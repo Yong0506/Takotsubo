@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Partner Pairing</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('partner.png') no-repeat center center/cover;
+            color: black;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 60%;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+        }
+
+        .card {
+            text-align: center;
+        }
+
+        .card img {
+            width: 100px;
+            height: 130px;
+            border: 4px solid black;
+            border-radius: 50%;
+            background-color: #f8c1c1;
+        }
+
+        .card p {
+            margin-top: 10px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .profile-panel {
+            width: 35%;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            color: black;
+        }
+
+        .profile-panel h2 {
+            margin-top: 0;
+            font-size: 1.8em;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .traits, .contact, .notes {
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        .hearts {
+            margin: 10px 0;
+        }
+
+        .hearts span {
+            font-size: 24px;
+            color: purple;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(153, 102, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #6633cc;
+            text-decoration: none;
+            border: 2px solid #b399ff;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(153, 102, 255, 0.4);
+            color: white;
+            border-color: #9966ff;
+            box-shadow: 0 0 8px #b399ff;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.8em;
+            font-weight: 800;
+            margin-top: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.50);
+            color: #3b215f;
+        }
+
+        .grid-container .card:nth-child(-n+4) {
+            padding-top: 20px;
+        }
+
+        .card.selected {
+            border: 3px solid #a278da;
+            box-shadow: 0 0 8px rgba(162, 120, 218, 0.6);
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body>
+    <a class="back-btn" href="#">←</a>
+    <div class="title">PARTNER PAIRING</div>
+
+    <div class="container">
+        <div class="grid-container">
+            <div class="card"><img src="avatar-red.png"><p>Rosaline</p></div>
+            <div class="card"><img src="avatar-red.png"><p>Kate</p></div>
+            <div class="card"><img src="avatar-blue.png"><p>Jason</p></div>
+            <div class="card"><img src="avatar-red.png"><p>Crystal</p></div>
+
+            <div class="card"><img src="avatar-red.png"><p>Dennis</p></div>
+            <div class="card"><img src="avatar-blue.png"><p>Jiajia</p></div>
+            <div class="card"><img src="avatar-blue.png"><p>Kent</p></div>
+            <div class="card"><img src="avatar-blue.png"><p>Eason</p></div>
+        </div>
+
+        <div class="profile-panel">
+            <h2 id="profile-title">Rosaline</h2>
+            <div class="card">
+                <img src="avatar-red.png" id="profile-img">
+                <p id="character-name">Rosaline</p>
+            </div>
+
+            <div class="hearts">
+                Matching Level:
+                <span>💜💜💜🤍🤍</span>
+            </div>
+
+            <div class="traits">
+                <strong>Traits:</strong><br>
+                Humorous, Kind, Independent
+            </div>
+
+            <div class="contact">
+                <strong>Contact:</strong><br>
+                Email: Rosaline123@gmail.com<br>
+                Phone: 0101234567
+            </div>
+
+            <div class="notes">
+                <strong>NOTES</strong><br>
+                Has class on Tuesdays.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cards = document.querySelectorAll(".grid-container .card");
+            const characterNameHeading = document.getElementById("character-name");
+            const profileTitle = document.getElementById("profile-title");
+            const profileImg = document.getElementById("profile-img");
+
+            cards.forEach(card => {
+                card.addEventListener("click", () => {
+                    cards.forEach(c => c.classList.remove("selected"));
+                    card.classList.add("selected");
+
+                    const name = card.querySelector("p").innerText;
+                    const imgSrc = card.querySelector("img").src;
+
+                    characterNameHeading.innerText = name;
+                    profileTitle.innerText = name;
+                    profileImg.src = imgSrc;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
