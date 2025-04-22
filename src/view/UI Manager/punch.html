@@ -1,3 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            background: url('../Asset Manager/images/punch/boxingRing.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            position: relative;
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
+        }
 
 
+        .pause {
+            left: 0;
+            top: 0;
+        }
 
+        .pause-icon {
+            width: 60px;
+            height: auto;
+        }
+
+        .health {
+            left: auto;
+            top: 0;
+        }
+
+        .health-icon {
+            width: 150px;
+            height: auto;
+        }
+
+        .opponent {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <div class="pause">
+            <img src="../Asset Manager/images/punch/pause.png" alt="pause" class="pause-icon">
+        </div>    
+    
+        <div class="health">
+            <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
+        </div>
+    </div>
+    
+
+
+    <div class="opponent">
+        <img src="../Asset Manager/images/punch/opponent.png" alt="Opponent">
+    </div>
+</body>
+
+</html>
