@@ -3,6 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.cdnfonts.com/css/digital-numbers" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -18,16 +25,25 @@
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
             display: flex;
-            align-items: center;
-            padding: 10px;
-            gap: 10px;
+            justify-content: space-between;
+            padding: 10px 20px;
+            box-sizing: border-box;
         }
 
+        .player-section,
+        .opponent-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
 
-        .pause {
-            left: 0;
-            top: 0;
+        .top-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .pause-icon {
@@ -36,12 +52,73 @@
         }
 
         .health {
-            left: auto;
-            top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .health-icon {
-            width: 150px;
+            width: 100px;
+            height: auto;
+        }
+
+        .health-number {
+            margin: 0;
+            font-size: 45px;
+            font-family: 'Digital Numbers', sans-serif;
+        }
+
+        .progress {
+            margin-left: 50px;
+            width: 300px;
+            height: 18px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-container {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .middle-top-bar {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 300px;
+            padding: 10px 20px;
+            background-color: white;
+            border: 5px solid yellow;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            font-family: 'Digital Numbers', sans-serif;
+        }
+
+        .middle-top-bar h2,
+        .middle-top-bar div {
+            margin: 0;
+            font-size: 32px;
+            color: black;
+            flex: 1;
+            text-align: center;
+        }
+
+        .middle-top-bar div{
+            color: blue;
+        }
+
+        .dodge-container{
+            background: #e0e0e0;
+        }
+
+        .left-punch{
+            width:50px;
             height: auto;
         }
 
@@ -51,25 +128,74 @@
             left: 50%;
             transform: translateX(-50%);
         }
+
+        .right-punch{
+            width:50px;
+            height: auto;
+        }
     </style>
 </head>
 
 <body>
     <div class="top-bar">
-        <div class="pause">
-            <img src="../Asset Manager/images/punch/pause.png" alt="pause" class="pause-icon">
-        </div>    
-    
-        <div class="health">
-            <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
+        <!-- Player section (left) -->
+        <div class="player-section">
+            <div class="top-info">
+                <img src="../Asset Manager/images/punch/pause.png" alt="pause" class="pause-icon">
+                <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
+                <h2 class="health-number">100</h2>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 70%;" aria-valuenow="70"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+        <!-- Spacer (to make room for center) -->
+        <div class="spacer"></div>
+
+        <!-- Opponent section (right) -->
+        <div class="opponent-section">
+            <div class="top-info">
+                <h2 class="health-number">100</h2>
+                <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
+            </div>
         </div>
     </div>
-    
 
+    <div class="middle-top-bar">
+        <div class="score">
+            <h2>1 |</h2>
+        </div>
+        <div class="time">
+            <div>60</div>
+        </div>
+        <div class="op-score">
+            <h2>| 0</h2>
+        </div>
+    </div>
+
+    <div class="dodge-container">
+        <img src="../Asset Manager/images/punch/timer.png" alt="time-icon">
+        <div class="progress">
+            <div class="progress-bar bg-success" role="progressbar" style="width: 70%;" aria-valuenow="70"
+                aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <img src="../Asset Manager/images/punch/arrow-left.png" alt="arrow-left">
+    </div>
+
+    <div class="left-punch">
+        <img src="../Asset Manager/images/punch/left-punch.png" alt="left-punch">
+    </div>
 
     <div class="opponent">
         <img src="../Asset Manager/images/punch/opponent.png" alt="Opponent">
     </div>
+
+    <div class="right-punch">
+        <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
+    </div>
 </body>
+
 
 </html>
