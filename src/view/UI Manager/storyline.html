@@ -44,7 +44,7 @@
             z-index: 100;
         }
 
-        .pause-button {
+        .pause-button, .settings-button {
             width: 50px;
             height: 50px;
             background: rgba(0, 0, 0, 0.7);
@@ -57,11 +57,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-right: 10px;
         }
 
-        .pause-button:hover {
+        .pause-button:hover, .settings-button:hover {
             background: rgba(0, 0, 0, 0.9);
             transform: scale(1.05);
+        }
+
+        .button-group {
+            display: flex;
+            align-items: center;
         }
 
         .chapter-title {
@@ -121,23 +127,30 @@
             background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
             color: white;
             box-sizing: border-box;
-            min-height: 180px;
+            height: 135px;
             backdrop-filter: blur(5px);
         }
 
         .character-name {
-        font-size: 24px;          /* 稍微调小字体 */
-        font-weight: 500;         /* 适中的字重 */
-        margin-bottom: 12px;      /* 与对话文本的间距 */
-        color: #FFFFFF;           /* 纯白色 */
-        text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);  /* 适度的阴影效果确保在任何背景下都清晰可见 */
-    }
+            position: absolute;
+            top: -30px;
+            left: 60px;
+            font-size: 24px;
+            font-weight: 600;
+            padding: 5px 20px;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            border-radius: 8px;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
     
         .dialogue-line {
             font-size: 20px;
             line-height: 1.6;
             color: rgba(255, 255, 255, 0.9);
             font-weight: 400;
+            margin-top: 5px;
         }
 
         .choices-container {
@@ -176,17 +189,17 @@
         .character-container {
             position: absolute;
             left: 50%;
-            bottom: 220px;  /* 调高位置 */
-            transform: translateX(-20%);  /* 向左偏移 */
+            bottom: -21px;
+            transform: translateX(-58%);
             width: auto;
-            max-width: 500px;  /* 增加最大宽度 */
+            max-width: 500px;
             height: auto;
             transition: all 0.3s ease;
         }
 
         .character {
             display: block;
-            max-width: 100%;
+            max-width: 92%;
             height: auto;
             filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
         }
@@ -195,7 +208,9 @@
 <body>
     <div class="vn-container">
         <div class="top-nav">
-            <button class="pause-button">⏸</button>
+            <div class="button-group">
+                <button class="pause-button" onclick="openPause()">⏸</button>
+            </div>
             <div class="chapter-title">Hang Out Together</div>
             <div class="skip-button">SKIP <span>►</span></div>
         </div>
@@ -237,24 +252,97 @@
         ];
 
         let currentDialogueIndex = 0;
+        let isTyping = false;
+        let currentTimeout = null;
+        let choicesTimeout = null;  // 添加一个变量来跟踪选项的timeout
+
+        function getTextSpeed() {
+            // 从本地存储获取文本速度设置
+            const savedSpeed = localStorage.getItem('textSpeed');
+            if (savedSpeed === null) return 50; // 默认速度
+
+            // 将0-100的值转换为实际打字速度（毫秒）
+            // 100 = 最快（10ms），0 = 最慢（200ms）
+            return Math.floor(200 - (savedSpeed * 1.9));
+        }
+
+        function typeText(text) {
+            // 如果正在打字，先清除之前的timeout
+            if (isTyping && currentTimeout) {
+                clearTimeout(currentTimeout);
+            }
+            
+            const dialogueElement = document.getElementById("dialogueText");
+            let i = 0;
+            isTyping = true;
+            dialogueElement.innerHTML = "";
+            const speed = getTextSpeed();  // 获取当前设置的速度
+
+            function typingEffect() {
+                if (i < text.length) {
+                    dialogueElement.innerHTML += text.charAt(i);
+                    i++;
+                    // 在标点符号后添加稍长的停顿
+                    const delay = /[,.!?]/.test(text.charAt(i-1)) ? speed * 4 : speed;
+                    currentTimeout = setTimeout(typingEffect, delay);
+                } else {
+                    isTyping = false;
+                    currentTimeout = null;
+                }
+            }
+
+            typingEffect();
+        }
+
+        function showChoices(dialogue) {
+            choicesContainer.innerHTML = '';
+            dialogue.choices.forEach(choiceText => {
+                const button = document.createElement("button");
+                button.classList.add("choice-btn");
+                button.innerText = choiceText;
+                button.style.textAlign = 'left';
+                button.addEventListener("click", () => handleChoice(choiceText));
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        // 点击skip按钮时立即显示全部文本
+        document.querySelector('.skip-button').addEventListener('click', function() {
+            if (isTyping) {
+                const dialogueElement = document.getElementById("dialogueText");
+                const currentDialogue = dialogues[currentDialogueIndex];
+                clearTimeout(currentTimeout);
+                if (choicesTimeout) {
+                    clearTimeout(choicesTimeout);  // 清除选项的timeout
+                }
+                dialogueElement.innerHTML = currentDialogue.text;
+                isTyping = false;
+                currentTimeout = null;
+                
+                // 立即显示选项按钮
+                if (currentDialogue.choices && currentDialogue.choices.length > 0) {
+                    showChoices(currentDialogue);
+                }
+            }
+        });
 
         function showDialogue(dialogue) {
             characterNameElement.innerText = dialogue.name;
-            dialogueTextElement.innerText = dialogue.text;
+            // 使用打字效果显示文本
+            typeText(dialogue.text);
             characterLeftElement.src = dialogue.left || '';
 
-            // Clear previous choices
+            // Clear previous choices and timeout
             choicesContainer.innerHTML = '';
+            if (choicesTimeout) {
+                clearTimeout(choicesTimeout);
+            }
 
             if (dialogue.choices && dialogue.choices.length > 0) {
-                dialogue.choices.forEach(choiceText => {
-                    const button = document.createElement("button");
-                    button.classList.add("choice-btn");
-                    button.innerText = choiceText;
-                    button.style.textAlign = 'left';
-                    button.addEventListener("click", () => handleChoice(choiceText));
-                    choicesContainer.appendChild(button);
-                });
+                // 等待文本打字完成后再显示选项
+                choicesTimeout = setTimeout(() => {
+                    showChoices(dialogue);
+                }, dialogue.text.length * 50 + 500); // 根据文本长度和打字速度计算延迟
             }
         }
 
@@ -269,6 +357,24 @@
             }
         }
 
+        function openPause() {
+            // 保存当前状态
+            localStorage.setItem('lastDialogueIndex', currentDialogueIndex);
+            // 跳转到设置页面
+            window.location.href = 'pause.html';
+        }
+
+        // 页面加载时检查是否从设置页面返回
+        window.onload = function() {
+            const lastIndex = localStorage.getItem('lastDialogueIndex');
+            if (lastIndex !== null) {
+                currentDialogueIndex = parseInt(lastIndex);
+                showDialogue(dialogues[currentDialogueIndex]);
+                // 清除保存的索引
+                localStorage.removeItem('lastDialogueIndex');
+            }
+        }
+
         // Initial display
         if (dialogues.length > 0) {
             showDialogue(dialogues[0]);
@@ -277,4 +383,5 @@
 
 </body>
 
+</html>
 </html>

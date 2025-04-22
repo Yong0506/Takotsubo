@@ -83,16 +83,31 @@
     </div>
 
     <script>
+        // 页面加载时读取保存的设置
+        window.onload = function() {
+            const savedVolume = localStorage.getItem('gameVolume') || 50;
+            const savedTextSpeed = localStorage.getItem('textSpeed') || 50;
+            
+            document.getElementById('volume').value = savedVolume;
+            document.getElementById('textSpeed').value = savedTextSpeed;
+            document.getElementById('volumeValue').innerText = savedVolume;
+            document.getElementById('textSpeedValue').innerText = savedTextSpeed;
+        }
+
         function updateVolume() {
-            document.getElementById('volumeValue').innerText = document.getElementById('volume').value;
+            const value = document.getElementById('volume').value;
+            document.getElementById('volumeValue').innerText = value;
+            localStorage.setItem('gameVolume', value);
         }
 
         function updateTextSpeed() {
-            document.getElementById('textSpeedValue').innerText = document.getElementById('textSpeed').value;
+            const value = document.getElementById('textSpeed').value;
+            document.getElementById('textSpeedValue').innerText = value;
+            localStorage.setItem('textSpeed', value);
         }
 
         function goBack() {
-            window.history.back();
+            window.location.href = 'storyline.html';
         }
 
         $(function () {
