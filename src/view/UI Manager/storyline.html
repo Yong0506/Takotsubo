@@ -176,10 +176,10 @@
         .character-container {
             position: absolute;
             left: 50%;
-            bottom: 180px;
-            transform: translateX(-50%);
+            bottom: 220px;  /* 调高位置 */
+            transform: translateX(-20%);  /* 向左偏移 */
             width: auto;
-            max-width: 400px;
+            max-width: 500px;  /* 增加最大宽度 */
             height: auto;
             transition: all 0.3s ease;
         }
@@ -207,7 +207,7 @@
 
   
         <div class="character-container">
-            <img src="../Asset Manager/images/main/character_sayuri.png" class="character" id="characterLeft" alt="iudfisjdbc">
+            <img src=  "../Asset Manager/images/main/character_sayuri.png"class ="character" id="characterLeft" alt="Sayuri">
         </div>
 
         <!-- 选项 -->
@@ -232,7 +232,7 @@
         const choicesContainer = document.querySelector(".choices-container");
 
         const dialogues = [
-            { name: "Sayuri", text: "So where do you want to go after class?", choices: ["Restaurant", "Badminton Court", "Cinema"], left: "character_sayuri.png" },
+            { name: "Sayuri", text: "So where do you want to go after class?", choices: ["Restaurant", "Badminton Court", "Cinema"], left: "../Asset Manager/images/main/character_sayuri.png" },
             // ... more dialogues
         ];
 
