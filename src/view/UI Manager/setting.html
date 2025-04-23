@@ -10,6 +10,7 @@
             text-align: center;
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Asset Manager/images/main/school.png') no-repeat center center/cover;
             color: white;
+            font-weight: 600;
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -18,12 +19,10 @@
         }
 
         .settings-container {
-            background: linear-gradient(135deg, #222, #444);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 30px;
             width: 400px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
         }
 
         .slider {
@@ -32,7 +31,7 @@
         }
 
         .btn-back {
-            background-color: rgba(169, 169, 169, 0.6);            
+            background-color: rgba(169, 169, 169, 0.6);
             color: white;
             font-size: 1.2em;
             padding: 10px 20px;
@@ -57,7 +56,7 @@
 
 <body>
     <div class="settings-container">
-        <h2 class="fw-bolder">Settings</h2>
+        <h2 class="fw-bold">Settings</h2>
 
         <div class="d-flex justify-content-between align-items-center">
             <label for="volume">Game Volume: <span id="volumeValue">50</span>%</label>
@@ -83,7 +82,6 @@
     </div>
 
     <script>
-        // 页面加载时读取保存的设置
         window.onload = function() {
             const savedVolume = localStorage.getItem('gameVolume') || 50;
             const savedTextSpeed = localStorage.getItem('textSpeed') || 50;
