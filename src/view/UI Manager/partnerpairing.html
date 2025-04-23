@@ -7,7 +7,7 @@
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background: url('partner.png') no-repeat center center/cover;
+            background: url('../Asset Manager/images/partnerpairing/partner.png') no-repeat center center/cover;
             color: black;
         }
 
@@ -17,13 +17,29 @@
             padding: 30px 50px;
         }
 
+        .grid-scroll {
+    height: 500px;
+    overflow-y: auto;
+    padding-right: 10px;
+        }
+
+        .grid-wrapper {
+    padding-right: 10px; /* Prevent scrollbar overlay */
+        }
+
         .grid-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            width: 60%;
+            width: 800px;
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 15px;
+
+            height: 520px;            /* fixed height */
+            overflow-y: auto;         /* vertical scroll only */
+            overflow-x: hidden;       /* hide horizontal overflow */
+            padding-right: 10px;      /* give space for vertical scrollbar */
+            box-sizing: border-box;   /* include padding inside the width */
         }
 
         .card {
@@ -120,9 +136,10 @@
     <div class="title">PARTNER PAIRING</div>
 
     <div class="container">
+        <div class="grid-wrapper">
         <div class="grid-container">
-            <div class="card"><img src="avatar-red.png"><p>Rosaline</p></div>
-            <div class="card"><img src="avatar-red.png"><p>Kate</p></div>
+            <div class="card"> <img src="../Asset Manager/images/partnerpairing/rosaline.jpg" alt="Rosaline"><p>Rosaline</p></div>
+            <div class="card"> <img src="../Asset Manager/images/partnerpairing/kate1.jpg" alt="Kate"><p>Kate</p></div>
             <div class="card"><img src="avatar-blue.png"><p>Jason</p></div>
             <div class="card"><img src="avatar-red.png"><p>Crystal</p></div>
 
@@ -130,7 +147,14 @@
             <div class="card"><img src="avatar-blue.png"><p>Jiajia</p></div>
             <div class="card"><img src="avatar-blue.png"><p>Kent</p></div>
             <div class="card"><img src="avatar-blue.png"><p>Eason</p></div>
+            
+            <div class="card"><img src="avatar-red.png"><p>Danial</p></div>
+            <div class="card"><img src="avatar-blue.png"><p>Kevin</p></div>
+            <div class="card"><img src="avatar-blue.png"><p>Mayyi</p></div>
+            <div class="card"><img src="avatar-blue.png"><p>Caven</p></div>
+            
         </div>
+    </div>
 
         <div class="profile-panel">
             <h2 id="profile-title">Rosaline</h2>
@@ -161,6 +185,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
