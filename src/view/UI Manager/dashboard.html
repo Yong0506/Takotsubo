@@ -378,9 +378,9 @@
         const db = getFirestore(app);
 
         const deviceId = localStorage.getItem("deviceId");
-
         const docRef = doc(db, "players", deviceId);
         const docSnap = await getDoc(docRef);
+        
         if (docSnap.exists()) {
             const data = docSnap.data();
 
@@ -541,7 +541,7 @@
                 const data = docSnap.data();
                 await updateDoc(docRef, { newGame: "No" });
 
-                window.location.href = 'storyline.html';
+                window.location.href = 'chapter.html';
             } else {
                 console.log("No such document!");
             }
