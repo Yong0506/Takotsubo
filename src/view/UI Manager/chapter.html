@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takotsubo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Asset Manager/images/main/school.png') no-repeat center center/cover;
+            color: white;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .chapter-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .chapter-box {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 20px 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            width: 300px;
+            display: none;
+            /* Hidden by default */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chapter-box:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chapter-container">
+        <div id="denyBox" class="chapter-box">Deny and Anger</div>
+        <div id="memoriesBox" class="chapter-box">Memories Together</div>
+        <div id="lettingGoBox" class="chapter-box">Letting Go</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+        import { getFirestore, collection, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.firebasestorage.app",
+            messagingSenderId: "59472372412",
+            appId: "1:59472372412:web:a192e23b031683988266b9",
+            measurementId: "G-QQ6VXX1M7C"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        const deviceId = localStorage.getItem("deviceId");
+        const docRef = doc(db, "players", deviceId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const denyAnger = data.denyAnger;
+            const memories = data.memories;
+            const lettingGo = data.lettingGo;
+            const allChapUnlock = data.allChapUnlock;
+
+            // Show all if fully unlocked
+            if (allChapUnlock === "Yes") {
+                document.getElementById("denyBox").style.display = "block";
+                document.getElementById("memoriesBox").style.display = "block";
+                document.getElementById("lettingGoBox").style.display = "block";
+            } else {
+                if (denyAnger === "Yes") {
+                    document.getElementById("denyBox").style.display = "block";
+                }
+                if (memories === "Yes") {
+                    document.getElementById("memoriesBox").style.display = "block";
+                }
+                if (lettingGo === "Yes") {
+                    document.getElementById("lettingGoBox").style.display = "block";
+                }
+            }
+        } else {
+            console.log("No such document!");
+        }
+    </script>
+</body>
+
+</html>
