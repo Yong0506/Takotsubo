@@ -155,7 +155,11 @@
             const birthDate = document.getElementById("birthDate").value;
             const email = document.getElementById("email").value;
             const phone = document.getElementById("phone").value;
-            const unlockChap = "No";
+            const newGame = "Yes";
+            const allChapUnlock = "No";
+            const denyAnger = "No";
+            const memories = "No";
+            const lettingGo = "No";
 
             if (!name || !gender || !birthDate || !email || !phone) {
                 alert("Please fill out all fields before proceeding.");
@@ -176,7 +180,11 @@
                     email: email,
                     phone: phone,
                     deviceId: deviceId,
-                    unlockChap: unlockChap,
+                    newGame: newGame,
+                    allChapUnlock: allChapUnlock,
+                    denyAnger: denyAnger,
+                    memories: memories,
+                    lettingGo: lettingGo,
                     createdAt: new Date()
                 });
 
