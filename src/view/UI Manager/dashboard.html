@@ -36,10 +36,11 @@
             flex-direction: column;
             justify-content: flex-start;
             width: 100%;
+            margin-left: 5%;
         }
 
         .chart-box {
-            width: 60%;
+            width: 70%;
             background: rgba(255, 255, 255, 0.2);
             color: white;
             font-size: 1.5em;
@@ -50,7 +51,7 @@
             margin-bottom: 20px;
         }
 
-        .continue-btn {
+        .story-btn {
             background-color: rgba(169, 169, 169, 0.8);
             color: white;
             font-size: 1.5em;
@@ -58,11 +59,11 @@
             border-radius: 12px;
             font-weight: 600;
             border: none;
-            width: 60%;
+            width: 70%;
             transition: all 0.3s ease-in-out;
         }
 
-        .continue-btn:hover {
+        .story-btn:hover {
             background-color: rgba(169, 169, 169, 1);
             transform: scale(1.05);
         }
@@ -75,6 +76,7 @@
             flex-direction: column;
             justify-content: space-between;
             width: 60%;
+
         }
 
         .box-container {
@@ -85,7 +87,7 @@
         }
 
         .box-small {
-            width: 48%;
+            width: 500px;
             background: rgba(255, 255, 255, 0.2);
             color: white;
             font-size: 1.2em;
@@ -220,7 +222,7 @@
                 <canvas id="doughnutChart"></canvas>
             </div>
 
-            <button class="continue-btn" onclick="continueStory()">Continue the Story</button>
+            <button id="storyBtn" class="story-btn" onclick="handleStoryButton()"></button>
         </div>
 
         <div class="right-container">
@@ -236,15 +238,11 @@
                     <button type="button" class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal">Edit <i
                             class="fas fa-edit"></i></button>
                 </div>
-                <div class="box-small">
-                    <p>Chapter Unlocked: 1/3</p>
-                    <div class="line"></div>
-                </div>
             </div>
 
             <div class="box-container">
                 <div class="box-small">
-                    <p>Unknown</p>
+                    <p>Total Chapter Unlock</p>
                     <div class="line"></div>
                 </div>
                 <div class="box-small">
@@ -378,6 +376,15 @@
             } else if (data.gender === "Female") {
                 document.getElementById("editFemale").checked = true;
             }
+
+            const btn = document.getElementById("storyBtn");
+            if (data.newGame === "Yes") {
+                btn.textContent = "Start Game";
+            } else if (data.allChapUnlock === "Yes") {
+                btn.textContent = "Select Chapter";
+            } else {
+                btn.textContent = "Continue the Story";
+            }
         } else {
             console.log("no such document!");
         }
@@ -407,7 +414,22 @@
             }
         }
 
+        async function handleStoryButton() {
+            const docRef = doc(db, "players", deviceId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                await updateDoc(docRef, { newGame: "No" });
+
+                window.location.href = 'storyline.html';
+            } else {
+                console.log("No such document!");
+            }
+        }
+
         window.saveEditedProfile = saveEditedProfile;
+        window.handleStoryButton = handleStoryButton;
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
