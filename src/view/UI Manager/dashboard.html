@@ -98,6 +98,23 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
         }
 
+        .progress-bar-container {
+            width: 100%;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #00b7ff;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+
         /*end right container css*/
 
         .line {
@@ -230,24 +247,30 @@
                 <div class="box-small">
                     <p>Player's Profile</p>
                     <div class="line"></div>
-                    <p id="name" class="text-start fw-light"></p>
-                    <p id="gender" class="text-start fw-light"></p>
-                    <p id="birth" class="text-start fw-light"></p>
-                    <p id="email" class="text-start fw-light"></p>
-                    <p id="phone" class="text-start fw-light"></p>
+                    <p id="name" class="text-start"></p>
+                    <p id="gender" class="text-start"></p>
+                    <p id="birth" class="text-start"></p>
+                    <p id="email" class="text-start"></p>
+                    <p id="phone" class="text-start"></p>
                     <button type="button" class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal">Edit <i
                             class="fas fa-edit"></i></button>
                 </div>
             </div>
-
             <div class="box-container">
                 <div class="box-small">
                     <p>Total Chapter Unlock</p>
                     <div class="line"></div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="chapterProgress"></div>
+                    </div>
+                    <p id="chapterCount" style="text-align:center;"></p>
                 </div>
+            </div>
+            <div class="box-container">
                 <div class="box-small">
-                    <p>Unknown</p>
+                    <p>Currrent Traits</p>
                     <div class="line"></div>
+                    <canvas id="traitsChart"></canvas>
                 </div>
             </div>
         </div>
@@ -360,6 +383,7 @@
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             const data = docSnap.data();
+
             document.getElementById("name").textContent = `Name: ${data.name}`;
             document.getElementById("gender").textContent = `Gender: ${data.gender}`;
             document.getElementById("birth").textContent = `Birth Date: ${data.birthDate}`;
@@ -385,8 +409,103 @@
             } else {
                 btn.textContent = "Continue the Story";
             }
+
+            let unlocked = 0;
+            if (data.denyAnger === "Yes") unlocked++;
+            if (data.memories === "Yes") unlocked++;
+            if (data.lettingGo === "Yes") unlocked++;
+
+            const percent = (unlocked / 3) * 100;
+            document.getElementById("chapterProgress").style.width = `${percent}%`;
+            document.getElementById("chapterCount").textContent = `${unlocked}/3`;
+
         } else {
             console.log("no such document!");
+        }
+
+        const traitsRef = doc(db, "traits", deviceId);
+        const traitsSnap = await getDoc(traitsRef);
+
+        if (traitsSnap.exists()) {
+            const data = traitsSnap.data();
+
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            const backgroundColors = [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)',
+                'rgba(199, 199, 199, 0.6)'
+            ];
+
+            const borderColors = [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(199, 199, 199, 1)'
+            ];
+
+            const ctx = document.getElementById('traitsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.map(label => label.charAt(0).toUpperCase() + label.slice(1)),
+                    datasets: [{
+                        label: 'Trait Level',
+                        data: values,
+                        backgroundColor: backgroundColors.slice(0, values.length),
+                        borderColor: borderColors.slice(0, values.length),
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'white'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.2)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: 'white' 
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.2)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                            labels: {
+                                color: 'white'
+                            }
+                        },
+                        tooltip: {
+                            bodyColor: 'white',
+                            titleColor: 'white',
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)'
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            console.log("Traits data not found");
         }
 
         async function saveEditedProfile() {
