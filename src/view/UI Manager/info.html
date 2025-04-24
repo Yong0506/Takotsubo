@@ -172,6 +172,18 @@
                 localStorage.setItem("deviceId", deviceId);
             }
 
+            let gameVolume = localStorage.getItem("gameVolume");
+            if (!gameVolume) {
+                gameVolume = 50;
+                localStorage.setItem("gameVolume", gameVolume);
+            }
+
+            let textSpeed = localStorage.getItem("textSpeed");
+            if (!textSpeed) {
+                textSpeed = 50;
+                localStorage.setItem("textSpeed", textSpeed);
+            }
+
             try {
                 await setDoc(doc(collection(db, "players"), deviceId), {
                     name: name,
