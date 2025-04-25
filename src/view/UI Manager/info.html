@@ -194,6 +194,12 @@
                 localStorage.setItem("textSpeed", textSpeed);
             }
 
+            let chapSelected = localStorage.getItem("chapSelected");
+            if (!chapSelected) {
+                chapSelected = 0;
+                localStorage.setItem("chapSelected", chapSelected);
+            }
+
             try {
                 await setDoc(doc(collection(db, "players"), deviceId), {
                     name: name,

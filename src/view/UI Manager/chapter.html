@@ -107,6 +107,21 @@
         function goBack() {
             window.history.back();
         }
+
+        function denyAnger() {
+            localStorage.setItem("chapSelected", 1);
+            window.location.href = 'storyline.html'
+        }
+
+        function memories() {
+            localStorage.setItem("chapSelected", 2);
+            window.location.href = 'storyline.html'
+        }
+
+        function lettingGo() {
+            localStorage.setItem("chapSelected", 3);
+            window.location.href = 'storyline.html'
+        }
     </script>
 
     <script type="module">
