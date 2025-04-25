@@ -149,6 +149,16 @@
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
+        document.addEventListener("DOMContentLoaded", () => {
+            const birthInput = document.getElementById("birthDate");
+            const today = new Date().toISOString().split("T")[0];
+            birthInput.setAttribute("max", today);
+        });
+
+        document.getElementById("phone").addEventListener("input", function () {
+            this.value = this.value.replace(/[^\d\s\-]/g, '');
+        });
+
         async function saveInfo() {
             const name = document.getElementById("playerName").value;
             const gender = document.querySelector('input[name="gender"]:checked')?.value;
@@ -198,6 +208,15 @@
                     memories: memories,
                     lettingGo: lettingGo,
                     createdAt: new Date()
+                });
+
+                await setDoc(doc(collection(db, "traits"), deviceId), {
+                    direct: 0,
+                    humorous: 0,
+                    kind: 0,
+                    optimistic: 0,
+                    romantic: 0,
+                    shy: 0
                 });
 
                 console.log("player ID (deviceId): ", deviceId);
