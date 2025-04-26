@@ -148,6 +148,14 @@
             box-sizing: border-box;
             height: 200px;
             backdrop-filter: blur(5px);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dialogue-box.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .character-name {
@@ -213,7 +221,12 @@
             width: auto;
             max-width: 700px;
             height: auto;
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .character-container.show {
+            opacity: 1;
         }
 
         .character {
@@ -264,16 +277,52 @@
         const dialogueTextElement = document.getElementById("dialogueText");
         const characterLeftElement = document.getElementById("characterLeft");
         const choicesContainer = document.querySelector(".choices-container");
+        const dialogueBox = document.querySelector(".dialogue-box");
+        const characterContainer = document.querySelector(".character-container");
 
+        // 更完整的对话数据结构
         const dialogues = [
-            { name: "Sayuri", text: "So where do you want to go after class?", choices: ["Restaurant", "Badminton Court", "Cinema"], left: "../Asset Manager/images/main/character_sayuri.png" },
-            // ... more dialogues
+            {
+                name: "Sayuri",
+                text: "So where do you want to go after class?",
+                choices: ["Restaurant", "Badminton Court", "Cinema"],
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: {
+                    "Restaurant": 1,
+                    "Badminton Court": 2,
+                    "Cinema": 3
+                }
+            },
+            {
+                name: "Sayuri",
+                text: "Great choice! I know a nice place nearby.",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: 4
+            },
+            {
+                name: "Sayuri",
+                text: "I love playing badminton! Let's go!",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: 4
+            },
+            {
+                name: "Sayuri",
+                text: "I've been wanting to watch that new movie!",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: 4
+            },
+            {
+                name: "Sayuri",
+                text: "Let's meet at the school gate after class!",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: null
+            }
         ];
 
         let currentDialogueIndex = 0;
         let isTyping = false;
         let currentTimeout = null;
-        let choicesTimeout = null;  // 添加一个变量来跟踪选项的timeout
+        let choicesTimeout = null;
 
         function getTextSpeed() {
             // 从本地存储获取文本速度设置
@@ -346,30 +395,44 @@
         });
 
         function showDialogue(dialogue) {
-            characterNameElement.innerText = dialogue.name;
-            // 使用打字效果显示文本
-            typeText(dialogue.text);
-            characterLeftElement.src = dialogue.left || '';
+            // 淡出当前对话
+            dialogueBox.classList.remove('show');
+            characterContainer.classList.remove('show');
 
-            // Clear previous choices and timeout
-            choicesContainer.innerHTML = '';
-            if (choicesTimeout) {
-                clearTimeout(choicesTimeout);
-            }
+            // 等待淡出动画完成
+            setTimeout(() => {
+                characterNameElement.innerText = dialogue.name;
+                characterLeftElement.src = dialogue.left || '';
+                
+                // 淡入新对话
+                dialogueBox.classList.add('show');
+                characterContainer.classList.add('show');
+                
+                // 使用打字效果显示文本
+                typeText(dialogue.text);
 
-            if (dialogue.choices && dialogue.choices.length > 0) {
-                // 等待文本打字完成后再显示选项
-                choicesTimeout = setTimeout(() => {
-                    showChoices(dialogue);
-                }, dialogue.text.length * 50 + 500); // 根据文本长度和打字速度计算延迟
-            }
+                // 清除之前的选项
+                choicesContainer.innerHTML = '';
+                if (choicesTimeout) {
+                    clearTimeout(choicesTimeout);
+                }
+
+                // 如果有选项，等待文本打字完成后再显示
+                if (dialogue.choices && dialogue.choices.length > 0) {
+                    choicesTimeout = setTimeout(() => {
+                        showChoices(dialogue);
+                    }, dialogue.text.length * 50 + 500);
+                }
+            }, 500);
         }
 
         function handleChoice(choice) {
-            console.log("Player chose:", choice);
-            // Implement your game logic here
-            currentDialogueIndex++;
-            if (currentDialogueIndex < dialogues.length) {
+            const currentDialogue = dialogues[currentDialogueIndex];
+            if (currentDialogue.next && currentDialogue.next[choice] !== undefined) {
+                currentDialogueIndex = currentDialogue.next[choice];
+                showDialogue(dialogues[currentDialogueIndex]);
+            } else if (currentDialogue.next) {
+                currentDialogueIndex = currentDialogue.next;
                 showDialogue(dialogues[currentDialogueIndex]);
             } else {
                 console.log("End of story.");
@@ -383,24 +446,19 @@
             window.location.href = 'pause.html';
         }
 
-        // 页面加载时检查是否从设置页面返回
+        // 页面加载时显示初始对话
         window.onload = function() {
             const lastIndex = localStorage.getItem('lastDialogueIndex');
             if (lastIndex !== null) {
                 currentDialogueIndex = parseInt(lastIndex);
                 showDialogue(dialogues[currentDialogueIndex]);
-                // 清除保存的索引
                 localStorage.removeItem('lastDialogueIndex');
+            } else {
+                showDialogue(dialogues[0]);
             }
-        }
-
-        // Initial display
-        if (dialogues.length > 0) {
-            showDialogue(dialogues[0]);
         }
     </script>
 
 </body>
 
-</html>
 </html>
