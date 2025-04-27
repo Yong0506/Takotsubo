@@ -23,6 +23,8 @@
             border-radius: 15px;
             padding: 30px;
             width: 400px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
         }
 
         .slider {
@@ -31,7 +33,7 @@
         }
 
         .btn-back {
-            background-color: rgba(169, 169, 169, 0.6);
+            background-color: rgba(169, 169, 169, 0.6);            
             color: white;
             font-size: 1.2em;
             padding: 10px 20px;
@@ -56,7 +58,7 @@
 
 <body>
     <div class="settings-container">
-        <h2 class="fw-bold">Settings</h2>
+        <h2 class="fw-bolder">Settings</h2>
 
         <div class="d-flex justify-content-between align-items-center">
             <label for="volume">Game Volume: <span id="volumeValue">50</span>%</label>

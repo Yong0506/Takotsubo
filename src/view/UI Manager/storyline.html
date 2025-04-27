@@ -148,6 +148,27 @@
             box-sizing: border-box;
             height: 200px;
             backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+
+        .dialogue-box::after {
+            content: "▼";
+            position: absolute;
+            right: 40px;
+            bottom: 20px;
+            color: white;
+            font-size: 24px;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .dialogue-box.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .character-name {
@@ -213,7 +234,12 @@
             width: auto;
             max-width: 700px;
             height: auto;
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .character-container.show {
+            opacity: 1;
         }
 
         .character {
@@ -264,29 +290,66 @@
         const dialogueTextElement = document.getElementById("dialogueText");
         const characterLeftElement = document.getElementById("characterLeft");
         const choicesContainer = document.querySelector(".choices-container");
+        const dialogueBox = document.querySelector(".dialogue-box");
+        const characterContainer = document.querySelector(".character-container");
 
+        // 更完整的对话数据结构
         const dialogues = [
-            { name: "Sayuri", text: "So where do you want to go after class?", choices: ["Restaurant", "Badminton Court", "Cinema"], left: "../Asset Manager/images/main/character_sayuri.png" },
-            // ... more dialogues
+            {
+                name: "Sayuri",
+                text: "So where do you want to go after class?",
+                choices: ["Restaurant", "Badminton Court", "Cinema"],
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: {
+                    "Restaurant": 1,
+                    "Badminton Court": 2,
+                    "Cinema": 3
+                }
+            },
+            {
+                name: "Sayuri",
+                text: "Great choice! I know a nice place nearby.",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: 4
+            },
+            {
+                name: "Sayuri",
+                text: "I love playing badminton! Let's go!",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: 5
+            },
+            {
+                name: "Sayuri",
+                text: "I've been wanting to watch that new movie!",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: 4
+            },
+            {
+                name: "Sayuri",
+                text: "Let's meet at the school gate after class!",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: null
+            },
+            {
+                name: "Sayuri",
+                text: "Hello! The school gym is just around the corner.",
+                left: "../Asset Manager/images/main/character_sayuri.png",
+                next: null
+            }
         ];
 
         let currentDialogueIndex = 0;
         let isTyping = false;
         let currentTimeout = null;
-        let choicesTimeout = null;  // 添加一个变量来跟踪选项的timeout
+        let choicesTimeout = null;
 
         function getTextSpeed() {
-            // 从本地存储获取文本速度设置
             const savedSpeed = localStorage.getItem('textSpeed');
-            if (savedSpeed === null) return 50; // 默认速度
-
-            // 将0-100的值转换为实际打字速度（毫秒）
-            // 100 = 最快（10ms），0 = 最慢（200ms）
+            if (savedSpeed === null) return 50;
             return Math.floor(200 - (savedSpeed * 1.9));
         }
 
         function typeText(text) {
-            // 如果正在打字，先清除之前的timeout
             if (isTyping && currentTimeout) {
                 clearTimeout(currentTimeout);
             }
@@ -295,13 +358,12 @@
             let i = 0;
             isTyping = true;
             dialogueElement.innerHTML = "";
-            const speed = getTextSpeed();  // 获取当前设置的速度
+            const speed = getTextSpeed();
 
             function typingEffect() {
                 if (i < text.length) {
                     dialogueElement.innerHTML += text.charAt(i);
                     i++;
-                    // 在标点符号后添加稍长的停顿
                     const delay = /[,.!?]/.test(text.charAt(i-1)) ? speed * 4 : speed;
                     currentTimeout = setTimeout(typingEffect, delay);
                 } else {
@@ -325,53 +387,80 @@
             });
         }
 
-        // 点击skip按钮时立即显示全部文本
-        document.querySelector('.skip-button').addEventListener('click', function() {
-            if (isTyping) {
-                const dialogueElement = document.getElementById("dialogueText");
-                const currentDialogue = dialogues[currentDialogueIndex];
-                clearTimeout(currentTimeout);
-                if (choicesTimeout) {
-                    clearTimeout(choicesTimeout);  // 清除选项的timeout
-                }
-                dialogueElement.innerHTML = currentDialogue.text;
-                isTyping = false;
-                currentTimeout = null;
-                
-                // 立即显示选项按钮
-                if (currentDialogue.choices && currentDialogue.choices.length > 0) {
-                    showChoices(currentDialogue);
-                }
-            }
-        });
-
         function showDialogue(dialogue) {
-            characterNameElement.innerText = dialogue.name;
-            // 使用打字效果显示文本
-            typeText(dialogue.text);
-            characterLeftElement.src = dialogue.left || '';
+            // 确保对话框和角色容器始终显示
+            dialogueBox.classList.add('show');
+            characterContainer.classList.add('show');
 
-            // Clear previous choices and timeout
+            // 更新对话内容
+            characterNameElement.innerText = dialogue.name;
+            characterLeftElement.src = dialogue.left || '';
+            typeText(dialogue.text);
+
+            // 清除之前的选项
             choicesContainer.innerHTML = '';
             if (choicesTimeout) {
                 clearTimeout(choicesTimeout);
             }
 
+            // 如果有选项，等待文本打字完成后再显示
             if (dialogue.choices && dialogue.choices.length > 0) {
-                // 等待文本打字完成后再显示选项
                 choicesTimeout = setTimeout(() => {
                     showChoices(dialogue);
-                }, dialogue.text.length * 50 + 500); // 根据文本长度和打字速度计算延迟
+                }, dialogue.text.length * 50 + 500);
             }
         }
 
-        function handleChoice(choice) {
-            console.log("Player chose:", choice);
-            // Implement your game logic here
-            currentDialogueIndex++;
-            if (currentDialogueIndex < dialogues.length) {
+        // 添加场景切换函数
+        function changeBackground(imagePath) {
+            document.body.style.backgroundImage = `url('${imagePath}')`;
+        }
+
+        // 添加对话框点击事件
+        dialogueBox.addEventListener('click', () => {
+            const currentDialogue = dialogues[currentDialogueIndex];
+            
+            // 如果正在打字，立即显示完整文本
+            if (isTyping) {
+                if (currentTimeout) {
+                    clearTimeout(currentTimeout);
+                }
+                dialogueTextElement.innerHTML = currentDialogue.text;
+                isTyping = false;
+                return;
+            }
+
+            // 如果当前对话有选项，不进行处理
+            if (currentDialogue.choices && currentDialogue.choices.length > 0) {
+                return;
+            }
+
+            // 如果有下一个对话，进入下一个对话
+            if (typeof currentDialogue.next === 'number') {
+                currentDialogueIndex = currentDialogue.next;
                 showDialogue(dialogues[currentDialogueIndex]);
-            } else {
+            } else if (currentDialogue.next === null) {
+                console.log("End of story.");
+            }
+        });
+
+        function handleChoice(choice) {
+            const currentDialogue = dialogues[currentDialogueIndex];
+            if (currentDialogue.next && typeof currentDialogue.next === 'object' && currentDialogue.next[choice] !== undefined) {
+                // 处理分支选择
+                const nextIndex = currentDialogue.next[choice];
+                currentDialogueIndex = nextIndex;
+                // 如果是羽毛球选项，切换场景
+                if (choice === "Badminton Court") {
+                    changeBackground('../Asset Manager/images/main/school.png');
+                }
+                showDialogue(dialogues[currentDialogueIndex]);
+            } else if (typeof currentDialogue.next === 'number') {
+                // 处理线性对话
+                currentDialogueIndex = currentDialogue.next;
+                showDialogue(dialogues[currentDialogueIndex]);
+            } else if (currentDialogue.next === null) {
+                // 对话结束
                 console.log("End of story.");
             }
         }
@@ -383,24 +472,19 @@
             window.location.href = 'pause.html';
         }
 
-        // 页面加载时检查是否从设置页面返回
+        // 页面加载时显示初始对话
         window.onload = function() {
             const lastIndex = localStorage.getItem('lastDialogueIndex');
             if (lastIndex !== null) {
                 currentDialogueIndex = parseInt(lastIndex);
                 showDialogue(dialogues[currentDialogueIndex]);
-                // 清除保存的索引
                 localStorage.removeItem('lastDialogueIndex');
+            } else {
+                showDialogue(dialogues[0]);
             }
-        }
-
-        // Initial display
-        if (dialogues.length > 0) {
-            showDialogue(dialogues[0]);
         }
     </script>
 
 </body>
 
-</html>
 </html>
