@@ -107,21 +107,6 @@
         function goBack() {
             window.history.back();
         }
-
-        function denyAnger() {
-            localStorage.setItem("chapSelected", 1);
-            window.location.href = 'storyline.html'
-        }
-
-        function memories() {
-            localStorage.setItem("chapSelected", 2);
-            window.location.href = 'storyline.html'
-        }
-
-        function lettingGo() {
-            localStorage.setItem("chapSelected", 3);
-            window.location.href = 'storyline.html'
-        }
     </script>
 
     <script type="module">
@@ -177,6 +162,51 @@
             }
         } else {
             console.log("No such document!");
+        }
+
+        async function denyAnger() {
+            const docRef = doc(db, "players", deviceId);
+            const docSnap = await getDoc(docRef);
+            localStorage.setItem("gameSavedChap", 1);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                await updateDoc(docRef, { gameSavedChap: 1 });
+
+            window.location.href = 'storyline.html'
+            } else {
+                console.log("No such document!");
+            }
+        }
+
+        async function memories() {
+            const docRef = doc(db, "players", deviceId);
+            const docSnap = await getDoc(docRef);
+            localStorage.setItem("gameSavedChap", 2);
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                await updateDoc(docRef, { gameSavedChap: 2 });
+
+            window.location.href = 'storyline.html'
+            } else {
+                console.log("No such document!");
+            }
+        }
+
+        async function lettingGo() {
+            const docRef = doc(db, "players", deviceId);
+            const docSnap = await getDoc(docRef);
+            localStorage.setItem("gameSavedChap", 3);
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                await updateDoc(docRef, { gameSavedChap: 3 });
+
+            window.location.href = 'storyline.html'
+            } else {
+                console.log("No such document!");
+            }
         }
     </script>
 </body>

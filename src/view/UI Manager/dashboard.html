@@ -60,6 +60,7 @@
             font-weight: 600;
             border: none;
             width: 70%;
+            height: 100px;
             transition: all 0.3s ease-in-out;
         }
 
@@ -76,7 +77,6 @@
             flex-direction: column;
             justify-content: space-between;
             width: 60%;
-
         }
 
         .box-container {
@@ -312,45 +312,6 @@
             window.location.href = 'setting.html'
         }
 
-        var ctx = document.getElementById('doughnutChart').getContext('2d');
-        var doughnutChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    label: 'Progress',
-                    data: [70, 30],
-                    backgroundColor: ['green', 'grey'],
-                    borderColor: ['#ffffff', '#ffffff'],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        enabled: false
-                    },
-                    datalabels: {
-                        color: '#fff',
-                        font: {
-                            weight: 'bold',
-                            size: 32
-                        },
-                        formatter: function (value) {
-                            return value + '%';
-                        }
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
-
-        function continueStory() {
-            window.location.href = 'story.html';
-        }
     </script>
 
     <script type="module">
@@ -411,6 +372,10 @@
                 btn.textContent = "Continue the Story";
             }
 
+            if (data.gameSavedChap > 0) {
+                btn.onclick = continueStoryButton;
+            }
+
             let unlocked = 0;
             if (data.denyAnger === "Yes") unlocked++;
             if (data.memories === "Yes") unlocked++;
@@ -420,6 +385,45 @@
             document.getElementById("chapterProgress").style.width = `${percent}%`;
             document.getElementById("chapterCount").textContent = `${unlocked}/3`;
 
+            var ctx = document.getElementById('doughnutChart').getContext('2d');
+            var doughnutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        label: 'Progress',
+                        data: [data.overallProgress, 100 - data.overallProgress],
+                        backgroundColor: ['green', 'grey'],
+                        borderColor: ['#ffffff', '#ffffff'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            enabled: false
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            font: {
+                                weight: 'bold',
+                                size: 32
+                            },
+                            formatter: function (value, context) {
+                                if (context.dataIndex === 0) {
+                                    return value + '%';
+                                } else {
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
         } else {
             console.log("no such document!");
         }
@@ -540,8 +544,13 @@
             }
         }
 
+        async function continueStoryButton() {
+            window.location.href = 'storyline.html';
+        }
+
         window.saveEditedProfile = saveEditedProfile;
         window.handleStoryButton = handleStoryButton;
+        window.continueStoryButton = continueStoryButton;
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
