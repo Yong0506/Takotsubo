@@ -282,6 +282,9 @@
     let dodgeDamage = 0;
     let wrongInputs = 0; // counts wrong arrow inputs during dodge
 
+    let isFeedbackShowing = false; //arrowFeed
+
+
     //Timer values
     let matchTimer = 60;  // Starting time for match timer
     let matchInterval;    // Timer interval reference
@@ -375,7 +378,8 @@
     }
 
     function finishDodge() {
-        const missed = dodgeSequence.length - currentArrowIndex;
+        let missed = dodgeSequence.length - currentArrowIndex;
+        missed = Math.max(0, missed);
         const totalMistakes = missed + wrongInputs;
         dodgeDamage = totalMistakes * 5;
 
@@ -398,23 +402,43 @@
 
     function handleArrowKeyInput(e) {
         if (!isDodgeActive || !dodgeArrowImages[e.key]) return;
+        if (currentArrowIndex >= dodgeSequence.length) return; // No input after sequence ends
 
         const expected = dodgeSequence[currentArrowIndex];
         if (!expected) return;
 
+        // Block inputs during feedback
+        if (isFeedbackShowing) return;
+
         if (e.key === expected) {
-            currentArrowIndex++;
+            showFeedbackArrow(expected, true);
         } else {
             wrongInputs++;
-            currentArrowIndex++;
+            showFeedbackArrow(expected, false);
         }
 
-        if (currentArrowIndex >= dodgeSequence.length) {
-            clearInterval(dodgeTimer);
-            finishDodge();
-        } else {
-            showNextArrow();
-        }
+
+    }
+
+    function showFeedbackArrow(keyPressed, isCorrect) {
+        isFeedbackShowing = true;
+
+        // Decide which feedback image to show
+        const feedbackType = isCorrect ? '_right' : '_wrong';
+        dodgeArrow.src = `../Asset Manager/images/punch/${dodgeArrowImages[keyPressed].replace('.png', feedbackType + '.png')}`;
+
+        setTimeout(() => {
+            currentArrowIndex++;
+
+            if (currentArrowIndex >= dodgeSequence.length) {
+                clearInterval(dodgeTimer);
+                finishDodge();
+            } else {
+                showNextArrow(); // Show next arrow
+            }
+
+            isFeedbackShowing = false; // Allow input again
+        }, 150); // 0.3 seconds
     }
 
     document.addEventListener('keydown', handleArrowKeyInput);
@@ -438,10 +462,7 @@
         document.querySelector('.dodge-container').style.display = 'none';
     }
 
-    // Disable punch inputs (if any key events were attached for punch input)
-    function disablePunchInputs() {
-        // You would disable the punch key event listener here (for 'p' or any punch key).
-    }
+
 
 
     //
@@ -478,7 +499,6 @@
     function endMatch() {
         isMatchActive = false;  // Deactivate the match
         hideDodgeContainer();   // Hide the dodge container if visible
-        disablePunchInputs();   // Disable punch inputs
         resetHealth();          // Reset healths if necessary for the next round
         resetDodgeTimer();      // Reset dodge timer for the next round
         resetStamina();
