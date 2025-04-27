@@ -191,8 +191,10 @@
         function checkSolution() {
             let tiles = document.querySelectorAll("#board img");
             for (let i = 0; i < tiles.length; i++) {
-                let expectedSrc = "../Asset Manager/images/memories/c3/" + (i + 1) + ".jpg";
+                let expectedSrc = "images/memories/c3/" + (i + 1) + ".jpg";
                 if (!tiles[i].src.includes(expectedSrc)) {
+                    console.log(tiles[i].src);
+                    console.log(expectedSrc);
                     alert("Try Again!");
                     return;
                 }
