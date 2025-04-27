@@ -6,6 +6,28 @@
     <title>Takotsubo - Visual Novel</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase 配置
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1sEZnX7LHaE1g_qAHhMH9lEqkGq5tW84",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.appspot.com",
+            messagingSenderId: "968896474919",
+            appId: "1:968896474919:web:c3a66671c0e0fa7f0f2f0e",
+            measurementId: "G-XKGK4RKPTS"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
     <style>
         body {
             margin: 0;
@@ -13,14 +35,24 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            background-image: url('../Asset Manager/images/main/classroom.png');
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
             font-family: 'Poppins', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+            transition: background-image 0.5s ease;
+            opacity: 1;
         }
 
         .vn-container {
@@ -146,7 +178,7 @@
             background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
             color: white;
             box-sizing: border-box;
-            height: 200px;
+            height: 250px;
             backdrop-filter: blur(5px);
             cursor: pointer;
         }
@@ -191,6 +223,11 @@
             color: rgba(255, 255, 255, 0.9);
             font-weight: 400;
             margin-top: 10px;
+        }
+
+        .monologue {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .choices-container {
@@ -252,6 +289,7 @@
 </head>
 <body>
     <div class="vn-container">
+        <div class="background-layer"></div>
         <div class="top-nav">
             <div class="button-group">
                 <button class="pause-button" onclick="openPause()">⏸</button>
@@ -293,48 +331,383 @@
         const dialogueBox = document.querySelector(".dialogue-box");
         const characterContainer = document.querySelector(".character-container");
 
-        // 更完整的对话数据结构
+        // 更新对话数据结构
         const dialogues = [
+            // 第一章：初遇与美好的日子
             {
-                name: "Sayuri",
-                text: "So where do you want to go after class?",
-                choices: ["Restaurant", "Badminton Court", "Cinema"],
-                left: "../Asset Manager/images/main/character_sayuri.png",
+                charName: "主角",
+                dialog: "啊……这封信，原来我还留着。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 1,
+                chapterProgress: 5,
+                overallProgress: 2
+            },
+            {
+                charName: "主角",
+                dialog: "没想到，回忆还是这么清晰……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 2,
+                chapterProgress: 10,
+                overallProgress: 2
+            },
+            {
+                charName: "主角",
+                dialog: "我还记得，那时候我是多么紧张……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 3,
+                chapterProgress: 15,
+                overallProgress: 2
+            },
+            {
+                charName: "主角",
+                dialog: "那天，我迟到了……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 4,
+                chapterProgress: 20,
+                overallProgress: 2
+            },
+            {
+                charName: "教授",
+                dialog: "这位同学，快找个座位坐下，不要打扰课堂。",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 5,
+                chapterProgress: 25,
+                overallProgress: 2
+            },
+            {
+                charName: "主角",
+                dialog: "啊啊啊，第一天就迟到，真是糟糕……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 6,
+                chapterProgress: 30,
+                overallProgress: 2
+            },
+            {
+                charName: "恋人",
+                dialog: "迟到的第一天？看来你是个很特别的新生呢。",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                choices: [
+                    {
+                        text: "啊哈哈……我闹钟没响，所以才迟到。",
+                        next: 7
+                    },
+                    {
+                        text: "对不起，打扰到你了吗？",
+                        next: 8
+                    },
+                    {
+                        text: "呃……其实我是故意迟到的，这样才更酷。",
+                        next: 9
+                    }
+                ],
+                chapterProgress: 35,
+                overallProgress: 2
+            },
+            {
+                charName: "恋人",
+                dialog: "啊哈哈哈，下次记得调好闹钟，别让教授盯上你。",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 10,
+                chapterProgress: 40,
+                overallProgress: 2
+            },
+            {
+                charName: "恋人",
+                dialog: "没关系，别紧张，教授只是凶一点，其实人还不错。",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 10,
+                chapterProgress: 45,
+                overallProgress: 2
+            },
+            {
+                charName: "恋人",
+                dialog: "嗯，确实很特别的方式呢。",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 10,
+                chapterProgress: 50,
+                overallProgress: 2
+            },
+            {
+                charName: "主角",
+                dialog: "（主角对恋人产生了第一印象：温柔、幽默、亲切。）",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/classroom.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next:12,
+                chapterProgress: 55,
+                overallProgress: 2
+            },
+            // 第二章 Memories Together
+            {
+                charName: "主角",
+                dialog: "这张照片……我已经很久没看了。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",    
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 13,
+                chapterProgress: 60,
+                overallProgress: 3
+            },
+            {
+                charName: "主角",
+                dialog: "原来我还一直留着这个……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 14,
+                chapterProgress: 65,
+                overallProgress: 3
+            },
+            {
+                charName: "主角",
+                dialog: "那时候，我们真的很开心……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 15,
+                chapterProgress: 70,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "你有没有想过，以后我们的生活会是什么样子？",
+                backgroundImg: "../Asset Manager/images/main/balcony.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                choices: [
+                    { text: "当然想过，我希望我们能一直这样。", next: 16 },
+                    { text: "嗯……至少，我想让你一直幸福。", next: 17 },
+                    { text: "未来的事谁知道呢？但至少现在，我们在一起。", next: 18 }
+                ],
+                chapterProgress: 75,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "我也是呢，未来的事谁都说不准，但现在很幸福。",
+                backgroundImg: "../Asset Manager/images/main/balcony.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 19,
+                chapterProgress: 80,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "谢谢你，我真的很开心。",
+                backgroundImg: "../Asset Manager/images/main/balcony.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 19,
+                chapterProgress: 85,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "你说得对，珍惜现在最重要。",
+                backgroundImg: "../Asset Manager/images/main/balcony.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 19,
+                chapterProgress: 90,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "你切菜的样子好笨拙啊，还是我来吧。",
+                backgroundImg: "../Asset Manager/images/main/kitchen.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                option1: "哼，你等着，我一定会比你更厉害！",
+                option1Next: 20,
+                option2: "好吧，还是交给专业的来吧……",
+                option2Next: 21,
+                option3: "嘿，我是在故意逗你笑的啦。",
+                option3Next: 22,
+                chapterProgress: 60,
+                overallProgress: 30,
+                trait1: "kind",
+                trait2: "romantic",
+                trait3: "humorous"
+            },
+            {
+                charName: "恋人",
+                dialog: "哈哈哈，期待你下次的表现！",
+                backgroundImg: "../Asset Manager/images/main/kitchen.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 23,
+                chapterProgress: 95,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "你真会认输，不过这样也很可爱。",
+                backgroundImg: "../Asset Manager/images/main/kitchen.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 23,
+                chapterProgress: 100,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "原来你是故意的啊，真拿你没办法。",
+                backgroundImg: "../Asset Manager/images/main/kitchen.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 23,
+                chapterProgress: 100,
+                overallProgress: 3
+            },
+            {
+                charName: "恋人",
+                dialog: "可是，我真的很想去山上看日出。",
+                backgroundImg: "../Asset Manager/images/main/travel.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                choices: [
+                    { text: "那我们就去山上吧，海边可以下次再去。", next: 24 },
+                    { text: "不如我们各自挑一天，一个去海边，一个去山上？", next: 25 },
+                    { text: "可是海边有我最喜欢的东西啊，你确定不考虑一下？", next: 26 }
+                ],
+                chapterProgress: 100,
+                overallProgress: 4
+            },
+            {
+                charName: "恋人",
+                dialog: "谢谢你，下次我们一起去海边！",
+                backgroundImg: "../Asset Manager/images/main/travel.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 27,
+                chapterProgress: 100,
+                overallProgress: 4
+            },
+            {
+                charName: "恋人",
+                dialog: "好主意，这样我们都能如愿！",
+                backgroundImg: "../Asset Manager/images/main/travel.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 27,
+                chapterProgress: 100,
+                overallProgress: 4
+            },
+            {
+                charName: "恋人",
+                dialog: "好吧，那就听你的，不过下次一定要陪我去山上！",
+                backgroundImg: "../Asset Manager/images/main/travel.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 27,
+                chapterProgress: 100,
+                overallProgress: 4
+            },
+            // 小游戏节点
+            {
+                charName: "主角",
+                dialog: "这些回忆，真的很珍贵……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/travel.png",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
                 next: {
-                    "Restaurant": 1,
-                    "Badminton Court": 2,
-                    "Cinema": 3
-                }
+                    type: "puzzle",
+                    chapter: 2,
+                    imagePath: "../Asset Manager/images/memories/c2/",
+                    onComplete: 28
+                },
+                chapterProgress: 100,
+                overallProgress: 5
             },
             {
-                name: "Sayuri",
-                text: "Great choice! I know a nice place nearby.",
-                left: "../Asset Manager/images/main/character_sayuri.png",
-                next: 4
+                charName: "主角",
+                dialog: "即使我们不再一起，那些回忆依然温暖。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 29,
+                chapterProgress: 100,
+                overallProgress: 5
             },
             {
-                name: "Sayuri",
-                text: "I love playing badminton! Let's go!",
-                left: "../Asset Manager/images/main/character_sayuri.png",
-                next: 5
+                charName: "主角",
+                dialog: "如果我们当时能更懂得珍惜……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 30,
+                chapterProgress: 100,
+                overallProgress: 5
             },
             {
-                name: "Sayuri",
-                text: "I've been wanting to watch that new movie!",
-                left: "../Asset Manager/images/main/character_sayuri.png",
-                next: 4
+                charName: "主角",
+                dialog: "有些事情，终究是回不去了。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 31,
+                chapterProgress: 100,
+                overallProgress: 5
+            },
+            // 最终章
+            {
+                charName: "主角",
+                dialog: "原来已经过去这么久了啊……",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 32,
+                chapterProgress: 100,
+                overallProgress: 6
             },
             {
-                name: "Sayuri",
-                text: "Let's meet at the school gate after class!",
-                left: "../Asset Manager/images/main/character_sayuri.png",
-                next: null
+                charName: "主角",
+                dialog: "那时候的我们……真的很幸福。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 33,
+                chapterProgress: 100,
+                overallProgress: 6
             },
             {
-                name: "Sayuri",
-                text: "Hello! The school gym is just around the corner.",
-                left: "../Asset Manager/images/main/character_sayuri.png",
-                next: null
+                charName: "主角",
+                dialog: "我们有过欢笑，也有过争吵，但每一刻都值得珍藏。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 34,
+                chapterProgress: 100,
+                overallProgress: 6
+            },
+            {
+                charName: "主角",
+                dialog: "过去不会改变，但未来还在继续。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: 35,
+                chapterProgress: 100,
+                overallProgress: 6
+            },
+            {
+                charName: "主角",
+                dialog: "谢谢你，曾经出现在我的人生里。",
+                type: "monologue",
+                backgroundImg: "../Asset Manager/images/main/room.jpg",
+                charImg: "../Asset Manager/images/main/character_sayuri.png",
+                next: {
+                    type: "puzzle",
+                    chapter: 3,
+                    imagePath: "../Asset Manager/images/memories/c3/",
+                    onComplete: null
+                },
+                chapterProgress: 100,
+                overallProgress: 7
             }
         ];
 
@@ -342,6 +715,110 @@
         let isTyping = false;
         let currentTimeout = null;
         let choicesTimeout = null;
+
+        // 特征追踪系统
+        const playerTraits = {
+            // 当前章节的特征
+            kind: 0,
+            romantic: 0,
+            humorous: 0
+        };
+
+        let currentUserId = null; // 用于存储当前用户ID
+
+        // 初始化或获取用户ID
+        async function initializeUser() {
+            // 从本地存储获取用户ID
+            currentUserId = localStorage.getItem('userId');
+            
+            if (!currentUserId) {
+                // 如果没有用户ID，创建匿名用户
+                try {
+                    const userCredential = await firebase.auth().signInAnonymously();
+                    currentUserId = userCredential.user.uid;
+                    localStorage.setItem('userId', currentUserId);
+                } catch (error) {
+                    console.error("Error creating anonymous user:", error);
+                }
+            }
+        }
+
+        // 从对应章节的 Firebase Collection 加载特征
+        async function loadTraitsFromFirebase(chapterId) {
+            if (!currentUserId) return;
+
+            try {
+                // 根据章节ID选择对应的collection
+                const collectionName = `chapter${chapterId}_traits`;
+                const doc = await db.collection(collectionName).doc(currentUserId).get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    // 清空当前特征
+                    Object.keys(playerTraits).forEach(key => {
+                        playerTraits[key] = 0;
+                    });
+                    // 加载新章节的特征
+                    Object.assign(playerTraits, data);
+                    console.log(`Traits loaded from ${collectionName}:`, playerTraits);
+                } else {
+                    // 如果是新用户，创建初始特征文档
+                    await saveTraitsToFirebase(chapterId);
+                }
+            } catch (error) {
+                console.error(`Error loading traits from chapter ${chapterId}:`, error);
+                loadTraitsFromLocal();
+            }
+        }
+
+        // 保存特征到对应章节的 Firebase Collection
+        async function saveTraitsToFirebase(chapterId) {
+            if (!currentUserId) return;
+
+            try {
+                const collectionName = `chapter${chapterId}_traits`;
+                await db.collection(collectionName).doc(currentUserId).set({
+                    ...playerTraits,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log(`Traits saved to ${collectionName}:`, playerTraits);
+            } catch (error) {
+                console.error(`Error saving traits to chapter ${chapterId}:`, error);
+                saveTraitsToLocal();
+            }
+        }
+
+        // 本地存储作为备份
+        function saveTraitsToLocal() {
+            localStorage.setItem('playerTraits', JSON.stringify(playerTraits));
+        }
+
+        function loadTraitsFromLocal() {
+            const savedTraits = localStorage.getItem('playerTraits');
+            if (savedTraits) {
+                Object.assign(playerTraits, JSON.parse(savedTraits));
+            }
+        }
+
+        // 更新特征值
+        async function updateTraits(traits, chapterId) {
+            if (!traits) return;
+            
+            // 确保已加载正确章节的特征
+            await loadTraitsFromFirebase(chapterId);
+            
+            // 更新特征值
+            if (traits.trait1) playerTraits[traits.trait1]++;
+            if (traits.trait2) playerTraits[traits.trait2]++;
+            if (traits.trait3) playerTraits[traits.trait3]++;
+            
+            // 保存到对应章节的 Firebase Collection
+            await saveTraitsToFirebase(chapterId);
+            // 同时保存到本地作为备份
+            saveTraitsToLocal();
+            
+            console.log(`Chapter ${chapterId} current traits:`, playerTraits);
+        }
 
         function getTextSpeed() {
             const savedSpeed = localStorage.getItem('textSpeed');
@@ -377,43 +854,163 @@
 
         function showChoices(dialogue) {
             choicesContainer.innerHTML = '';
-            dialogue.choices.forEach(choiceText => {
-                const button = document.createElement("button");
-                button.classList.add("choice-btn");
-                button.innerText = choiceText;
-                button.style.textAlign = 'left';
-                button.addEventListener("click", () => handleChoice(choiceText));
-                choicesContainer.appendChild(button);
-            });
+            if (dialogue.choices) {
+                dialogue.choices.forEach((choice, index) => {
+                    const button = document.createElement("button");
+                    button.classList.add("choice-btn");
+                    button.innerText = choice.text;
+                    // 收集当前选项的特征
+                    const traits = {
+                        trait1: dialogue[`trait${index+1}`],
+                        trait2: dialogue[`trait${index+1}_2`],
+                        trait3: dialogue[`trait${index+1}_3`]
+                    };
+                    button.addEventListener("click", () => handleChoice(choice.next, traits));
+                    choicesContainer.appendChild(button);
+                });
+            } else if (dialogue.option1) {
+                // 处理老的选项格式
+                const choices = [];
+                if (dialogue.option1) {
+                    choices.push({
+                        text: dialogue.option1,
+                        next: dialogue.option1Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                if (dialogue.option2) {
+                    choices.push({
+                        text: dialogue.option2,
+                        next: dialogue.option2Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                if (dialogue.option3) {
+                    choices.push({
+                        text: dialogue.option3,
+                        next: dialogue.option3Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                
+                choices.forEach(choice => {
+                    const button = document.createElement("button");
+                    button.classList.add("choice-btn");
+                    button.innerText = choice.text;
+                    button.addEventListener("click", () => handleChoice(choice.next, choice.traits));
+                    choicesContainer.appendChild(button);
+                });
+            }
         }
 
-        function showDialogue(dialogue) {
-            // 确保对话框和角色容器始终显示
-            dialogueBox.classList.add('show');
-            characterContainer.classList.add('show');
+        async function showDialogue(dialogue) {
+            // 更新背景
+            if (dialogue.backgroundImg) {
+                await changeBackground(dialogue.backgroundImg);
+            }
+
+            // 更新角色图片
+            if (dialogue.charImg) {
+                characterLeftElement.src = dialogue.charImg;
+                characterContainer.classList.add('show');
+            } else {
+                characterContainer.classList.remove('show');
+            }
 
             // 更新对话内容
-            characterNameElement.innerText = dialogue.name;
-            characterLeftElement.src = dialogue.left || '';
-            typeText(dialogue.text);
+            characterNameElement.innerText = dialogue.charName;
+            if (dialogue.type === "monologue") {
+                dialogueTextElement.classList.add("monologue");
+            } else {
+                dialogueTextElement.classList.remove("monologue");
+            }
+            typeText(dialogue.dialog);
 
             // 清除之前的选项
             choicesContainer.innerHTML = '';
-            if (choicesTimeout) {
-                clearTimeout(choicesTimeout);
+
+            // 如果有选项，显示选项
+            if (dialogue.choices) {
+                showChoices(dialogue);
+            } else if (dialogue.option1) {
+                // 处理老的选项格式
+                const choices = [];
+                if (dialogue.option1) {
+                    choices.push({
+                        text: dialogue.option1,
+                        next: dialogue.option1Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                if (dialogue.option2) {
+                    choices.push({
+                        text: dialogue.option2,
+                        next: dialogue.option2Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                if (dialogue.option3) {
+                    choices.push({
+                        text: dialogue.option3,
+                        next: dialogue.option3Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                
+                choices.forEach(choice => {
+                    const button = document.createElement("button");
+                    button.classList.add("choice-btn");
+                    button.innerText = choice.text;
+                    button.addEventListener("click", () => handleChoice(choice.next, choice.traits));
+                    choicesContainer.appendChild(button);
+                });
             }
 
-            // 如果有选项，等待文本打字完成后再显示
-            if (dialogue.choices && dialogue.choices.length > 0) {
-                choicesTimeout = setTimeout(() => {
-                    showChoices(dialogue);
-                }, dialogue.text.length * 50 + 500);
+            // 更新进度
+            if (dialogue.chapterProgress) {
+                updateProgress(dialogue.chapterProgress, dialogue.overallProgress);
             }
         }
 
         // 添加场景切换函数
         function changeBackground(imagePath) {
-            document.body.style.backgroundImage = `url('${imagePath}')`;
+            const backgroundLayer = document.querySelector('.background-layer');
+            if (!backgroundLayer) return;
+            
+            // 创建新的Image对象来预加载图片
+            const img = new Image();
+            img.onload = function() {
+                backgroundLayer.style.backgroundImage = `url('${imagePath}')`;
+                backgroundLayer.style.opacity = '1';
+            };
+            img.onerror = function() {
+                console.error('Failed to load background image:', imagePath);
+            };
+            img.src = imagePath;
         }
 
         // 添加对话框点击事件
@@ -425,44 +1022,87 @@
                 if (currentTimeout) {
                     clearTimeout(currentTimeout);
                 }
-                dialogueTextElement.innerHTML = currentDialogue.text;
+                dialogueTextElement.innerHTML = currentDialogue.dialog;
                 isTyping = false;
                 return;
             }
 
             // 如果当前对话有选项，不进行处理
-            if (currentDialogue.choices && currentDialogue.choices.length > 0) {
-                return;
-            }
+            if (currentDialogue.choices) return;
 
             // 如果有下一个对话，进入下一个对话
             if (typeof currentDialogue.next === 'number') {
                 currentDialogueIndex = currentDialogue.next;
                 showDialogue(dialogues[currentDialogueIndex]);
-            } else if (currentDialogue.next === null) {
-                console.log("End of story.");
+            } else if (currentDialogue.next && typeof currentDialogue.next === 'object') {
+                // 处理拼图游戏等特殊情况
+                handleChoice(currentDialogue.next);
             }
         });
 
-        function handleChoice(choice) {
+        // 添加Skip按钮功能
+        document.querySelector('.skip-button').addEventListener('click', () => {
             const currentDialogue = dialogues[currentDialogueIndex];
-            if (currentDialogue.next && typeof currentDialogue.next === 'object' && currentDialogue.next[choice] !== undefined) {
-                // 处理分支选择
-                const nextIndex = currentDialogue.next[choice];
-                currentDialogueIndex = nextIndex;
-                // 如果是羽毛球选项，切换场景
-                if (choice === "Badminton Court") {
-                    changeBackground('../Asset Manager/images/main/school.png');
-                }
-                showDialogue(dialogues[currentDialogueIndex]);
-            } else if (typeof currentDialogue.next === 'number') {
-                // 处理线性对话
-                currentDialogueIndex = currentDialogue.next;
-                showDialogue(dialogues[currentDialogueIndex]);
-            } else if (currentDialogue.next === null) {
-                // 对话结束
-                console.log("End of story.");
+            if (currentDialogue.choices || (currentDialogue.next && typeof currentDialogue.next === 'object')) {
+                // 当前就是分支点，不做任何事
+                return;
             }
+            let nextIndex = currentDialogueIndex + 1;
+            while (nextIndex < dialogues.length) {
+                const dialogue = dialogues[nextIndex];
+                if (dialogue.choices || (dialogue.next && typeof dialogue.next === 'object')) {
+                    currentDialogueIndex = nextIndex;
+                    showDialogue(dialogues[currentDialogueIndex]);
+                    return;
+                }
+                nextIndex++;
+            }
+            // 如果后面没有分支点，直接跳到最后一句
+            if (nextIndex >= dialogues.length) {
+                currentDialogueIndex = dialogues.length - 1;
+                showDialogue(dialogues[currentDialogueIndex]);
+            }
+        });
+
+        // 修改选择处理函数
+        async function handleChoice(next, traits) {
+            // 确定当前章节
+            const currentChapter = Math.floor(currentDialogueIndex / 100) + 1;
+            
+            // 更新特征
+            if (traits) {
+                await updateTraits(traits, currentChapter);
+            }
+
+            if (typeof next === 'object' && next.type === "puzzle") {
+                startPuzzleGame(next.chapter, next.imagePath);
+            } else if (typeof next === 'number') {
+                // 如果切换到新章节，加载新章节的特征
+                const nextChapter = Math.floor(next / 100) + 1;
+                if (nextChapter !== currentChapter) {
+                    await loadTraitsFromFirebase(nextChapter);
+                }
+                
+                currentDialogueIndex = next;
+                showDialogue(dialogues[currentDialogueIndex]);
+            }
+        }
+
+        // 添加拼图游戏触发函数
+        function startPuzzleGame(chapter, imagePath) {
+            // 保存当前对话索引
+            localStorage.setItem('lastDialogueIndex', currentDialogueIndex);
+            
+            // 保存拼图完成后的跳转索引
+            const nextIndex = dialogues[currentDialogueIndex].next.onComplete;
+            localStorage.setItem('puzzleCompleteNext', nextIndex);
+            
+            // 保存当前章节和图片路径
+            localStorage.setItem('currentChapter', chapter);
+            localStorage.setItem('puzzleImagePath', imagePath);
+            
+            // 跳转到拼图页面
+            window.location.href = 'memories.html';
         }
 
         function openPause() {
@@ -472,8 +1112,51 @@
             window.location.href = 'pause.html';
         }
 
-        // 页面加载时显示初始对话
-        window.onload = function() {
+        // 添加进度更新函数
+        function updateProgress(chapterProgress, overallProgress) {
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                progressFill.style.height = `${(chapterProgress / 100) * 100}%`;
+            }
+            // 可以添加总体进度的存储
+            if (overallProgress) {
+                localStorage.setItem('overallProgress', overallProgress);
+            }
+        }
+
+        // 获取特定章节的特征总结
+        async function getChapterTraitsSummary(chapterId) {
+            try {
+                const collectionName = `chapter${chapterId}_traits`;
+                const doc = await db.collection(collectionName).doc(currentUserId).get();
+                
+                if (doc.exists) {
+                    return doc.data();
+                }
+                return null;
+            } catch (error) {
+                console.error(`Error getting chapter ${chapterId} traits summary:`, error);
+                return null;
+            }
+        }
+
+        // 显示章节结束时的特征总结
+        async function showChapterSummary(chapter) {
+            const summary = await getChapterTraitsSummary(chapter);
+            if (!summary) return;
+
+            console.log(`Chapter ${chapter} Traits Summary:`, summary);
+            // 这里可以添加显示UI的代码
+        }
+
+        // 页面加载时初始化
+        window.onload = async function() {
+            await initializeUser();
+            
+            // 确定初始章节
+            const currentChapter = Math.floor(currentDialogueIndex / 100) + 1;
+            await loadTraitsFromFirebase(currentChapter);
+            
             const lastIndex = localStorage.getItem('lastDialogueIndex');
             if (lastIndex !== null) {
                 currentDialogueIndex = parseInt(lastIndex);
