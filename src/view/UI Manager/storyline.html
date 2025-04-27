@@ -6,6 +6,28 @@
     <title>Takotsubo - Visual Novel</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase 配置
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1sEZnX7LHaE1g_qAHhMH9lEqkGq5tW84",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.appspot.com",
+            messagingSenderId: "968896474919",
+            appId: "1:968896474919:web:c3a66671c0e0fa7f0f2f0e",
+            measurementId: "G-XKGK4RKPTS"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
     <style>
         body {
             margin: 0;
@@ -694,6 +716,110 @@
         let currentTimeout = null;
         let choicesTimeout = null;
 
+        // 特征追踪系统
+        const playerTraits = {
+            // 当前章节的特征
+            kind: 0,
+            romantic: 0,
+            humorous: 0
+        };
+
+        let currentUserId = null; // 用于存储当前用户ID
+
+        // 初始化或获取用户ID
+        async function initializeUser() {
+            // 从本地存储获取用户ID
+            currentUserId = localStorage.getItem('userId');
+            
+            if (!currentUserId) {
+                // 如果没有用户ID，创建匿名用户
+                try {
+                    const userCredential = await firebase.auth().signInAnonymously();
+                    currentUserId = userCredential.user.uid;
+                    localStorage.setItem('userId', currentUserId);
+                } catch (error) {
+                    console.error("Error creating anonymous user:", error);
+                }
+            }
+        }
+
+        // 从对应章节的 Firebase Collection 加载特征
+        async function loadTraitsFromFirebase(chapterId) {
+            if (!currentUserId) return;
+
+            try {
+                // 根据章节ID选择对应的collection
+                const collectionName = `chapter${chapterId}_traits`;
+                const doc = await db.collection(collectionName).doc(currentUserId).get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    // 清空当前特征
+                    Object.keys(playerTraits).forEach(key => {
+                        playerTraits[key] = 0;
+                    });
+                    // 加载新章节的特征
+                    Object.assign(playerTraits, data);
+                    console.log(`Traits loaded from ${collectionName}:`, playerTraits);
+                } else {
+                    // 如果是新用户，创建初始特征文档
+                    await saveTraitsToFirebase(chapterId);
+                }
+            } catch (error) {
+                console.error(`Error loading traits from chapter ${chapterId}:`, error);
+                loadTraitsFromLocal();
+            }
+        }
+
+        // 保存特征到对应章节的 Firebase Collection
+        async function saveTraitsToFirebase(chapterId) {
+            if (!currentUserId) return;
+
+            try {
+                const collectionName = `chapter${chapterId}_traits`;
+                await db.collection(collectionName).doc(currentUserId).set({
+                    ...playerTraits,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log(`Traits saved to ${collectionName}:`, playerTraits);
+            } catch (error) {
+                console.error(`Error saving traits to chapter ${chapterId}:`, error);
+                saveTraitsToLocal();
+            }
+        }
+
+        // 本地存储作为备份
+        function saveTraitsToLocal() {
+            localStorage.setItem('playerTraits', JSON.stringify(playerTraits));
+        }
+
+        function loadTraitsFromLocal() {
+            const savedTraits = localStorage.getItem('playerTraits');
+            if (savedTraits) {
+                Object.assign(playerTraits, JSON.parse(savedTraits));
+            }
+        }
+
+        // 更新特征值
+        async function updateTraits(traits, chapterId) {
+            if (!traits) return;
+            
+            // 确保已加载正确章节的特征
+            await loadTraitsFromFirebase(chapterId);
+            
+            // 更新特征值
+            if (traits.trait1) playerTraits[traits.trait1]++;
+            if (traits.trait2) playerTraits[traits.trait2]++;
+            if (traits.trait3) playerTraits[traits.trait3]++;
+            
+            // 保存到对应章节的 Firebase Collection
+            await saveTraitsToFirebase(chapterId);
+            // 同时保存到本地作为备份
+            saveTraitsToLocal();
+            
+            console.log(`Chapter ${chapterId} current traits:`, playerTraits);
+        }
+
         function getTextSpeed() {
             const savedSpeed = localStorage.getItem('textSpeed');
             if (savedSpeed === null) return 50;
@@ -728,13 +854,65 @@
 
         function showChoices(dialogue) {
             choicesContainer.innerHTML = '';
-            dialogue.choices.forEach(choice => {
-                const button = document.createElement("button");
-                button.classList.add("choice-btn");
-                button.innerText = choice.text;
-                button.addEventListener("click", () => handleChoice(choice.next));
-                choicesContainer.appendChild(button);
-            });
+            if (dialogue.choices) {
+                dialogue.choices.forEach((choice, index) => {
+                    const button = document.createElement("button");
+                    button.classList.add("choice-btn");
+                    button.innerText = choice.text;
+                    // 收集当前选项的特征
+                    const traits = {
+                        trait1: dialogue[`trait${index+1}`],
+                        trait2: dialogue[`trait${index+1}_2`],
+                        trait3: dialogue[`trait${index+1}_3`]
+                    };
+                    button.addEventListener("click", () => handleChoice(choice.next, traits));
+                    choicesContainer.appendChild(button);
+                });
+            } else if (dialogue.option1) {
+                // 处理老的选项格式
+                const choices = [];
+                if (dialogue.option1) {
+                    choices.push({
+                        text: dialogue.option1,
+                        next: dialogue.option1Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                if (dialogue.option2) {
+                    choices.push({
+                        text: dialogue.option2,
+                        next: dialogue.option2Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                if (dialogue.option3) {
+                    choices.push({
+                        text: dialogue.option3,
+                        next: dialogue.option3Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
+                }
+                
+                choices.forEach(choice => {
+                    const button = document.createElement("button");
+                    button.classList.add("choice-btn");
+                    button.innerText = choice.text;
+                    button.addEventListener("click", () => handleChoice(choice.next, choice.traits));
+                    choicesContainer.appendChild(button);
+                });
+            }
         }
 
         async function showDialogue(dialogue) {
@@ -770,20 +948,44 @@
                 // 处理老的选项格式
                 const choices = [];
                 if (dialogue.option1) {
-                    choices.push({ text: dialogue.option1, next: dialogue.option1Next });
+                    choices.push({
+                        text: dialogue.option1,
+                        next: dialogue.option1Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
                 }
                 if (dialogue.option2) {
-                    choices.push({ text: dialogue.option2, next: dialogue.option2Next });
+                    choices.push({
+                        text: dialogue.option2,
+                        next: dialogue.option2Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
                 }
                 if (dialogue.option3) {
-                    choices.push({ text: dialogue.option3, next: dialogue.option3Next });
+                    choices.push({
+                        text: dialogue.option3,
+                        next: dialogue.option3Next,
+                        traits: {
+                            trait1: dialogue.trait1,
+                            trait2: dialogue.trait2,
+                            trait3: dialogue.trait3
+                        }
+                    });
                 }
                 
                 choices.forEach(choice => {
                     const button = document.createElement("button");
                     button.classList.add("choice-btn");
                     button.innerText = choice.text;
-                    button.addEventListener("click", () => handleChoice(choice.next));
+                    button.addEventListener("click", () => handleChoice(choice.next, choice.traits));
                     choicesContainer.appendChild(button);
                 });
             }
@@ -863,12 +1065,24 @@
         });
 
         // 修改选择处理函数
-        function handleChoice(next) {
+        async function handleChoice(next, traits) {
+            // 确定当前章节
+            const currentChapter = Math.floor(currentDialogueIndex / 100) + 1;
+            
+            // 更新特征
+            if (traits) {
+                await updateTraits(traits, currentChapter);
+            }
+
             if (typeof next === 'object' && next.type === "puzzle") {
-                // 触发拼图游戏
                 startPuzzleGame(next.chapter, next.imagePath);
             } else if (typeof next === 'number') {
-                // 正常对话流程
+                // 如果切换到新章节，加载新章节的特征
+                const nextChapter = Math.floor(next / 100) + 1;
+                if (nextChapter !== currentChapter) {
+                    await loadTraitsFromFirebase(nextChapter);
+                }
+                
                 currentDialogueIndex = next;
                 showDialogue(dialogues[currentDialogueIndex]);
             }
@@ -910,8 +1124,39 @@
             }
         }
 
-        // 页面加载时显示初始对话
-        window.onload = function() {
+        // 获取特定章节的特征总结
+        async function getChapterTraitsSummary(chapterId) {
+            try {
+                const collectionName = `chapter${chapterId}_traits`;
+                const doc = await db.collection(collectionName).doc(currentUserId).get();
+                
+                if (doc.exists) {
+                    return doc.data();
+                }
+                return null;
+            } catch (error) {
+                console.error(`Error getting chapter ${chapterId} traits summary:`, error);
+                return null;
+            }
+        }
+
+        // 显示章节结束时的特征总结
+        async function showChapterSummary(chapter) {
+            const summary = await getChapterTraitsSummary(chapter);
+            if (!summary) return;
+
+            console.log(`Chapter ${chapter} Traits Summary:`, summary);
+            // 这里可以添加显示UI的代码
+        }
+
+        // 页面加载时初始化
+        window.onload = async function() {
+            await initializeUser();
+            
+            // 确定初始章节
+            const currentChapter = Math.floor(currentDialogueIndex / 100) + 1;
+            await loadTraitsFromFirebase(currentChapter);
+            
             const lastIndex = localStorage.getItem('lastDialogueIndex');
             if (lastIndex !== null) {
                 currentDialogueIndex = parseInt(lastIndex);
