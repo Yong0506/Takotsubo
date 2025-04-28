@@ -193,6 +193,58 @@
             height: auto;
         }
 
+        .matchWin,
+        .matchLose,
+        .gameWin,
+        .gameLose {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 300px;
+            display: none;
+            /* Hidden by default */
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 9999;
+            text-align: center;
+        }
+
+        /* Match Win/Lose styles */
+        .matchWin,
+        .matchLose {
+            background: rgba(0, 0, 0, 0.5);
+            /* black with 50% opacity */
+        }
+
+        /* Game Win/Lose styles */
+        .gameWin,
+        .gameLose {
+            background: rgba(255, 255, 255, 0.5);
+            /* white with 50% opacity */
+        }
+
+        .gameWin {
+            border: 4px solid yellow;
+        }
+
+        .gameLose {
+            border: 4px solid red;
+        }
+
+        /* Buttons */
+        .nextMatch {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+
 
         .opponent {
             position: absolute;
@@ -264,6 +316,30 @@
         <img src="../Asset Manager/images/punch/opponent.png" alt="Opponent">
     </div>
 
+    <div class="matchWin">
+        <h2 class="matchStatus">YOU WON!</h2>
+        <b class="enWord">READY FOR THE NEXT ROUND?</b>
+        <button class="nextMatch" onclick="">READY</button>
+    </div>
+
+    <div class="matchLose">
+        <h2 class="matchStatus">YOU LOSE</h2>
+        <b class="enWord">READY FOR THE NEXT ROUND?</b>
+        <button class="nextMatch" onclick="">READY</button>
+    </div>
+
+    <div class="gameWin">
+        <h2 class="matchStatus">YOU WON!</h2>
+        <b class="enWord">CONGRATS</b>
+        <button class="nextMatch" onclick="">CONTINUE</button>
+    </div>
+
+    <div class="gameLose">
+        <h2 class="matchStatus">YOU LOSE</h2>
+        <b class="enWord">STAY DETERMINED!</b>
+        <button class="nextMatch" onclick="">RETRY</button>
+    </div>
+
     <div class="right-punch">
         <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
     </div>
@@ -290,6 +366,7 @@
     let matchInterval;    // Timer interval reference
 
     let isMatchActive = true;  // Is the match currently active
+    let isMatchOver = false;
     let dodgeSequenceInProgress = false;
 
 
@@ -319,6 +396,18 @@
 
     let playerScore = 0;
     let opponentScore = 0;
+
+    // Grab all the containers
+    const matchWinContainer = document.querySelector('.matchWin');
+    const matchLoseContainer = document.querySelector('.matchLose');
+    const gameWinContainer = document.querySelector('.gameWin');
+    const gameLoseContainer = document.querySelector('.gameLose');
+
+    // Buttons inside the containers
+    const matchWinButton = matchWinContainer.querySelector('.nextMatch');
+    const matchLoseButton = matchLoseContainer.querySelector('.nextMatch');
+    const gameWinButton = gameWinContainer.querySelector('.nextMatch');
+    const gameLoseButton = gameLoseContainer.querySelector('.nextMatch');
 
     //
     //
@@ -350,7 +439,7 @@
     }
 
     function startDodgeSequence() {
-        if (isDodgeActive) return;
+        if (isDodgeActive || isMatchOver) return;
 
         isDodgeActive = true;
         dodgeContainer.style.display = 'flex';
@@ -472,9 +561,10 @@
     //
     // Reset health values for both player and opponent
     function resetHealth() {
-        document.querySelector('.player-section .health-number').textContent = 100;
-        document.querySelector('.opponent-section .health-number').textContent = 100;
-        document.querySelector('.progress-bar').style.width = '100%';
+        playerHealth = 100;
+        opponentHealth = 100;
+        updatePlayerHealthUI();
+        updateOpponentHealthUI();
     }
 
     // Reset dodge sequence timer
@@ -490,11 +580,7 @@
         updatePlayerStaminaBar();
     }
 
-    // Reset opponent health (example when match starts)
-    function resetOpponentHealth() {
-        opponentHealth = 100;
-        updateOpponentHealth();
-    }
+
 
     function endMatch() {
         isMatchActive = false;  // Deactivate the match
@@ -502,13 +588,14 @@
         resetHealth();          // Reset healths if necessary for the next round
         resetDodgeTimer();      // Reset dodge timer for the next round
         resetStamina();
-        resetOpponentHealth();
 
         setTimeout(startNewMatch, 2000);
     }
 
     // Function to update the match timer on the screen
     function updateMatchTimer() {
+        if (!isMatchActive || isMatchOver) return; //Do nothing if match is paused or over
+
         if (matchTimer <= 0) {
             clearInterval(matchInterval);  // Stop the match timer
             determineMatchWinner();
@@ -526,6 +613,7 @@
         document.querySelector('.time div').textContent = matchTimer;  // 🟢 Update the screen immediately
         isMatchActive = true; // 🟠 Mark match as active
         matchInterval = setInterval(updateMatchTimer, 1000);  // 🟣 Start a new interval
+        startRandomDodgeInterval();
     }
 
     matchInterval = setInterval(updateMatchTimer, 1000)
@@ -569,13 +657,6 @@
         }
     }
 
-    // Reset health (already existing in your code but updated cleaner)
-    function resetHealth() {
-        playerHealth = 100;
-        opponentHealth = 100;
-        updatePlayerHealthUI();
-        updateOpponentHealthUI();
-    }
 
 
     //
@@ -672,45 +753,121 @@
         playerScoreElement.textContent = `${playerScore} |`;
         opponentScoreElement.textContent = `| ${opponentScore}`;
 
-        checkGameOver();
     }
 
-    function checkGameOver() {
-        if (playerScore >= 2 || opponentScore >= 2) {
-            console.log('Game Over! Resetting scores.');
-
-            // Reset scores
-            playerScore = 0;
-            opponentScore = 0;
-
-            playerScoreElement.textContent = `0 |`;
-            opponentScoreElement.textContent = `| 0`;
-
-            // Later you can show final winner here if you want
-        }
-    }
 
     // This function is called when match ends
     function determineMatchWinner() {
-        const playerHealth = parseInt(playerHealthNumber.textContent);
-        const opponentHealth = parseInt(opponentHealthNumber.textContent);
+    const playerHealth = parseInt(playerHealthNumber.textContent);
+    const opponentHealth = parseInt(opponentHealthNumber.textContent);
 
-        if (playerHealth === opponentHealth) {
-            console.log('Match tied. Restarting match without awarding point.');
+    if (playerHealth === opponentHealth) {
+        console.log('Match tied. Restarting match without awarding point.');
+        endMatch();
+        startNewMatch();
+    } else if (playerHealth > opponentHealth) {
+        console.log('Player wins this match!');
+        playerScore++; // Update score manually here
+        playerScoreElement.textContent = `${playerScore} |`;
+        opponentScoreElement.textContent = `| ${opponentScore}`;
+
+        if (playerScore >= 2) {
+            console.log('Player wins the game!');
             endMatch();
-            startNewMatch(); // Start next match without changing scores
-        } else if (playerHealth > opponentHealth) {
-            console.log('Player wins this match!');
-            updateScore('player');
-            endMatch();
-            startNewMatch();
+            showGameWin();  // 🎯 Show game win container
         } else {
-            console.log('Opponent wins this match!');
-            updateScore('opponent');
             endMatch();
-            startNewMatch();
+            showMatchWin(); // 🎯 Only show match win if game not ended
+        }
+    } else {
+        console.log('Opponent wins this match!');
+        opponentScore++; // Update score manually here
+        playerScoreElement.textContent = `${playerScore} |`;
+        opponentScoreElement.textContent = `| ${opponentScore}`;
+
+        if (opponentScore >= 2) {
+            console.log('Opponent wins the game!');
+            endMatch();
+            showGameLose(); // 🎯 Show game lose container
+        } else {
+            endMatch();
+            showMatchLose(); // 🎯 Only show match lose if game not ended
         }
     }
+}
+
+
+    //
+    //
+    //matchInBetween
+    //
+    //
+
+    // Functions to show containers
+    function showMatchWin() {
+        isMatchOver = true;
+        matchWinContainer.style.display = 'flex';
+    }
+
+    function showMatchLose() {
+        isMatchOver = true;
+        matchLoseContainer.style.display = 'flex';
+    }
+
+    function showGameWin() {
+        isMatchOver = true;
+        gameWinContainer.style.display = 'flex';
+    }
+
+    function showGameLose() {
+        isMatchOver = true;
+        gameLoseContainer.style.display = 'flex';
+    }
+
+    // Functions to hide all containers
+    function hideAllMatchContainers() {
+        matchWinContainer.style.display = 'none';
+        matchLoseContainer.style.display = 'none';
+        gameWinContainer.style.display = 'none';
+        gameLoseContainer.style.display = 'none';
+    }
+
+    // Attach button behaviors
+    matchWinButton.onclick = () => {
+        hideAllMatchContainers();
+        isMatchOver = false;  // Unlock the match
+        startNewMatch();
+    };
+
+    matchLoseButton.onclick = () => {
+        hideAllMatchContainers();
+        isMatchOver = false;
+        startNewMatch();
+    };
+
+    gameWinButton.onclick = () => {
+        hideAllMatchContainers();
+        isMatchOver = false;
+
+        playerScore = 0;
+        opponentScore = 0;
+        playerScoreElement.textContent = `0 |`;
+        opponentScoreElement.textContent = `| 0`;
+
+        startNewMatch();
+    };
+
+    gameLoseButton.onclick = () => {
+        hideAllMatchContainers();
+        isMatchOver = false;
+
+        playerScore = 0;
+        opponentScore = 0;
+        playerScoreElement.textContent = `0 |`;
+        opponentScoreElement.textContent = `| 0`;
+
+        startNewMatch();
+    };
 
 </script>
 
