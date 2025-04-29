@@ -166,8 +166,6 @@
                 memoriesPuzzle = parseInt(localStorage.getItem("memoriesPuzzle"));
             }
 
-            memoriesPuzzle = 3;
-
             document.querySelector(".background").style.background = `url('../Asset Manager/images/memories/c${memoriesPuzzle}/full.webp') no-repeat center center / cover`;
 
             createBoard();
@@ -231,7 +229,20 @@
                 }
             }
             alert("Congratulations, Puzzle Completed!");
-             window.location.href = 'storyline.html'
+            
+            // 获取完成后的跳转位置
+            const nextDialogueId = localStorage.getItem('currentProgress');
+            if (nextDialogueId) {
+                localStorage.setItem('currentDialogueId', nextDialogueId);
+            }
+            
+            // 清理拼图相关的localStorage数据
+            localStorage.removeItem('memoriesPuzzle');
+            
+            // 保留 currentChapter 和 currentProgress，因为这些是整体游戏进度
+            
+            // 返回故事页面
+            window.location.href = 'storyline.html';
         }
 
         function resetPuzzle() {
