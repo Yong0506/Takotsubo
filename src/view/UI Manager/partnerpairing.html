@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Partner Pairing</title>
@@ -18,13 +19,14 @@
         }
 
         .grid-scroll {
-    height: 500px;
-    overflow-y: auto;
-    padding-right: 10px;
+            height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
         }
 
         .grid-wrapper {
-    padding-right: 10px; /* Prevent scrollbar overlay */
+            padding-right: 10px;
+            /* Prevent scrollbar overlay */
         }
 
         .grid-container {
@@ -34,12 +36,12 @@
             width: 800px;
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 15px;
-
-            height: 520px;            /* fixed height */
-            overflow-y: auto;         /* vertical scroll only */
-            overflow-x: hidden;       /* hide horizontal overflow */
-            padding-right: 10px;      /* give space for vertical scrollbar */
-            box-sizing: border-box;   /* include padding inside the width */
+            height: 520px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 10px;
+            box-sizing: border-box;
+     
         }
 
         .card {
@@ -62,32 +64,75 @@
 
         .profile-panel {
             width: 35%;
-            background-color: rgba(255, 255, 255, 0.8);
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
             padding: 20px;
             border-radius: 15px;
             color: black;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
+
+        .profile-panel:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
 
         .profile-panel h2 {
             margin-top: 0;
-            font-size: 1.8em;
-            font-weight: 600;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            font-size: 2em;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            color: #3b215f;
+            text-align: center;
         }
 
-        .traits, .contact, .notes {
+        .profile-panel .card {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .profile-panel .card img {
+            width: 120px;
+            height: 150px;
+            border: 4px solid #a278da;
+            border-radius: 50%;
+            background-color: #f8c1c1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-panel .traits,
+        .profile-panel .contact,
+        .profile-panel .notes {
             margin-top: 20px;
-            font-size: 0.95em;
+            font-size: 1em;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .hearts {
-            margin: 10px 0;
+        .profile-panel .traits strong,
+        .profile-panel .contact strong,
+        .profile-panel .notes strong {
+            font-weight: bold;
+            color: #3b215f;
         }
 
-        .hearts span {
-            font-size: 24px;
+
+        .profile-panel .hearts {
+            margin: 15px 0;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .profile-panel .hearts span {
+            font-size: 28px;
             color: purple;
         }
+
 
         .back-btn {
             position: absolute;
@@ -116,7 +161,7 @@
             font-size: 2.8em;
             font-weight: 800;
             margin-top: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.50);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.50);
             color: #3b215f;
         }
 
@@ -131,30 +176,15 @@
         }
     </style>
 </head>
+
 <body>
     <a class="back-btn" href="#">←</a>
     <div class="title">PARTNER PAIRING</div>
 
     <div class="container">
         <div class="grid-wrapper">
-        <div class="grid-container">
-            <div class="card"> <img src="../Asset Manager/images/partnerpairing/kate.jpg" alt="Rosaline"><p>Rosaline</p></div>
-            <div class="card"> <img src="../Asset Manager/images/partnerpairing/kate.jpg" alt="Kate"><p>Kate</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/boy.jpg" alt="Jason"><p>Jason</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/kate.jpg" alt="Crystal"><p>Crystal</p></div>
-
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/boy.jpg"><p>Dennis</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/kate.jpg"><p>Jiajia</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/boy.jpg"><p>Kent</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/boy.jpg"><p>Eason</p></div>
-            
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/boy.jpg"><p>Danial</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/kate.jpg"><p>Michy</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/kate.jpg"><p>Mayyi</p></div>
-            <div class="card"><img src="../Asset Manager/images/partnerpairing/boy.jpg"><p>Caven</p></div>
-            
+                <div class="grid-container" id="card-container"></div>
         </div>
-    </div>
 
         <div class="profile-panel">
             <h2 id="profile-title">Rosaline</h2>
@@ -186,6 +216,11 @@
         </div>
     </div>
 
+    <select id="genderFilter">
+        <option value="">-- Select Gender --</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -209,5 +244,88 @@
             });
         });
     </script>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+    import { getFirestore, getDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+        authDomain: "takotsubo-4f61d.firebaseapp.com",
+        projectId: "takotsubo-4f61d",
+        storageBucket: "takotsubo-4f61d.firebasestorage.app",
+        messagingSenderId: "59472372412",
+        appId: "1:59472372412:web:a192e23b031683988266b9",
+        measurementId: "G-QQ6VXX1M7C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const container = document.getElementById("card-container");
+let allPartners = [];
+
+async function loadPartners() {
+    const querySnapshot = await getDocs(collection(db, "partners"));
+    allPartners = [];
+
+    querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        allPartners.push({
+            id: docSnap.id,
+            name: data.name,
+            gender: data.gender,
+            imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg"
+        });
+    });
+
+    renderCards("all");
+}
+
+function renderCards(gender) {
+    container.innerHTML = ""; // clear cards
+
+    const filtered = gender === "all"
+        ? allPartners
+        : allPartners.filter(p => p.gender === gender);
+
+    filtered.forEach(partner => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <img src="${partner.imgUrl}" alt="${partner.name}">
+            <p>${partner.name}</p>
+        `;
+        container.appendChild(card);
+
+        // Add click event for each card
+        card.addEventListener("click", () => {
+            document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+
+            document.getElementById("profile-title").innerText = partner.name;
+            document.getElementById("character-name").innerText = partner.name;
+            document.getElementById("profile-img").src = partner.imgUrl;
+        });
+    });
+}
+
+document.getElementById("genderFilter").addEventListener("change", (e) => {
+    const selectedGender = e.target.value;
+    renderCards(selectedGender);
+});
+
+
+    </script>
 </body>
+
 </html>
