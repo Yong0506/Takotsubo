@@ -282,8 +282,8 @@ async function loadPartners() {
         const data = docSnap.data();
         allPartners.push({
             id: docSnap.id,
-            name: data.name,
-            gender: data.gender,
+            name: data.name ||"Unknown",
+            gender: data.gender ||"Unknown",
             imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
             email: data.email || "N/A",
             phone: data.phone || "N/A" 
@@ -326,8 +326,12 @@ function renderCards(gender) {
     });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    loadPartners(); // 加载玩家数据
+});
+
 document.getElementById("genderFilter").addEventListener("change", (e) => {
-    const selectedGender = e.target.value;
+    const selectedGender = e.target.value || "all";
     renderCards(selectedGender);
 });
 
