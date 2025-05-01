@@ -426,18 +426,13 @@
                     console.error("Error creating anonymous user:", error);
                 }
             }
+             // 加载用户的 traits
+             await loadTraitsFromFirebase();
         }
 
-        function openSettings() {
-            window.location.href = 'setting.html'
-        }
-
-        function goToMainMenu() {
-            window.location.href = 'dashboard.html'
-        }
-
+     
         // 从对应章节的 Firebase Collection 加载特征
-        async function loadTraitsFromFirebase(chapterId) {
+        async function loadTraitsFromFirebase() {
             if (!currentUserId) return;
 
             try {
@@ -445,33 +440,34 @@
                 
                 if (doc.exists) {
                     const data = doc.data();
-                    // 清空当前特征
-                    Object.keys(playerTraits).forEach(key => {
-                        playerTraits[key] = 0;
-                    });
-                    // 加载特征
+                    // 如果数据中没有特征，使用默认值
                     Object.assign(playerTraits, data);
                     console.log('Traits loaded:', playerTraits);
+
+                    // 同步到本地存储
+                    saveTraitsToLocal();
                 } else {
                     // 如果是新用户，创建初始特征文档
-                    await saveTraitsToFirebase(chapterId);
+                    await saveTraitsToFirebase();
                 }
             } catch (error) {
-                console.error(`Error loading traits from chapter ${chapterId}:`, error);
+                console.error('Error loading traits:', error);
                 loadTraitsFromLocal();
             }
         }
 
-        // 保存特征到对应章节的 Firebase Collection
-        async function saveTraitsToFirebase(chapterId) {
+    
+        async function saveTraitsToFirebase() {
             if (!currentUserId) return;
 
             try {
                 await db.collection('traits').doc(currentUserId).set({
                     ...playerTraits,
+                    //lastUpdated的时间 
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 console.log(`Traits saved to traits collection:`, playerTraits);
+                saveTraitsToLocal();
             } catch (error) {
                 console.error(`Error saving traits to traits collection:`, error);
                 saveTraitsToLocal();
@@ -671,11 +667,11 @@
         async function handleChoice(nextDialogueId, traits) {
             console.log('handleChoice nextDialogueId type:', typeof nextDialogueId);
             console.log('handleChoice nextDialogueId value:', nextDialogueId);
-            
+
             // 更新 trait
             const currentChapter = getCurrentChapterFromId(nextDialogueId);
             if (traits) {
-                // 收集所有可能的trait
+                // 收集所有可能的 trait
                 const allTraits = {
                     kind: traits.kind,
                     romantic: traits.romantic,
@@ -684,15 +680,17 @@
                     optimistic: traits.optimistic,
                     shy: traits.shy
                 };
+
+                // 更新并保存 traits
                 await updateTraits(allTraits, currentChapter);
             }
-            
-            // 如果是对象并且类型是puzzle
+
+            // 如果是对象并且类型是 puzzle
             if (typeof nextDialogueId === 'object' && nextDialogueId.type === "puzzle") {
                 console.log('Puzzle type detected:', nextDialogueId);
                 console.log('Current dialogue ID:', currentDialogueId);
-                
-                // 直接使用nextDialogueId中的值
+
+                // 直接使用 nextDialogueId 中的值
                 if (nextDialogueId.chapter && nextDialogueId.imagePath) {
                     console.log('Starting puzzle with:', {
                         chapter: nextDialogueId.chapter,
@@ -873,36 +871,40 @@
         // 添加拼图游戏触发函数
         async function startPuzzleGame(chapter, imagePath) {
             console.log('startPuzzleGame called with:', { chapter, imagePath });
-            
+
             if (!chapter || !imagePath) {
                 console.error('Invalid puzzle parameters:', { chapter, imagePath });
                 return;
             }
 
+            // 保存当前特征值到 Firebase 和本地存储
+            await saveTraitsToFirebase(chapter);
+            saveTraitsToLocal();
+
             // 保存当前对话索引
             localStorage.setItem('lastDialogueIndex', currentDialogueId);
-            
+
             // 获取当前对话数据
             const dialogue = await loadDialogueFromFirebase(currentDialogueId);
             console.log('Loaded dialogue in startPuzzleGame:', dialogue);
-            
+
             // 保存当前章节
             localStorage.setItem('currentChapter', String(chapter));
-            
-            // 保存拼图完成后应该返回的对话ID
+
+            // 保存拼图完成后应该返回的对话 ID
             if (dialogue && dialogue.next && dialogue.next.onComplete) {
                 localStorage.setItem('currentProgress', dialogue.next.onComplete);
             }
-            
+
             // 保存当前章节和图片路径
             localStorage.setItem('memoriesPuzzle', String(imagePath));
-            
+
             console.log('Saved to localStorage:', {
                 currentChapter: localStorage.getItem('currentChapter'),
                 currentProgress: localStorage.getItem('currentProgress'),
                 memoriesPuzzle: localStorage.getItem('memoriesPuzzle')
             });
-            
+
             // 跳转到拼图页面
             window.location.href = 'memories.html';
         }
