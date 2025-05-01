@@ -284,7 +284,9 @@ async function loadPartners() {
             id: docSnap.id,
             name: data.name,
             gender: data.gender,
-            imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg"
+            imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
+            email: data.email || "N/A",
+            phone: data.phone || "N/A" 
         });
     });
 
@@ -315,6 +317,11 @@ function renderCards(gender) {
             document.getElementById("profile-title").innerText = partner.name;
             document.getElementById("character-name").innerText = partner.name;
             document.getElementById("profile-img").src = partner.imgUrl;
+            document.querySelector(".contact").innerHTML = `  <strong>Contact:</strong><br>
+                                      Email: ${partner.email}<br>
+                                      Phone: ${partner.phone}
+    `;
+
         });
     });
 }
