@@ -230,18 +230,29 @@
             }
             alert("Congratulations, Puzzle Completed!");
             
-            // 获取完成后的跳转位置
-            const nextDialogueId = localStorage.getItem('currentProgress');
-            if (nextDialogueId) {
-                localStorage.setItem('currentDialogueId', nextDialogueId);
+            // 获取当前章节和进度
+            const currentChapter = localStorage.getItem('currentChapter');
+            const currentProgress = localStorage.getItem('currentProgress');
+            
+            console.log('Puzzle completed - Current state:', {
+                currentChapter,
+                currentProgress
+            });
+            
+            if (!currentProgress || !currentChapter) {
+                console.error('Missing progress information:', {
+                    currentProgress,
+                    currentChapter
+                });
+                alert("Error: Could not determine next dialogue. Returning to story.");
+                window.location.href = 'storyline.html';
+                return;
             }
             
-            // 清理拼图相关的localStorage数据
+            // 清理拼图相关的临时数据
             localStorage.removeItem('memoriesPuzzle');
             
-            // 保留 currentChapter 和 currentProgress，因为这些是整体游戏进度
-            
-            // 返回故事页面
+            // 返回故事页面，保留 currentChapter 和 currentProgress
             window.location.href = 'storyline.html';
         }
 
