@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takotsubo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Asset Manager/images/main/school.png') no-repeat center center/cover;
+            color: white;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .pause-btn {
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            background-color: rgba(169, 169, 169, 0.6);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .pause-btn:hover {
+            background-color: rgba(169, 169, 169, 1);
+            transform: scale(1.05);
+        }
+
+        .chapter-info {
+            position: absolute;
+            top: 100px;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .chapter-title,
+        .chapter-footer {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .chapter-summary {
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid white;
+        }
+
+        .modal-title {
+            color: white;
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .btn-custom {
+            background-color: white;
+            color: rgb(78, 78, 78);
+            font-size: 1.2em;
+            padding: 12px 20px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: white;
+            color: rgb(0, 0, 0);
+            transform: scale(1.05);
+        }
+
+        .btn-custom i {
+            margin-right: 8px;
+        }
+
+        .btn-next {
+            font-size: 1.3em;
+            margin-top: 200px;
+            padding: 12px 35px;
+            border-radius: 10px;
+            background-color: rgba(169, 169, 169, 0.6);
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-next:hover {
+            background-color: rgba(169, 169, 169, 1);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <button class="pause-btn" data-bs-toggle="modal" data-bs-target="#pauseModal"><i class="fas fa-pause"></i></button>
+
+    <div class="chapter-info text-center">
+        <h1 class="chapter-title">Loading...</h1>
+        <p class="chapter-summary">Please wait while we load your story progress.</p>
+        <h1 class="chapter-footer">~ End of the Chapter ~</h1>
+    </div>
+    
+    <button type="button" class="btn-next" onclick="nextChap()">Let's Proceed Next Chapter</button>
+
+    <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column align-items-center">
+                        <button type="button" class="btn-custom" data-bs-dismiss="modal"><i
+                                class="fas fa-play"></i>Resume</button>
+                        <button type="button" class="btn-custom" onclick="openSettings()"><i
+                                class="fas fa-cogs"></i>Settings</button>
+                        <button type="button" class="btn-custom" onclick="goToMainMenu()"><i
+                                class="fas fa-home"></i>Main Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function openSettings() {
+            window.location.href = 'setting.html'
+        }
+
+        function goToMainMenu() {
+            window.location.href = 'dashboard.html'
+        }
+
+        function nextChap() {
+            window.location.href = 'dashboard.html'
+        }
+
+        window.onload = function () {
+            const savedChap = parseInt(localStorage.getItem('gameSavedChap'));
+            const title = document.querySelector(".chapter-title");
+            const summary = document.querySelector(".chapter-summary");
+            const footer = document.querySelector(".chapter-footer");
+
+
+            if (savedChap === 1) {
+                title.textContent = "Chapter 1: Deny And Anger";
+                summary.textContent = "The story begins with a fateful first meeting on campus. A simple seat change leads to the start of something meaningful as the protagonist writes a heartfelt love letter.";
+                footer.textContent = "~ End of the Chapter 1 ~";
+            } else if (savedChap === 2) {
+                title.textContent = "Chapter 2: Memories Together";
+                summary.textContent = "This chapter of Memories Together teaches us about the beauty of first love and the importance of cherishing happy moments. It shows how two people meet, become close, and slowly build a connection through small, kind actions. The most important part of this chapter is understanding that love often starts with simple things—like a smile, a seat beside someone, or a letter. You should learn to appreciate these little moments and the courage it takes to express your feelings. This chapter also reminds you that even if things change later, those first memories still matter. You should take time to remember what made you happy and carry those feelings with you, not with sadness, but with warmth and congrats.";
+                footer.textContent = "~ End of the Chapter 2 ~";
+            } else if (savedChap === 3) {
+                title.textContent = "Chapter 3: Letting Go";
+                summary.textContent = "Things start to shift. Misunderstandings and emotional distance challenge the relationship, pushing both to reflect on what brought them together—and what might drive them apart.";
+                footer.textContent = "~ End of the Chapter 3 ~";
+            } else {
+                title.textContent = "Chapter Unknown";
+                summary.textContent = "No saved progress found. Start a new story to unveil its path.";
+                footer.textContent = "~ End Chapter Unknown ~";
+            }
+        };
+    </script>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+        import { getFirestore, collection, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.firebasestorage.app",
+            messagingSenderId: "59472372412",
+            appId: "1:59472372412:web:a192e23b031683988266b9",
+            measurementId: "G-QQ6VXX1M7C"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        const deviceId = localStorage.getItem("deviceId");
+        const docRef = doc(db, "players", deviceId);
+        const docSnap = await getDoc(docRef);
+
+    </script>
+</body>
+
+</html>

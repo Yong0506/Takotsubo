@@ -156,7 +156,32 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+        import { getFirestore, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.firebasestorage.app",
+            messagingSenderId: "59472372412",
+            appId: "1:59472372412:web:a192e23b031683988266b9",
+            measurementId: "G-QQ6VXX1M7C"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        const deviceId = localStorage.getItem("deviceId");
+
         const gridSize = 3;
         let selectedTile = null;
         let targetTile = null;
@@ -217,7 +242,7 @@
             }
         }
 
-        function checkSolution() {
+        async function checkSolution() {
             let tiles = document.querySelectorAll("#board img");
             for (let i = 0; i < tiles.length; i++) {
                 let expectedSrc = `images/memories/c${memoriesPuzzle}/${i + 1}.jpg`;
@@ -229,16 +254,16 @@
                 }
             }
             alert("Congratulations, Puzzle Completed!");
-            
+
             // 获取当前章节和进度
             const currentChapter = localStorage.getItem('currentChapter');
             const currentProgress = localStorage.getItem('currentProgress');
-            
+
             console.log('Puzzle completed - Current state:', {
                 currentChapter,
                 currentProgress
             });
-            
+
             if (!currentProgress || !currentChapter) {
                 console.error('Missing progress information:', {
                     currentProgress,
@@ -248,12 +273,23 @@
                 window.location.href = 'storyline.html';
                 return;
             }
-            
+
             // 清理拼图相关的临时数据
             localStorage.removeItem('memoriesPuzzle');
-            
-            // 返回故事页面，保留 currentChapter 和 currentProgress
-            window.location.href = 'storyline.html';
+
+            if (memoriesPuzzle === 3) {
+                window.location.href = 'storyline.html';
+            } else {
+                try {
+                    await setDoc(doc(collection(db, "players"), deviceId), {
+                        lettingGo: "Yes",
+                    });
+                    window.location.href = 'storyEnd.html';
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                    alert("Failed to save your information. Please try again.");
+                }
+            }
         }
 
         function resetPuzzle() {
