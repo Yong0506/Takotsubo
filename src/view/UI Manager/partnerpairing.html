@@ -189,7 +189,7 @@
         <div class="profile-panel">
             <h2 id="profile-title">Rosaline</h2>
             <div class="card">
-                <img src="avatar-red.png" id="profile-img">
+                <img src="../Asset Manager/images/partnerpairing/kate.jpg" id="profile-img">
                 <p id="character-name">Rosaline</p>
             </div>
 
@@ -280,25 +280,29 @@ async function loadPartners() {
 
     querySnapshot.forEach(docSnap => {
         const data = docSnap.data();
+        console.log("Fetched data:", data); // 调试输出
         allPartners.push({
             id: docSnap.id,
-            name: data.name ||"Unknown",
-            gender: data.gender ||"Unknown",
+            name: data.name || "Unknown",
+            gender: data.gender || "Unknown",
             imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
             email: data.email || "N/A",
-            phone: data.phone || "N/A" 
+            phone: data.phone || "N/A"
         });
     });
 
+    console.log("All partners:", allPartners); // 调试输出
     renderCards("all");
 }
 
 function renderCards(gender) {
-    container.innerHTML = ""; // clear cards
+    container.innerHTML = ""; // 清空卡片容器
 
     const filtered = gender === "all"
         ? allPartners
         : allPartners.filter(p => p.gender === gender);
+
+    console.log("Filtered partners:", filtered); // 调试输出
 
     filtered.forEach(partner => {
         const card = document.createElement("div");
@@ -309,19 +313,21 @@ function renderCards(gender) {
         `;
         container.appendChild(card);
 
-        // Add click event for each card
+        // 添加点击事件，显示详细信息
         card.addEventListener("click", () => {
             document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
             card.classList.add("selected");
 
+            console.log("Selected partner:", partner); // 调试输出
+
             document.getElementById("profile-title").innerText = partner.name;
             document.getElementById("character-name").innerText = partner.name;
             document.getElementById("profile-img").src = partner.imgUrl;
-            document.querySelector(".contact").innerHTML = `  <strong>Contact:</strong><br>
-                                      Email: ${partner.email}<br>
-                                      Phone: ${partner.phone}
-    `;
-
+            document.querySelector(".contact").innerHTML = `
+                <strong>Contact:</strong><br>
+                Email: ${partner.email}<br>
+                Phone: ${partner.phone}
+            `;
         });
     });
 }
