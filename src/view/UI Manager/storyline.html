@@ -567,7 +567,7 @@ validateLocalStorage();
         }
 
         try {
-            const doc = await db.collection(`${currentStory}_dialog`).doc(dialogueId).get();
+            const doc = await db.collection("${currentStory}_dialogue").doc(dialogueId).get();
             if (doc.exists) {
                 return doc.data();
             } else {
@@ -1015,8 +1015,34 @@ validateLocalStorage();
             // 检查是否有保存的章节和对话
             const savedChapter = localStorage.getItem('gameSavedChap');
             const savedDialog = localStorage.getItem('gameSavedDialog');
-            const currentStory = localStorage.getItem('currentStory') || 'defaultStory';
-            const currentProgress = localStorage.getItem('currentProgress');
+            let currentStory = localStorage.getItem('currentStory') || 'defaultStory';
+            let currentProgress = localStorage.getItem('currentProgress');
+
+            if(savedChapter === 1){
+                currentStory = "denyAnger";
+                localStorage.setItem('currentStory',"denyAnger");
+                if(savedDialog !== null){
+                    currentProgress = savedDialog;
+                }else{
+                    currentProgress = "deny1"
+                }
+            }else if (savedChapter === 2){
+                currentStory = "memoriesTogether";
+                localStorage.setItem('currentStory', "memoriesTogether");
+                if(savedDialog !== null){
+                    currentProgress = savedDialog;
+                }else{
+                    currentProgress = "memories1"
+                }
+            }else{
+                currentStory = "lettingGo";
+                localStorage.setItem('currentStory', "lettingGo");
+                if(savedDialog !== null){
+                    currentProgress = savedDialog;
+                }else{
+                    currentProgress = "letting1"
+                }
+            }
 
             console.log('Initialization - Current state:', {
                 savedChapter,
