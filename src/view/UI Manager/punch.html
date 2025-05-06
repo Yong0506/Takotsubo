@@ -651,7 +651,7 @@
     </div>
 </body>
 
-<script>
+<script type="module">
     const dodgeContainer = document.querySelector('.dodge-container');
     const dodgeArrow = document.querySelector('.dodge-arrow img');
     const dodgeProgressBar = document.querySelector('.dodge-progress .progress-bar');
@@ -678,7 +678,7 @@
 
     // Health values
     let playerHealth = 100;
-    let opponentHealth = 100;
+    let opponentHealth = 10;
     const playerHealthNumber = document.querySelector('.player-section .health-number');
     const opponentHealthNumber = document.querySelector('.opponent-section .health-number');
 
@@ -723,6 +723,33 @@
 
     //BGM
     let currentBGM = null;
+
+
+    //JUMP/SAVE CHP
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+    import { getFirestore, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+        authDomain: "takotsubo-4f61d.firebaseapp.com",
+        projectId: "takotsubo-4f61d",
+        storageBucket: "takotsubo-4f61d.firebasestorage.app",
+        messagingSenderId: "59472372412",
+        appId: "1:59472372412:web:a192e23b031683988266b9",
+        measurementId: "G-QQ6VXX1M7C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    const deviceId = localStorage.getItem("deviceId");
 
 
     //
@@ -875,7 +902,7 @@
     // Reset health values for both player and opponent
     function resetHealth() {
         playerHealth = 100;
-        opponentHealth = 100;
+        opponentHealth = 10;
         updatePlayerHealthUI();
         updateOpponentHealthUI();
     }
@@ -1216,9 +1243,23 @@
         opponentScore = 0;
         playerScoreElement.textContent = `0 |`;
         opponentScoreElement.textContent = `| 0`;
+        saveChp();
 
-        startNewMatch();
+
+
     };
+
+    async function saveChp(){
+        try {
+            await setDoc(doc(collection(db, "players"), deviceId), {
+                memories: "Yes",
+            });
+            window.location.href = 'storyEnd.html';
+        } catch (e) {
+            console.error("Error adding document: ", e);
+            alert("Failed to save your information. Please try again.");
+        }
+    }
 
     gameLoseButton.onclick = () => {
         hideAllMatchContainers();
