@@ -217,10 +217,10 @@
     </div>
 
     <select id="genderFilter">
-        <option value="">-- Select Gender --</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
+        <option value="all">-- Select Gender --</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+    </select>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -280,7 +280,7 @@ async function loadPartners() {
 
     querySnapshot.forEach(docSnap => {
         const data = docSnap.data();
-        console.log("Fetched data:", data); // 调试输出
+        console.log("Fetched data:", data); // Debugging output
         allPartners.push({
             id: docSnap.id,
             name: data.name || "Unknown",
@@ -291,18 +291,25 @@ async function loadPartners() {
         });
     });
 
-    console.log("All partners:", allPartners); // 调试输出
+    console.log("All partners:", allPartners); // Debugging output
     renderCards("all");
 }
 
 function renderCards(gender) {
-    container.innerHTML = ""; // 清空卡片容器
+    container.innerHTML = ""; // Clear the card container
+
+    console.log("Selected gender:", gender); // Debugging output
 
     const filtered = gender === "all"
         ? allPartners
-        : allPartners.filter(p => p.gender === gender);
+        : allPartners.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
 
-    console.log("Filtered partners:", filtered); // 调试输出
+    console.log("Filtered partners:", filtered); // Debugging output
+
+    if (filtered.length === 0) {
+        container.innerHTML = "<p>No partners found for the selected gender.</p>";
+        return;
+    }
 
     filtered.forEach(partner => {
         const card = document.createElement("div");
@@ -313,12 +320,12 @@ function renderCards(gender) {
         `;
         container.appendChild(card);
 
-        // 添加点击事件，显示详细信息
+        // Add click event to display details
         card.addEventListener("click", () => {
             document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
             card.classList.add("selected");
 
-            console.log("Selected partner:", partner); // 调试输出
+            console.log("Selected partner:", partner); // Debugging output
 
             document.getElementById("profile-title").innerText = partner.name;
             document.getElementById("character-name").innerText = partner.name;
@@ -338,6 +345,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.getElementById("genderFilter").addEventListener("change", (e) => {
     const selectedGender = e.target.value || "all";
+    console.log("Gender filter changed to:", selectedGender); // Debugging output
     renderCards(selectedGender);
 });
 
