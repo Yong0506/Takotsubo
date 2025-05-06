@@ -605,19 +605,23 @@ validateLocalStorage();
              // 如果是 HTML 页面，跳转到该页面
             if (typeof nextDialogueId === 'string' && nextDialogueId.endsWith('.html')) {
                 console.log('Detected HTML page, redirecting to:', );
-                nextDialogueId        window.location.href = nextDialogueId;
+                window.location.href = nextDialogueId;
                 return;
             }
 
             // 更新进度条
             updateProgress(dialogue.progressBar, dialogue.overallProgress);
 
+            if(dialogue.type === 'punch'){
+                window.location.href = 'punch.html'
+            }
+
             // 如果当前对话是拼图类型，直接开始拼图
             if (dialogue.type === 'puzzle') {
                 console.log('Current dialogue is puzzle type, starting puzzle game:', dialogue);
                 startPuzzleGame(dialogue.chapter || 2, dialogue.imagePath || 1);
                 return;
-            }
+            } 
 
             // 如果下一个对话是拼图类型，显示当前对话后自动开始拼图
             if (dialogue.next && typeof dialogue.next === 'object' && dialogue.next.type === 'puzzle') {
