@@ -275,21 +275,22 @@ const container = document.getElementById("card-container");
 let allPartners = [];
 
 async function loadPartners() {
-    const querySnapshot = await getDocs(collection(db, "partners"));
+    const querySnapshot = await getDocs(collection(db, "players"));
     allPartners = [];
 
     querySnapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        console.log("Fetched data:", data); // Debugging output
-        allPartners.push({
-            id: docSnap.id,
-            name: data.name || "Unknown",
-            gender: data.gender || "Unknown",
-            imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
-            email: data.email || "N/A",
-            phone: data.phone || "N/A"
-        });
+    const data = docSnap.data();
+    console.log("Fetched data:", data); // Debugging output
+    console.log("Image URL:", data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg"); // Debugging output
+    allPartners.push({
+        id: docSnap.id,
+        name: data.name || "Unknown",
+        gender: data.gender || "Unknown",
+        imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
+        email: data.email || "N/A",
+        phone: data.phone || "N/A"
     });
+});
 
     console.log("All partners:", allPartners); // Debugging output
     renderCards("all");
@@ -312,10 +313,11 @@ function renderCards(gender) {
     }
 
     filtered.forEach(partner => {
+        console.log("Rendering partner:", partner); // Debugging output
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-            <img src="${partner.imgUrl}" alt="${partner.name}">
+            <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
             <p>${partner.name}</p>
         `;
         container.appendChild(card);
@@ -338,7 +340,6 @@ function renderCards(gender) {
         });
     });
 }
-
 document.addEventListener("DOMContentLoaded", function () {
     loadPartners(); // 加载玩家数据
 });
