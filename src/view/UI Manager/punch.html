@@ -503,8 +503,10 @@
             <!-- Player section (left) -->
             <div class="player-section">
                 <div class="top-info">
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pauseModal">
-                        Pause
+                    <!-- PAUSE BUTTON -->
+                    <button id="btn btn-success" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#pauseModal">
+                        <i class="fas fa-pause"></i>
                     </button>
                     <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
                     <h2 class="health-number">100</h2>
@@ -598,6 +600,7 @@
             <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
         </div>
 
+        <!-- PAUSE SCREEN -->
         <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -649,6 +652,21 @@
 
         <button class="startButton">START</button>
     </div>
+    <script>
+        function openSettings() {
+            const confirmed = window.confirm("Your current progress will all be lost, are you sure?");
+            if (confirmed) {
+                window.location.href = 'setting.html';
+            }
+        }
+
+        function goToMainMenu() {
+            const confirmed = window.confirm("Your current progress will all be lost, are you sure?");
+            if (confirmed) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+    </script>
 </body>
 
 <script type="module">
@@ -665,6 +683,11 @@
     let wrongInputs = 0; // counts wrong arrow inputs during dodge
 
     let isFeedbackShowing = false; //arrowFeed
+
+    let dodgeInterval;
+    let dodgeStartTime = null;
+    let dodgeRemainingTime = null;
+    let dodgeElapsedBeforePause = 0;
 
 
     //Timer values
@@ -725,6 +748,12 @@
     let currentBGM = null;
 
 
+    //PAUSE VALUES
+    let isPaused = false;
+    let savedMatchInterval = null;
+    let savedDodgeInterval = null;
+
+
     //JUMP/SAVE CHP
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
@@ -782,32 +811,22 @@
     }
 
     function startDodgeSequence() {
-        if (isDodgeActive || isMatchOver) return;
+        if (isDodgeActive || isMatchOver || isPaused) return;
 
         isDodgeActive = true;
         dodgeContainer.style.display = 'flex';
         dodgeSequence = generateDodgeSequence();
         currentArrowIndex = 0;
         dodgeDamage = 0;
-        showNextArrow();
         wrongInputs = 0;
+        showNextArrow();
 
-        let duration = 8000; // 8 seconds
-        let remaining = duration;
-        const updateInterval = 100;
-        dodgeProgressBar.style.width = '100%';
-
-        dodgeTimer = setInterval(() => {
-            remaining -= updateInterval;
-            const percent = (remaining / duration) * 100;
-            dodgeProgressBar.style.width = `${percent}%`;
-
-            if (remaining <= 0) {
-                clearInterval(dodgeTimer);
-                finishDodge();
-            }
-        }, updateInterval);
+        dodgeElapsedBeforePause = 0;
+        resumeDodgeTimer(); // run timer logic separately
     }
+
+
+
 
     function finishDodge() {
         let missed = dodgeSequence.length - currentArrowIndex;
@@ -858,6 +877,13 @@
         // Decide which feedback image to show
         const feedbackType = isCorrect ? '_right' : '_wrong';
         dodgeArrow.src = `../Asset Manager/images/punch/${dodgeArrowImages[keyPressed].replace('.png', feedbackType + '.png')}`;
+
+        // Play appropriate sound
+        if (isCorrect) {
+            playSoundEffect('../Asset Manager/images/punch/snd_egg.wav');
+        } else {
+            playSoundEffect('../Asset Manager/images/punch/snd_error.wav');
+        }
 
         setTimeout(() => {
             currentArrowIndex++;
@@ -977,8 +1003,7 @@
         // Punch Key Listener
         document.addEventListener('keydown', (e) => {
             if (e.key === 'p') {
-                if (isDodgeActive) return;
-                if (isMatchOver) return; //Cannot punch during dodge sequence & matchOver
+                if (isPaused || isDodgeActive || isMatchOver) return;
                 punch();
             }
         });
@@ -1249,7 +1274,7 @@
 
     };
 
-    async function saveChp(){
+    async function saveChp() {
         try {
             await setDoc(doc(collection(db, "players"), deviceId), {
                 memories: "Yes",
@@ -1273,14 +1298,6 @@
         startNewMatch();
     };
 
-    //pause
-    function openSettings() {
-        window.location.href = 'setting.html'
-    }
-
-    function goToMainMenu() {
-        window.location.href = 'dashboard.html'
-    }
 
     //BGM FUNCTION
     function playBackgroundMusic(filePath) {
@@ -1307,7 +1324,77 @@
         });
     }
 
+    //
+    //
+    // Pause everything
+    //
+    function pauseGame() {
+        isPaused = true;
 
+        if (matchInterval) clearInterval(matchInterval);
+
+        if (dodgeTimer) {
+            clearInterval(dodgeTimer);
+            dodgeElapsedBeforePause += Date.now() - dodgeStartTime;
+        }
+
+        if (dodgeInterval) clearInterval(dodgeInterval);
+
+        stopStaminaRegen();
+
+        if (currentBGM && !currentBGM.paused) currentBGM.pause();
+    }
+
+
+    function resumeDodgeTimer() {
+        const duration = 8000;
+        dodgeStartTime = Date.now();
+
+        dodgeTimer = setInterval(() => {
+            const totalElapsed = dodgeElapsedBeforePause + (Date.now() - dodgeStartTime);
+            const percent = ((duration - totalElapsed) / duration) * 100;
+            dodgeProgressBar.style.width = `${percent}%`;
+
+            if (totalElapsed >= duration) {
+                clearInterval(dodgeTimer);
+                dodgeElapsedBeforePause = 0;
+                finishDodge();
+            }
+        }, 100);
+    }
+
+
+    function resumeGame() {
+        isPaused = false;
+
+        if (isMatchActive && !isMatchOver) {
+            matchInterval = setInterval(updateMatchTimer, 1000);
+        }
+
+        if (isDodgeActive) {
+            resumeDodgeTimer(); // Don't restart sequence, just continue timing
+        } else {
+            startRandomDodgeInterval();
+        }
+
+        if (playerStamina < maxStamina) {
+            startStaminaRegen();
+        }
+
+
+        if (currentBGM && currentBGM.paused) currentBGM.play();
+    }
+
+
+
+    // Resume when "Resume" button is clicked in modal
+    document.querySelector('#pauseModal .btn-custom[data-bs-dismiss="modal"]')
+        .addEventListener('click', resumeGame);
+
+    document.getElementById('btn btn-success').addEventListener('click', () => {
+
+        pauseGame(); // This will pause everything as defined earlier
+    });
 
 
 </script>
