@@ -376,129 +376,279 @@
         .btn-custom i {
             margin-right: 8px;
         }
+
+
+        /*
+        startGameScreen
+        */
+
+        /* Hide all game elements initially */
+        .gameUI {
+            display: none;
+        }
+
+        /* Fade-out effect for startGameInstruction */
+        .startGameInstruction.fade-out {
+            animation: fadeOut 0.6s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+
+        .startGameInstruction {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .titleImage {
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .startGameContainer {
+            background: rgba(255, 255, 255, 0.5);
+            width: 500px;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .instructionTitle {
+            align-self: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .instruction {
+            font-size: 16px;
+            font-weight: normal;
+            text-align: left;
+        }
+
+        .punchInRow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .punchIcon {
+            width: 40px;
+            height: auto;
+        }
+
+        .punchWord {
+            font-weight: bold;
+            font-size: 18px;
+            margin-left: auto;
+        }
+
+        .arrowInRow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .arrowIcons img {
+            width: 40px;
+            margin-right: 5px;
+        }
+
+        .dodgeWord {
+            font-weight: bold;
+            font-size: 18px;
+            margin-left: auto;
+        }
+
+        .startButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background-color: white;
+            color: black;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .startButton:hover {
+            background-color: #333;
+        }
     </style>
 </head>
 
 <body>
-    <div class="top-bar">
-        <!-- Player section (left) -->
-        <div class="player-section">
-            <div class="top-info">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pauseModal">
-                    Pause
-                </button>
-                <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
-                <h2 class="health-number">100</h2>
-            </div>
-            <div class="progress">
-                <img src="../Asset Manager/images/punch/stamina.png" alt="stamina-icon" class="stamina-icon">
-                <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="50"
-                    aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-
-        <!-- Spacer (to make room for center) -->
-        <div class="spacer"></div>
-
-        <!-- Opponent section (right) -->
-        <div class="opponent-section">
-            <div class="top-info">
-                <h2 class="health-number">100</h2>
-                <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
-            </div>
-        </div>
-    </div>
-
-    <div class="middle-top-bar">
-        <div class="score">
-            <h2>0 |</h2>
-        </div>
-        <div class="time">
-            <div>60</div>
-        </div>
-        <div class="op-score">
-            <h2>| 0</h2>
-        </div>
-    </div>
-
-    <div class="dodge-container">
-        <div class="dodge-header">
-            <img src="../Asset Manager/images/punch/timer.png" alt="time-icon" class="timer-icon">
-            <div class="dodge-progress">
-                <div class="progress-bar bg-success" role="progressbar" style="width: 70%;" aria-valuenow="8"
-                    aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-        <div class="dodge-arrow">
-            <img src="../Asset Manager/images/punch/arrow-left.png" alt="arrow-left" class="arrow-img">
-        </div>
-    </div>
-
-
-    <div class="left-punch">
-        <img src="../Asset Manager/images/punch/left-punch.png" alt="left-punch">
-    </div>
-
-    <div class="opponent">
-        <img src="../Asset Manager/images/punch/opponent.png" alt="Opponent">
-    </div>
-
-    <div class="opponent_hit">
-        <img src="../Asset Manager/images/punch/opponent.png" alt="Opponent">
-    </div>
-
-    <div class="matchWin">
-        <h2 class="matchStatus">YOU WON!</h2>
-        <b class="enWord">READY FOR THE NEXT ROUND?</b>
-        <button class="nextMatch" onclick="">READY</button>
-    </div>
-
-    <div class="matchLose">
-        <h2 class="matchStatus">YOU LOSE</h2>
-        <b class="enWord">READY FOR THE NEXT ROUND?</b>
-        <button class="nextMatch" onclick="">READY</button>
-    </div>
-
-    <div class="gameWin">
-        <h2 class="matchStatus">YOU WON!</h2>
-        <b class="enWord">CONGRATS</b>
-        <button class="nextMatch" onclick="">CONTINUE</button>
-    </div>
-
-    <div class="gameLose">
-        <h2 class="matchStatus">YOU LOSE</h2>
-        <b class="enWord">STAY DETERMINED!</b>
-        <button class="nextMatch" onclick="">RETRY</button>
-    </div>
-
-    <div class="right-punch">
-        <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
-    </div>
-
-    <div class="right-punched">
-        <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
-    </div>
-
-    <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
+    <!-- BOXING UI -->
+    <div class="gameUI">
+        <div class="top-bar">
+            <!-- Player section (left) -->
+            <div class="player-section">
+                <div class="top-info">
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pauseModal">
+                        Pause
+                    </button>
+                    <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
+                    <h2 class="health-number">100</h2>
                 </div>
-                <div class="modal-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <button type="button" class="btn-custom" data-bs-dismiss="modal"><i
-                                class="fas fa-play"></i>Resume</button>
-                        <button type="button" class="btn-custom" onclick="openSettings()"><i
-                                class="fas fa-cogs"></i>Settings</button>
-                        <button type="button" class="btn-custom" onclick="goToMainMenu()"><i
-                                class="fas fa-home"></i>Main Menu</button>
+                <div class="progress">
+                    <img src="../Asset Manager/images/punch/stamina.png" alt="stamina-icon" class="stamina-icon">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="50"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <!-- Spacer (to make room for center) -->
+            <div class="spacer"></div>
+
+            <!-- Opponent section (right) -->
+            <div class="opponent-section">
+                <div class="top-info">
+                    <h2 class="health-number">100</h2>
+                    <img src="../Asset Manager/images/punch/health-icon.png" alt="health-icon" class="health-icon">
+                </div>
+            </div>
+        </div>
+
+        <div class="middle-top-bar">
+            <div class="score">
+                <h2>0 |</h2>
+            </div>
+            <div class="time">
+                <div>60</div>
+            </div>
+            <div class="op-score">
+                <h2>| 0</h2>
+            </div>
+        </div>
+
+        <div class="dodge-container">
+            <div class="dodge-header">
+                <img src="../Asset Manager/images/punch/timer.png" alt="time-icon" class="timer-icon">
+                <div class="dodge-progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 70%;" aria-valuenow="8"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            <div class="dodge-arrow">
+                <img src="../Asset Manager/images/punch/arrow-left.png" alt="arrow-left" class="arrow-img">
+            </div>
+        </div>
+
+
+        <div class="left-punch">
+            <img src="../Asset Manager/images/punch/left-punch.png" alt="left-punch">
+        </div>
+
+        <div class="opponent">
+            <img src="../Asset Manager/images/punch/opponent.png" alt="Opponent">
+        </div>
+
+        <div class="opponent_hit">
+            <img src="../Asset Manager/images/punch/opponent.png" alt="Opponent">
+        </div>
+
+        <div class="matchWin">
+            <h2 class="matchStatus">YOU WON!</h2>
+            <b class="enWord">READY FOR THE NEXT ROUND?</b>
+            <button class="nextMatch" onclick="">READY</button>
+        </div>
+
+        <div class="matchLose">
+            <h2 class="matchStatus">YOU LOSE</h2>
+            <b class="enWord">READY FOR THE NEXT ROUND?</b>
+            <button class="nextMatch" onclick="">READY</button>
+        </div>
+
+        <div class="gameWin">
+            <h2 class="matchStatus">YOU WON!</h2>
+            <b class="enWord">CONGRATS</b>
+            <button class="nextMatch" onclick="">CONTINUE</button>
+        </div>
+
+        <div class="gameLose">
+            <h2 class="matchStatus">YOU LOSE</h2>
+            <b class="enWord">STAY DETERMINED!</b>
+            <button class="nextMatch" onclick="">RETRY</button>
+        </div>
+
+        <div class="right-punch">
+            <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
+        </div>
+
+        <div class="right-punched">
+            <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
+        </div>
+
+        <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex flex-column align-items-center">
+                            <button type="button" class="btn-custom" data-bs-dismiss="modal"><i
+                                    class="fas fa-play"></i>Resume</button>
+                            <button type="button" class="btn-custom" onclick="openSettings()"><i
+                                    class="fas fa-cogs"></i>Settings</button>
+                            <button type="button" class="btn-custom" onclick="goToMainMenu()"><i
+                                    class="fas fa-home"></i>Main Menu</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!--START MENU-->
+    <div class="startGameInstruction">
+        <img src="../Asset Manager/images/punch/PUNCH OUT.png" alt="title" class="titleImage">
+
+        <div class="startGameContainer">
+            <h2 class="instructionTitle">INSTRUCTIONS</h2>
+            <b class="instruction">
+                Play a match with an opponent, try and decrease opponent’s health by punching.
+                The one with the less health loses the match and winner gains a score.
+                Score 2 points to win the game.
+            </b>
+
+            <div class="punchInRow">
+                <img src="../Asset Manager/images/punch/p_button.png" alt="punchInImg" class="punchIcon">
+                <b class="punchWord">PUNCH</b>
+            </div>
+
+            <div class="arrowInRow">
+                <div class="arrowIcons">
+                    <img src="../Asset Manager/images/punch/arrow-down.png" alt="arrowDownInImg">
+                    <img src="../Asset Manager/images/punch/arrow-up.png" alt="arrowUpInImg">
+                    <img src="../Asset Manager/images/punch/arrow-left.png" alt="arrowLeftInImg">
+                    <img src="../Asset Manager/images/punch/arrow-right.png" alt="arrowRightInImg">
+                </div>
+                <b class="dodgeWord">DODGE</b>
+            </div>
+        </div>
+
+        <button class="startButton">START</button>
+    </div>
 </body>
 
 <script>
@@ -569,6 +719,11 @@
     const matchLoseButton = matchLoseContainer.querySelector('.nextMatch');
     const gameWinButton = gameWinContainer.querySelector('.nextMatch');
     const gameLoseButton = gameLoseContainer.querySelector('.nextMatch');
+
+
+    //BGM
+    let currentBGM = null;
+
 
     //
     //
@@ -691,7 +846,6 @@
         }, 150); // 0.3 seconds
     }
 
-    document.addEventListener('keydown', handleArrowKeyInput);
 
     function startRandomDodgeInterval() {
         function scheduleNext() {
@@ -703,8 +857,6 @@
         scheduleNext();
     }
 
-    // Start the dodge sequence random timer when the game starts
-    startRandomDodgeInterval();
 
 
     // Hide the dodge container
@@ -766,6 +918,24 @@
         }
     }
 
+    document.addEventListener('DOMContentLoaded', () => {
+        // All your setup code here
+        const startButton = document.querySelector('.startButton');
+        const startScreen = document.querySelector('.startGameInstruction');
+        const gameUI = document.querySelector('.gameUI');
+
+        startButton.addEventListener('click', () => {
+            playBackgroundMusic('../Asset Manager/images/punch/punchBGM.mp3')
+            startScreen.classList.add('fade-out');
+
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                gameUI.style.display = 'block';
+                startNewMatch();
+            }, 600);
+        });
+    });
+
 
     function startNewMatch() {
         clearInterval(matchInterval);  //  FIRST clear the old interval before anything else
@@ -774,10 +944,20 @@
         document.querySelector('.time div').textContent = matchTimer;  //  Update the screen immediately
         isMatchActive = true; //  Mark match as active
         matchInterval = setInterval(updateMatchTimer, 1000);  //  Start a new interval
+        document.addEventListener('keydown', handleArrowKeyInput);
         startRandomDodgeInterval();
+
+        // Punch Key Listener
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'p') {
+                if (isDodgeActive) return;
+                if (isMatchOver) return; //Cannot punch during dodge sequence & matchOver
+                punch();
+            }
+        });
     }
 
-    matchInterval = setInterval(updateMatchTimer, 1000)
+
 
     //
     //
@@ -847,6 +1027,15 @@
         // Stop stamina regeneration if player punches
         stopStaminaRegen();
 
+        // 🎵 Play one of two punch sound effects randomly
+        const punchSounds = [
+            '../Asset Manager/images/punch/punch_ish_1.wav',
+            '../Asset Manager/images/punch/punch_ish_1_bc.wav'
+        ];
+        const randomSound = punchSounds[Math.floor(Math.random() * punchSounds.length)];
+        playSoundEffect(randomSound);
+
+
         // Apply punch
         playerStamina -= staminaPerPunch;
         if (playerStamina < 0) playerStamina = 0;
@@ -909,14 +1098,7 @@
         }
     }
 
-    // Punch Key Listener
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'p') {
-            if (isDodgeActive) return;
-            if (isMatchOver) return; //Cannot punch during dodge sequence & matchOver
-            punch();
-        }
-    });
+
 
     //
     //
@@ -1058,6 +1240,35 @@
     function goToMainMenu() {
         window.location.href = 'dashboard.html'
     }
+
+    //BGM FUNCTION
+    function playBackgroundMusic(filePath) {
+        // Stop previous BGM if playing
+        if (currentBGM) {
+            currentBGM.pause();
+            currentBGM.currentTime = 0;
+        }
+
+        // Create new audio element
+        currentBGM = new Audio(filePath);
+        currentBGM.loop = true;
+        currentBGM.volume = 0.5; // Adjust volume as needed
+        currentBGM.play().catch((err) => {
+            console.warn("Autoplay blocked or error occurred:", err);
+        });
+    }
+
+    function playSoundEffect(filePath) {
+        const sfx = new Audio(filePath);
+        sfx.volume = 0.7; // Adjust volume as needed
+        sfx.play().catch((err) => {
+            console.warn("Sound effect failed to play:", err);
+        });
+    }
+
+
+
+
 </script>
 
 

@@ -113,7 +113,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-        import { getFirestore, collection, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+        import { getFirestore, collection, getDoc, doc , updateDoc} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -173,7 +173,7 @@
                 const data = docSnap.data();
                 await updateDoc(docRef, { gameSavedChap: 1 });
 
-            window.location.href = 'storyline.html'
+            window.location.href = 'storyline.html';
             } else {
                 console.log("No such document!");
             }
@@ -208,6 +208,10 @@
                 console.log("No such document!");
             }
         }
+
+        window.denyAnger = denyAnger;
+        window.memories = memories;
+        window.lettingGo = lettingGo;
     </script>
 </body>
 
