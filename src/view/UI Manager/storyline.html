@@ -393,7 +393,7 @@
         const characterContainer = document.querySelector(".character-container");
 
         // 新增：当前对话ID
-        let currentDialogueId = "memories1"; // 初始节点ID
+        let currentDialogueId = null; 
         let isTyping = false;
         let currentTimeout = null;
         let choicesTimeout = null;
@@ -542,25 +542,68 @@
             typingEffect();
         }
 
+        function validateLocalStorage() {
+            const savedDialog = localStorage.getItem('gameSavedDialog');
+            if (savedDialog === "0") {
+                console.warn('Invalid gameSavedDialog value detected. Clearing it.');
+                localStorage.removeItem('gameSavedDialog');
+            }
+
+            const currentProgress = localStorage.getItem('currentProgress');
+            if (currentProgress === "0") {
+                console.warn('Invalid currentProgress value detected. Clearing it.');
+                localStorage.removeItem('currentProgress');
+            }
+        }
+
+validateLocalStorage();
+
         // 新增：从 Firebase 获取对话节点
         async function loadDialogueFromFirebase(dialogueId) {
-            const doc = await db.collection('memoriesTogether_dialog').doc(dialogueId).get();
-            if (doc.exists) {
-                return doc.data();
-            }
+            const currentStory = localStorage.getItem('currentStory') || 'defaultStory'; // 默认故事为 defaultStory
+        if (!dialogueId || dialogueId === "0") {
+            console.error(`Invalid dialogue ID: ${dialogueId}`);
             return null;
         }
+
+        try {
+            const doc = await db.collection(`${currentStory}_dialog`).doc(dialogueId).get();
+            if (doc.exists) {
+                return doc.data();
+            } else {
+                console.error(`No dialogue found for ID: ${dialogueId} in story: ${currentStory}`);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error loading dialogue from Firebase:', error);
+            return null;
+        }
+    }
 
         // 新 showDialogue 函数：全部从 Firebase 渲染
         async function showDialogue(dialogueId) {
             console.log('Loading dialogue:', dialogueId);
             const dialogue = await loadDialogueFromFirebase(dialogueId);
             console.log('Loaded dialogue data:', dialogue);
-            
+
             if (!dialogue) {
                 console.error('No dialogue found for ID:', dialogueId);
                 return;
             }
+
+            // 保存当前对话 ID 到 localStorage
+            localStorage.setItem('gameSavedDialog', dialogueId);
+
+            // 保存 overallProgress 和 progressBar 到 localStorage
+            if (dialogue.overallProgress) {
+                localStorage.setItem('overallProgress', dialogue.overallProgress);
+            }
+            if (dialogue.progressBar) {
+                localStorage.setItem('progressBar', dialogue.progressBar);
+            }
+
+            // 更新进度条
+            updateProgress(dialogue.progressBar, dialogue.overallProgress);
 
             // 如果当前对话是拼图类型，直接开始拼图
             if (dialogue.type === 'puzzle') {
@@ -663,6 +706,31 @@
             }
         }
 
+        async function completeChapter(chapterId) {
+            const deviceId = localStorage.getItem("deviceId");
+            const docRef = doc(db, "players", deviceId);
+
+            try {
+                // 更新 Firebase 中的解锁状态
+                if (chapterId === 1) {
+                    await updateDoc(docRef, { memories: "Yes" }); // 解锁第二章
+                } else if (chapterId === 2) {
+                    await updateDoc(docRef, { lettingGo: "Yes" }); // 解锁第三章
+                }
+
+                console.log(`Chapter ${chapterId} completed. Next chapter unlocked.`);
+            } catch (error) {
+                console.error("Error updating chapter unlock status:", error);
+            }
+
+            // 清除当前对话保存，并更新章节
+            localStorage.removeItem('gameSavedDialog');
+            localStorage.setItem('gameSavedChap', chapterId + 1); // 解锁下一章节
+
+            // 跳转回章节选择页面
+            window.location.href = "chapter.html";
+        }
+
         // 修改 handleChoice 逻辑：用对话ID跳转
         async function handleChoice(nextDialogueId, traits) {
             console.log('handleChoice nextDialogueId type:', typeof nextDialogueId);
@@ -712,11 +780,24 @@
 
         // 新增：根据对话ID推断章节（可自定义）
         function getCurrentChapterFromId(dialogueId) {
-            // 你可以根据ID命名规则自定义章节划分
-            // 例如 denyAnger1, denyAnger2... 属于第1章
-            if (/^memories1/.test(dialogueId)) return 1;
-            if (/^memories2/.test(dialogueId)) return 2;
-            if (/^memories3/.test(dialogueId)) return 3;
+            const currentStory = localStorage.getItem('currentStory') || 'defaultStory'; // 获取当前故事线
+
+            // 根据当前故事线动态解析章节
+            if (currentStory === 'memories') {
+                if (/^memories1/.test(dialogueId)) return 1;
+                if (/^memories2/.test(dialogueId)) return 2;
+                if (/^memories3/.test(dialogueId)) return 3;
+            } else if (currentStory === 'denyAnger') {
+                if (/^deny1/.test(dialogueId)) return 1;
+                if (/^deny2/.test(dialogueId)) return 2;
+                if (/^deny3/.test(dialogueId)) return 3;
+            } else if (currentStory === 'lettingGo') {
+                if (/^letting1/.test(dialogueId)) return 1;
+                if (/^letting2/.test(dialogueId)) return 2;
+                if (/^letting3/.test(dialogueId)) return 3;
+            }
+
+            // 默认返回第1章
             return 1;
         }
 
@@ -859,10 +940,16 @@
         // 添加进度更新函数
         function updateProgress(chapterProgress, overallProgress) {
             const progressFill = document.querySelector('.progress-fill');
-            if (progressFill) {
+
+            // 更新进度条
+            if (progressFill && chapterProgress) {
                 progressFill.style.height = `${(chapterProgress / 100) * 100}%`;
             }
-            // 可以添加总体进度的存储
+
+            // 保存到 localStorage
+            if (chapterProgress) {
+                localStorage.setItem('progressBar', chapterProgress);
+            }
             if (overallProgress) {
                 localStorage.setItem('overallProgress', overallProgress);
             }
@@ -876,6 +963,8 @@
                 console.error('Invalid puzzle parameters:', { chapter, imagePath });
                 return;
             }
+
+            const currentStory = localStorage.getItem('currentStory');
 
             // 保存当前特征值到 Firebase 和本地存储
             await saveTraitsToFirebase(chapter);
@@ -893,16 +982,20 @@
 
             // 保存拼图完成后应该返回的对话 ID
             if (dialogue && dialogue.next && dialogue.next.onComplete) {
+                console.log('Saving currentProgress:', dialogue.next.onComplete);
                 localStorage.setItem('currentProgress', dialogue.next.onComplete);
+            } else {
+                console.error('onComplete is missing or invalid in dialogue.next:', dialogue.next);
             }
 
             // 保存当前章节和图片路径
-            localStorage.setItem('memoriesPuzzle', String(imagePath));
+            localStorage.setItem('puzzleImagePath', String(imagePath));
 
             console.log('Saved to localStorage:', {
+                currentStory,
                 currentChapter: localStorage.getItem('currentChapter'),
                 currentProgress: localStorage.getItem('currentProgress'),
-                memoriesPuzzle: localStorage.getItem('memoriesPuzzle')
+                puzzleImagePath: localStorage.getItem('puzzleImagePath')
             });
 
             // 跳转到拼图页面
@@ -916,33 +1009,52 @@
         }
 
         // 页面初始化
-        window.onload = async function() {
+        window.onload = async function () {
             await initializeUser();
-            
-            // 检查是否从拼图页面返回
+
+            // 检查是否有保存的章节和对话
+            const savedChapter = localStorage.getItem('gameSavedChap');
+            const savedDialog = localStorage.getItem('gameSavedDialog');
+            const currentStory = localStorage.getItem('currentStory') || 'defaultStory';
             const currentProgress = localStorage.getItem('currentProgress');
-            const currentChapter = localStorage.getItem('currentChapter');
-            
+
             console.log('Initialization - Current state:', {
-                currentProgress,
-                currentChapter
+                savedChapter,
+                savedDialog,
+                currentStory,
+                currentProgress
             });
-            
-            if (currentProgress) {
-                // 如果有currentProgress，说明是从拼图页面返回
-                console.log('Returning from puzzle, loading dialogue:', currentProgress);
+
+            if (currentProgress && currentProgress !== "0") {
+                console.log(`Returning from puzzle, loading dialogue: ${currentProgress}`);
                 currentDialogueId = currentProgress;
-                
-                // 清除currentProgress，因为我们已经处理了它
-                localStorage.removeItem('currentProgress');
+                localStorage.removeItem('currentProgress'); // 清除 currentProgress
+            } else if (savedDialog && savedDialog !== "0") {
+                console.log(`Loading saved dialog: ${savedDialog}`);
+                currentDialogueId = savedDialog;
+            } else if (savedChapter) {
+                console.log(`Loading saved chapter: ${savedChapter}`);
+                currentDialogueId = `${currentStory}_dialogue`; // 动态生成对话 ID
             } else {
-                // 正常初始化，使用默认对话ID
-                console.log('Normal initialization with:', currentDialogueId);
+                console.log('No saved chapter or dialog found, starting from default.');
+                currentDialogueId = `${currentStory}_dialogue`; // 默认从第1章第1对话开始
             }
-            
-            // 显示对话
+
+            if (!currentDialogueId || currentDialogueId === "0") {
+                console.error('Failed to initialize currentDialogueId. Setting to default.');
+                currentDialogueId = `${currentStory}_dialogue`; // 设置为默认值
+            }
+
             showDialogue(currentDialogueId);
-        }
+    };
+
+    function openSettings() {
+        window.location.href = 'setting.html';
+    }
+
+    function goToMainMenu() {
+        window.location.href = 'dashboard.html';
+    }
     </script>
 
 </body>
