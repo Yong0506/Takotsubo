@@ -567,7 +567,7 @@ validateLocalStorage();
         }
 
         try {
-            const doc = await db.collection('${currentStory}_dialogue').doc(dialogueId).get();
+            const doc = await db.collection(`${currentStory}_dialogue`).doc(dialogueId).get();
             if (doc.exists) {
                 return doc.data();
             } else {
@@ -600,6 +600,13 @@ validateLocalStorage();
             }
             if (dialogue.progressBar) {
                 localStorage.setItem('progressBar', dialogue.progressBar);
+            }
+
+             // 如果是 HTML 页面，跳转到该页面
+            if (typeof nextDialogueId === 'string' && nextDialogueId.endsWith('.html')) {
+                console.log('Detected HTML page, redirecting to:', );
+                nextDialogueId        window.location.href = nextDialogueId;
+                return;
             }
 
             // 更新进度条
@@ -751,6 +758,12 @@ validateLocalStorage();
 
                 // 更新并保存 traits
                 await updateTraits(allTraits, currentChapter);
+            }
+
+            if (typeof nextDialogueId === 'string' && nextDialogueId.endsWith('.html')) {
+                console.log('Detected HTML page, redirecting to:', nextDialogueId);
+                window.location.href = nextDialogueId;
+                return;
             }
 
             // 如果是对象并且类型是 puzzle
