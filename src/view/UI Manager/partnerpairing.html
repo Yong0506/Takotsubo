@@ -279,9 +279,15 @@
         if (!traitsSnapshot.empty) {
             const traitsData = traitsSnapshot.docs[0].data();
             console.log(`Traits data for deviceId ${deviceId}:`, traitsData); // Debugging output
-            return Object.keys(traitsData)
-                .filter(key => traitsData[key] > 0) // Only include traits with a value greater than 0
-                .map(key => key.charAt(0).toUpperCase() + key.slice(1)); // Capitalize the first letter of each trait
+
+            // Only include the desired traits
+            const allowedTraits = ["direct", "humorous", "kind", "optimistic", "romantic", "shy"];
+            const filteredTraits = Object.entries(traitsData)
+                .filter(([key, value]) => allowedTraits.includes(key) && value > 0) // Include only allowed traits with a value > 0
+                .sort((a, b) => b[1] - a[1]) // Sort traits by value in descending order
+                .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1)); // Capitalize the first letter of each trait
+
+            return filteredTraits;
         } else {
             console.warn(`No traits found for deviceId: ${deviceId}`); // Debugging output
         }
