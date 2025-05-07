@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,13 +18,13 @@
     <script>
         // Firebase 配置
         const firebaseConfig = {
-        apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
-        authDomain: "takotsubo-4f61d.firebaseapp.com",
-        projectId: "takotsubo-4f61d",
-        storageBucket: "takotsubo-4f61d.firebasestorage.app",
-        messagingSenderId: "59472372412",
-        appId: "1:59472372412:web:a192e23b031683988266b9",
-        measurementId: "G-QQ6VXX1M7C"
+            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.firebasestorage.app",
+            messagingSenderId: "59472372412",
+            appId: "1:59472372412:web:a192e23b031683988266b9",
+            measurementId: "G-QQ6VXX1M7C"
         };
 
         // 初始化 Firebase
@@ -150,11 +151,11 @@
             bottom: 0;
             width: 100%;
             height: 40%;
-            background: linear-gradient(to top, 
-                #FF0000 0%,
-                #FF4500 30%,
-                #FF6B6B 70%,
-                #FF8E8E 100%);
+            background: linear-gradient(to top,
+                    #FF0000 0%,
+                    #FF4500 30%,
+                    #FF6B6B 70%,
+                    #FF8E8E 100%);
             border-radius: 8px;
             transition: height 0.3s ease;
             animation: pulse 2s infinite;
@@ -164,9 +165,11 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
             }
+
             70% {
                 box-shadow: 0 0 0 15px rgba(255, 0, 0, 0);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
             }
@@ -197,8 +200,13 @@
         }
 
         @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-10px);
+            }
         }
 
         .dialogue-box.show {
@@ -219,7 +227,7 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-    
+
         .dialogue-line {
             font-size: 32px;
             line-height: 1.6;
@@ -329,16 +337,15 @@
             margin-right: 8px;
             /* Add space between the icon and the text */
         }
-        
-
     </style>
 </head>
+
 <body>
     <div class="vn-container">
         <div class="background-layer"></div>
         <div class="top-nav">
             <div class="button-group">
-                <button class="pause-button" data-bs-toggle="modal" data-bs-target="#pauseModal" >⏸</button>
+                <button class="pause-button" data-bs-toggle="modal" data-bs-target="#pauseModal">⏸</button>
             </div>
             <div class="chapter-title">Hang Out Together</div>
             <div class="skip-button">SKIP <span>►</span></div>
@@ -349,9 +356,10 @@
             <div class="progress-fill"></div>
         </div>
 
-  
+
         <div class="character-container">
-            <img src="../Asset Manager/images/main/character_sayuri.png"class ="character" id="characterLeft" alt="Sayuri">
+            <img src="../Asset Manager/images/main/character_sayuri.png" class="character" id="characterLeft"
+                alt="Sayuri">
         </div>
 
         <!-- 选项 -->
@@ -393,7 +401,7 @@
         const characterContainer = document.querySelector(".character-container");
 
         // 新增：当前对话ID
-        let currentDialogueId = null; 
+        let currentDialogueId = null;
         let isTyping = false;
         let currentTimeout = null;
         let choicesTimeout = null;
@@ -415,7 +423,7 @@
         async function initializeUser() {
             // 从本地存储获取用户ID
             currentUserId = localStorage.getItem('deviceId');
-            
+
             if (!currentUserId) {
                 // 如果没有用户ID，创建匿名用户
                 try {
@@ -426,18 +434,18 @@
                     console.error("Error creating anonymous user:", error);
                 }
             }
-             // 加载用户的 traits
-             await loadTraitsFromFirebase();
+            // 加载用户的 traits
+            await loadTraitsFromFirebase();
         }
 
-     
+
         // 从对应章节的 Firebase Collection 加载特征
         async function loadTraitsFromFirebase() {
             if (!currentUserId) return;
 
             try {
                 const doc = await db.collection('traits').doc(currentUserId).get();
-                
+
                 if (doc.exists) {
                     const data = doc.data();
                     // 如果数据中没有特征，使用默认值
@@ -456,7 +464,7 @@
             }
         }
 
-    
+
         async function saveTraitsToFirebase() {
             if (!currentUserId) return;
 
@@ -489,7 +497,7 @@
         // 更新特征值
         async function updateTraits(traits, chapterId) {
             if (!traits) return;
-            
+
             try {
                 // 遍历traits对象，如果某个trait为true，就增加对应的值
                 Object.keys(traits).forEach(trait => {
@@ -498,12 +506,12 @@
                         console.log(`Increased ${trait} trait to:`, playerTraits[trait]);
                     }
                 });
-                
+
                 // 保存到 Firebase
                 await saveTraitsToFirebase(chapterId);
                 // 同时保存到本地作为备份
                 saveTraitsToLocal();
-                
+
                 console.log('All traits updated:', playerTraits);
             } catch (error) {
                 console.error('Error updating traits:', error);
@@ -520,7 +528,7 @@
             if (isTyping && currentTimeout) {
                 clearTimeout(currentTimeout);
             }
-            
+
             const dialogueElement = document.getElementById("dialogueText");
             let i = 0;
             isTyping = true;
@@ -531,7 +539,7 @@
                 if (i < text.length) {
                     dialogueElement.innerHTML += text.charAt(i);
                     i++;
-                    const delay = /[,.!?]/.test(text.charAt(i-1)) ? speed * 4 : speed;
+                    const delay = /[,.!?]/.test(text.charAt(i - 1)) ? speed * 4 : speed;
                     currentTimeout = setTimeout(typingEffect, delay);
                 } else {
                     isTyping = false;
@@ -556,29 +564,29 @@
             }
         }
 
-validateLocalStorage();
+        validateLocalStorage();
 
         // 新增：从 Firebase 获取对话节点
         async function loadDialogueFromFirebase(dialogueId) {
             const currentStory = localStorage.getItem('currentStory') || 'defaultStory'; // 默认故事为 defaultStory
-        if (!dialogueId || dialogueId === "0") {
-            console.error(`Invalid dialogue ID: ${dialogueId}`);
-            return null;
-        }
-
-        try {
-            const doc = await db.collection(`${currentStory}_dialogue`).doc(dialogueId).get();
-            if (doc.exists) {
-                return doc.data();
-            } else {
-                console.error(`No dialogue found for ID: ${dialogueId} in story: ${currentStory}`);
+            if (!dialogueId || dialogueId === "0") {
+                console.error(`Invalid dialogue ID: ${dialogueId}`);
                 return null;
             }
-        } catch (error) {
-            console.error('Error loading dialogue from Firebase:', error);
-            return null;
+
+            try {
+                const doc = await db.collection(`${currentStory}_dialogue`).doc(dialogueId).get();
+                if (doc.exists) {
+                    return doc.data();
+                } else {
+                    console.error(`No dialogue found for ID: ${dialogueId} in story: ${currentStory}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error loading dialogue from Firebase:', error);
+                return null;
+            }
         }
-    }
 
         // 新 showDialogue 函数：全部从 Firebase 渲染
         async function showDialogue(dialogueId) {
@@ -602,9 +610,9 @@ validateLocalStorage();
                 localStorage.setItem('progressBar', dialogue.progressBar);
             }
 
-             // 如果是 HTML 页面，跳转到该页面
+            // 如果是 HTML 页面，跳转到该页面
             if (typeof nextDialogueId === 'string' && nextDialogueId.endsWith('.html')) {
-                console.log('Detected HTML page, redirecting to:', );
+                console.log('Detected HTML page, redirecting to:',);
                 window.location.href = nextDialogueId;
                 return;
             }
@@ -612,7 +620,7 @@ validateLocalStorage();
             // 更新进度条
             updateProgress(dialogue.progressBar, dialogue.overallProgress);
 
-            if(dialogue.type === 'punch'){
+            if (dialogue.type === 'punch') {
                 window.location.href = 'punch.html'
             }
 
@@ -621,7 +629,7 @@ validateLocalStorage();
                 console.log('Current dialogue is puzzle type, starting puzzle game:', dialogue);
                 startPuzzleGame(dialogue.chapter || 2, dialogue.imagePath || 1);
                 return;
-            } 
+            }
 
             // 如果下一个对话是拼图类型，显示当前对话后自动开始拼图
             if (dialogue.next && typeof dialogue.next === 'object' && dialogue.next.type === 'puzzle') {
@@ -687,7 +695,7 @@ validateLocalStorage();
                     const btn = document.createElement('button');
                     btn.classList.add('choice-btn');
                     btn.innerText = dialogue[`option${i}`];
-                    
+
                     // 收集该选项的traits
                     const optionTraits = {};
                     // 检查trait1, trait2, trait3的值并设置对应的trait
@@ -700,7 +708,7 @@ validateLocalStorage();
                     if (dialogue[`trait${i}_3`]) {
                         optionTraits[dialogue[`trait${i}_3`]] = true;
                     }
-                    
+
                     btn.onclick = () => handleChoice(dialogue[`option${i}Next`], optionTraits);
                     choicesContainer.appendChild(btn);
                 }
@@ -822,14 +830,14 @@ validateLocalStorage();
         function changeBackground(imagePath) {
             const backgroundLayer = document.querySelector('.background-layer');
             if (!backgroundLayer) return;
-            
+
             // 创建新的Image对象来预加载图片
             const img = new Image();
-            img.onload = function() {
+            img.onload = function () {
                 backgroundLayer.style.backgroundImage = `url('${imagePath}')`;
                 backgroundLayer.style.opacity = '1';
             };
-            img.onerror = function() {
+            img.onerror = function () {
                 console.error('Failed to load background image:', imagePath);
             };
             img.src = imagePath;
@@ -889,9 +897,9 @@ validateLocalStorage();
         dialogueBox.addEventListener('click', async () => {
             const dialogue = await loadDialogueFromFirebase(currentDialogueId);
             console.log('Click event - Current dialogue:', dialogue);
-            
+
             if (!dialogue) return;
-            
+
             // 如果正在打字，立即显示完整文本
             if (isTyping) {
                 if (currentTimeout) {
@@ -901,26 +909,26 @@ validateLocalStorage();
                 isTyping = false;
                 return;
             }
-            
+
             // 有选项时不处理
             let hasOptions = false;
             for (let i = 1; i <= 3; i++) {
                 if (dialogue[`option${i}`]) hasOptions = true;
             }
             if (hasOptions) return;
-            
+
             // 检查当前对话是否是拼图类型
             if (dialogue.type === 'puzzle') {
                 console.log('Current dialogue is puzzle type:', dialogue);
                 startPuzzleGame(dialogue.chapter || 2, dialogue.imagePath || 1);
                 return;
             }
-            
+
             // 跳到下一个
             if (dialogue.next) {
                 console.log('Processing next:', dialogue.next);
                 console.log('Next type:', typeof dialogue.next);
-                
+
                 if (typeof dialogue.next === 'string') {
                     // 正常切换对话
                     console.log('Normal dialogue transition to:', dialogue.next);
@@ -931,7 +939,7 @@ validateLocalStorage();
                     // 清理type字段中的额外引号
                     const cleanType = dialogue.next.type ? dialogue.next.type.replace(/['"\\]/g, '') : '';
                     console.log('Clean type:', cleanType);
-                    
+
                     if (cleanType === 'puzzle') {
                         // 直接开始拼图，不需要额外点击
                         console.log('Starting puzzle game with:', dialogue.next);
@@ -1030,36 +1038,27 @@ validateLocalStorage();
             await initializeUser();
 
             // 检查是否有保存的章节和对话
-            const savedChapter = localStorage.getItem('gameSavedChap');
+            const savedChapter = parseInt(localStorage.getItem("gameSavedChap"));
             const savedDialog = localStorage.getItem('gameSavedDialog');
-            let currentStory = localStorage.getItem('currentStory') || 'defaultStory';
-            let currentProgress = localStorage.getItem('currentProgress');
+            let currentStory, currentProgress;
 
-            if(savedChapter == 1){
+            if (savedChapter === 1) {
                 currentStory = "denyAnger";
-                localStorage.setItem('currentStory',"denyAnger");
-                if(savedDialog !== null){
-                    currentProgress = savedDialog;
-                }else{
-                    currentProgress = "deny1"
-                }
-            }else if (savedChapter == 2){
+                localStorage.setItem('currentStory', "denyAnger");
+                currentProgress = savedDialog !== "" ? savedDialog : "deny1";
+                if (savedDialog === "") localStorage.setItem('gameSavedDialog', "deny1");
+
+            } else if (savedChapter === 2) {
                 currentStory = "memoriesTogether";
                 localStorage.setItem('currentStory', "memoriesTogether");
-                if(savedDialog !== null){
-                    currentProgress = savedDialog;
-                }else{
-                    currentProgress = "memories1"
-                }
-            }else{
+                currentProgress = savedDialog !== "" ? savedDialog : "memories1";
+                if (savedDialog === "") localStorage.setItem('gameSavedDialog', "memories1");
+                
+            } else if (savedChapter === 3) {
                 currentStory = "lettingGo";
                 localStorage.setItem('currentStory', "lettingGo");
-                console.log(savedChap)
-                if(savedDialog !== null){
-                    currentProgress = savedDialog;
-                }else{
-                    currentProgress = "letting1"
-                }
+                currentProgress = savedDialog !== "" ? savedDialog : "letting1";
+                if (savedDialog === "") localStorage.setItem('gameSavedDialog', "letting1");
             }
 
             console.log('Initialization - Current state:', {
@@ -1090,15 +1089,15 @@ validateLocalStorage();
             }
 
             showDialogue(currentDialogueId);
-    };
+        };
 
-    function openSettings() {
-        window.location.href = 'setting.html';
-    }
+        function openSettings() {
+            window.location.href = 'setting.html';
+        }
 
-    function goToMainMenu() {
-        window.location.href = 'dashboard.html';
-    }
+        function goToMainMenu() {
+            window.location.href = 'dashboard.html';
+        }
     </script>
 
 </body>

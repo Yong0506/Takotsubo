@@ -758,7 +758,7 @@
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-    import { getFirestore, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+    import { getFirestore, collection, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -1276,9 +1276,11 @@
 
     async function saveChp() {
         try {
-            await setDoc(doc(collection(db, "players"), deviceId), {
+            await updateDoc(doc(collection(db, "players"), deviceId), {
                 memories: "Yes",
             });
+            localStorage.setItem("gameSavedDialog", "");
+            localStorage.setItem("currentStory", "");
             window.location.href = 'storyEnd.html';
         } catch (e) {
             console.error("Error adding document: ", e);
