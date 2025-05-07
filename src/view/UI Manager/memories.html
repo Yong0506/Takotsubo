@@ -117,10 +117,10 @@
             transform: scale(1.1);
         }
 
-        .settings-btn {
+        .pause-btn {
             position: absolute;
             top: 20px;
-            right: 50px;
+            left: 50px;
             width: 50px;
             height: 50px;
             font-size: 24px;
@@ -132,9 +132,67 @@
             transition: all 0.3s ease-in-out;
         }
 
-        .settings-btn:hover {
+        .pause-btn:hover {
             background-color: rgba(169, 169, 169, 1);
             transform: scale(1.05);
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid white;
+        }
+
+        .modal-title {
+            color: white;
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .btn-custom {
+            background-color: white;
+            color: rgb(78, 78, 78);
+            font-size: 1.2em;
+            padding: 12px 20px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: white;
+            color: rgb(0, 0, 0);
+            transform: scale(1.05);
+        }
+
+        .btn-custom i {
+            margin-right: 8px;
+        }
+
+        .btn-next {
+            font-size: 1.3em;
+            margin-top: 200px;
+            padding: 12px 35px;
+            border-radius: 10px;
+            background-color: rgba(169, 169, 169, 0.6);
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-next:hover {
+            background-color: rgba(169, 169, 169, 1);
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -143,7 +201,7 @@
 
     <div class="background"></div>
 
-    <button type="button" class="settings-btn" onclick="openSettings()"><i class="fas fa-cogs"></i></button>
+    <button class="pause-btn" data-bs-toggle="modal" data-bs-target="#pauseModal"><i class="fas fa-pause"></i></button>
 
     <div class="puzzle-container">
         <div id="board"></div>
@@ -156,11 +214,41 @@
         </div>
     </div>
 
+    <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column align-items-center">
+                        <button type="button" class="btn-custom" data-bs-dismiss="modal"><i
+                                class="fas fa-play"></i>Resume</button>
+                        <button type="button" class="btn-custom" onclick="openSettings()"><i
+                                class="fas fa-cogs"></i>Settings</button>
+                        <button type="button" class="btn-custom" onclick="goToMainMenu()"><i
+                                class="fas fa-home"></i>Main Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSettings() {
+            window.location.href = 'setting.html'
+        }
+
+        function goToMainMenu() {
+            window.location.href = 'dashboard.html'
+        }
+    </script>
+
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-        import { getFirestore, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+        import { getFirestore, collection, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -186,10 +274,14 @@
         let selectedTile = null;
         let targetTile = null;
 
+        let memoriesPuzzle;
+
         window.onload = function () {
-            if (localStorage.getItem("memoriesPuzzle")) {
-                memoriesPuzzle = parseInt(localStorage.getItem("memoriesPuzzle"));
+
+            if (localStorage.getItem("puzzleImagePath")) {
+                memoriesPuzzle = parseInt(localStorage.getItem("puzzleImagePath"));
             }
+            console.log(memoriesPuzzle);
 
             document.querySelector(".background").style.background = `url('../Asset Manager/images/memories/c${memoriesPuzzle}/full.webp') no-repeat center center / cover`;
 
@@ -255,7 +347,6 @@
             }
             alert("Congratulations, Puzzle Completed!");
 
-            // 获取当前章节和进度
             const currentChapter = localStorage.getItem('currentChapter');
             const currentProgress = localStorage.getItem('currentProgress');
 
@@ -274,16 +365,19 @@
                 return;
             }
 
-            // 清理拼图相关的临时数据
-            localStorage.removeItem('memoriesPuzzle');
-
-            if (memoriesPuzzle === 3) {
+            if (memoriesPuzzle == 1) {
+                localStorage.setItem("gameSavedDialog", "memories17");
+                window.location.href = 'storyline.html';
+            } else if (memoriesPuzzle == 2) {
+                localStorage.setItem("gameSavedDialog", "memories28");
                 window.location.href = 'storyline.html';
             } else {
                 try {
-                    await setDoc(doc(collection(db, "players"), deviceId), {
+                    await updateDoc(doc(collection(db, "players"), deviceId), {
                         lettingGo: "Yes",
                     });
+                    localStorage.setItem("gameSavedDialog", "");
+                    localStorage.setItem("currentStory", "");
                     window.location.href = 'storyEnd.html';
                 } catch (e) {
                     console.error("Error adding document: ", e);
@@ -299,9 +393,7 @@
             shufflePieces();
         }
 
-        function openSettings() {
-            window.location.href = 'setting.html'
-        }
+        window.checkSolution = checkSolution;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

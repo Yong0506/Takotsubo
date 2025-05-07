@@ -168,6 +168,7 @@
             const docRef = doc(db, "players", deviceId);
             const docSnap = await getDoc(docRef);
             localStorage.setItem("gameSavedChap", 1);
+            localStorage.setItem("currentStory", "denyAnger");
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
@@ -183,6 +184,7 @@
             const docRef = doc(db, "players", deviceId);
             const docSnap = await getDoc(docRef);
             localStorage.setItem("gameSavedChap", 2);
+            localStorage.setItem("currentStory", "memories");
             
             if (docSnap.exists()) {
                 const data = docSnap.data();
@@ -198,6 +200,7 @@
             const docRef = doc(db, "players", deviceId);
             const docSnap = await getDoc(docRef);
             localStorage.setItem("gameSavedChap", 3);
+            localStorage.setItem("currentStory", "lettingGo");
             
             if (docSnap.exists()) {
                 const data = docSnap.data();
