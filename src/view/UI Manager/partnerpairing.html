@@ -211,39 +211,9 @@
     <a class="back-btn" href="#">←</a>
     <div class="title">PARTNER PAIRING</div>
 
-    <div class="container">
-        <div class="grid-wrapper">
-                <div class="grid-container" id="card-container"></div>
-        </div>
-
-        <div class="profile-panel">
-            <h2 id="profile-title">Rosaline</h2>
-            <div class="card">
-                <img src="../Asset Manager/images/partnerpairing/kate.jpg" id="profile-img">
-                <p id="character-name">Rosaline</p>
-            </div>
-
-            <div class="hearts">
-                Matching Level:
-                <span>💜💜💜🤍🤍</span>
-            </div>
-
-            <div class="traits">
-                <strong>Traits:</strong><br>
-                Humorous, Kind, Independent
-            </div>
-
-            <div class="contact">
-                <strong>Contact:</strong><br>
-                Email: Rosaline123@gmail.com<br>
-                Phone: 0101234567
-            </div>
-
-            <div class="notes">
-                <strong>NOTES</strong><br>
-                Has class on Tuesdays.
-            </div>
-        </div>
+    <div class="search-bar">
+        <input type="text" id="traitSearch" placeholder="Search by trait (e.g., Kind, Humorous)" />
+        <button id="searchButton">Search</button>
     </div>
 
     <select id="genderFilter">
@@ -252,272 +222,175 @@
         <option value="Female">Female</option>
     </select>
 
-    <div class="search-bar">
-        <input type="text" id="traitSearch" placeholder="Search by trait (e.g., Kind, Humorous)" />
-        <button id="searchButton">Search</button>
+    <div class="container">
+        <div class="grid-wrapper">
+            <div class="grid-container" id="card-container"></div>
+        </div>
+
+        <div class="profile-panel">
+            <h2 id="profile-title">Rosaline</h2>
+            <div class="card">
+                <img src="../Asset Manager/images/partnerpairing/kate.jpg" id="profile-img">
+                <p id="character-name">Rosaline</p>
+            </div>
+            <div class="hearts">
+                Matching Level:
+                <span>💜💜💜🤍🤍</span>
+            </div>
+            <div class="traits">
+                <strong>Traits:</strong><br>
+                Humorous, Kind, Independent
+            </div>
+            <div class="contact">
+                <strong>Contact:</strong><br>
+                Email: Rosaline123@gmail.com<br>
+                Phone: 0101234567
+            </div>
+            <div class="notes">
+                <strong>NOTES</strong><br>
+                Has class on Tuesdays.
+            </div>
+        </div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const cards = document.querySelectorAll(".grid-container .card");
-            const characterNameHeading = document.getElementById("character-name");
-            const profileTitle = document.getElementById("profile-title");
-            const profileImg = document.getElementById("profile-img");
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-            cards.forEach(card => {
-                card.addEventListener("click", () => {
-                    cards.forEach(c => c.classList.remove("selected"));
-                    card.classList.add("selected");
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.appspot.com",
+            messagingSenderId: "59472372412",
+            appId: "1:59472372412:web:a192e23b031683988266b9",
+            measurementId: "G-QQ6VXX1M7C"
+        };
 
-                    const name = card.querySelector("p").innerText;
-                    const imgSrc = card.querySelector("img").src;
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
 
-                    characterNameHeading.innerText = name;
-                    profileTitle.innerText = name;
-                    profileImg.src = imgSrc;
-                });
-            });
-        });
-    </script>
+        const container = document.getElementById("card-container");
+        const genderFilter = document.getElementById("genderFilter");
+        const searchInput = document.getElementById("traitSearch");
+        const searchButton = document.getElementById("searchButton");
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const cards = document.querySelectorAll(".grid-container .card");
-        const characterNameHeading = document.getElementById("character-name");
-        const profileTitle = document.getElementById("profile-title");
-        const profileImg = document.getElementById("profile-img");
+        let allPartners = [];
 
-        cards.forEach(card => {
-            card.addEventListener("click", () => {
-                cards.forEach(c => c.classList.remove("selected"));
-                card.classList.add("selected");
-
-                const name = card.querySelector("p").innerText;
-                const imgSrc = card.querySelector("img").src;
-
-                characterNameHeading.innerText = name;
-                profileTitle.innerText = name;
-                profileImg.src = imgSrc;
-            });
-        });
-
-        // Add event listener for the search button
-        document.getElementById("searchButton").addEventListener("click", () => {
-    console.log("Search button clicked!"); // Debugging output
-    const searchValue = document.getElementById("traitSearch").value.trim().toLowerCase();
-    console.log("Search Value:", searchValue); // Debugging output
-
-    if (!searchValue) {
-        renderCards("all"); // If search is empty, show all cards
-        return;
-    }
-
-    const filteredByTrait = allPartners.filter(partner => {
-        console.log("Checking partner:", partner); // Debugging output
-        return partner.traits &&
-            partner.traits.some(trait => {
-                console.log("Checking trait:", trait.toLowerCase()); // Debugging output
-                return trait.toLowerCase() === searchValue;
-            });
-    });
-
-    console.log("Filtered Partners:", filteredByTrait); // Debugging output
-
-    if (filteredByTrait.length === 0) {
-        container.innerHTML = "<p style='color: red; text-align: center;'>No partners found with the specified trait.</p>";
-    } else {
-        renderFilteredCards(filteredByTrait);
-    }
-});
-    });
-
-    // Function to render filtered cards
-    function renderFilteredCards(filteredPartners) {
-        container.innerHTML = ""; // Clear the card container
-
-        filteredPartners.forEach(partner => {
-            const card = document.createElement("div");
-            card.className = "card";
-            card.innerHTML = `
-                <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
-                <p>${partner.name}</p>
-            `;
-            container.appendChild(card);
-
-            // Add click event to display details
-            card.addEventListener("click", () => {
-                document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-                card.classList.add("selected");
-
-                document.getElementById("profile-title").innerText = partner.name;
-                document.getElementById("character-name").innerText = partner.name;
-                document.getElementById("profile-img").src = partner.imgUrl;
-                document.querySelector(".contact").innerHTML = `
-                    <strong>Contact:</strong><br>
-                    Email: ${partner.email}<br>
-                    Phone: ${partner.phone}
-                `;
-                document.querySelector(".traits").innerHTML = `
-                    <strong>Traits:</strong><br>
-                    ${partner.traits.length > 0 ? partner.traits.join(", ") : "No traits available"}
-                `;
-            });
-        });
-    }
-</script>
-
-<script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
-        authDomain: "takotsubo-4f61d.firebaseapp.com",
-        projectId: "takotsubo-4f61d",
-        storageBucket: "takotsubo-4f61d.firebasestorage.app",
-        messagingSenderId: "59472372412",
-        appId: "1:59472372412:web:a192e23b031683988266b9",
-        measurementId: "G-QQ6VXX1M7C"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-
-    const container = document.getElementById("card-container");
-    let allPartners = [];
-
-    // Function to fetch traits for a specific player by deviceId
-    async function fetchTraitsByDeviceId(deviceId) {
-    try {
-        console.log(`Fetching traits for deviceId: ${deviceId}`); // Debugging output
-        const traitsQuery = query(collection(db, "traits"), where("deviceId", "==", deviceId));
-        const traitsSnapshot = await getDocs(traitsQuery);
-
-        if (!traitsSnapshot.empty) {
-            const traitsData = traitsSnapshot.docs[0].data();
-            console.log(`Traits data for deviceId ${deviceId}:`, traitsData); // Debugging output
-
-            // Only include the desired traits
-            const allowedTraits = ["direct", "humorous", "kind", "optimistic", "romantic", "shy"];
-            const filteredTraits = Object.entries(traitsData)
-                .filter(([key, value]) => allowedTraits.includes(key) && value > 0) // Include only allowed traits with a value > 0
-                .sort((a, b) => b[1] - a[1]) // Sort traits by value in descending order
-                .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1)); // Capitalize the first letter of each trait
-
-            return filteredTraits;
-        } else {
-            console.warn(`No traits found for deviceId: ${deviceId}`); // Debugging output
+        async function fetchTraitsByDeviceId(deviceId) {
+            try {
+                const traitsQuery = query(collection(db, "traits"), where("deviceId", "==", deviceId));
+                const traitsSnapshot = await getDocs(traitsQuery);
+                if (!traitsSnapshot.empty) {
+                    const traitsData = traitsSnapshot.docs[0].data();
+                    const allowedTraits = ["direct", "humorous", "kind", "optimistic", "romantic", "shy"];
+                    return Object.entries(traitsData)
+                        .filter(([key, value]) => allowedTraits.includes(key) && value > 0)
+                        .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
+                }
+            } catch (error) {
+                console.error(`Error fetching traits for deviceId ${deviceId}:`, error);
+            }
+            return [];
         }
-    } catch (error) {
-        console.error(`Error fetching traits for deviceId ${deviceId}:`, error);
-    }
 
-    return []; // Return an empty array if no traits are found or an error occurs
-}
+        async function loadPartners() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "players"));
+                allPartners = [];
 
-    // Function to load players and their traits
-    async function loadPartners() {
-    try {
-        const querySnapshot = await getDocs(collection(db, "players"));
-        allPartners = [];
+                for (const docSnap of querySnapshot.docs) {
+                    const data = docSnap.data();
+                    let traits = [];
+                    if (data.deviceId) {
+                        traits = await fetchTraitsByDeviceId(data.deviceId);
+                    }
 
-        for (const docSnap of querySnapshot.docs) {
-            const data = docSnap.data();
-            console.log("Fetched player data:", data); // Debugging output
+                    allPartners.push({
+                        id: docSnap.id,
+                        name: data.name || "Unknown",
+                        gender: data.gender || "Unknown",
+                        imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
+                        email: data.email || "N/A",
+                        phone: data.phone || "N/A",
+                        traits: traits
+                    });
+                }
 
-            let traits = [];
-            if (data.deviceId) {
-                // Fetch traits for the current player using their deviceId
-                traits = await fetchTraitsByDeviceId(data.deviceId);
-            } else {
-                console.warn(`Player ${data.name || "Unknown"} is missing a deviceId.`);
+                renderCards("all");
+            } catch (error) {
+                console.error("Error loading partners:", error);
+            }
+        }
+
+        function renderCards(gender = "all", searchTrait = "") {
+            container.innerHTML = "";
+
+            let filtered = allPartners;
+
+            if (gender !== "all") {
+                filtered = filtered.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
             }
 
-            allPartners.push({
-                id: docSnap.id,
-                name: data.name || "Unknown",
-                gender: data.gender || "Unknown",
-                imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
-                email: data.email || "N/A",
-                phone: data.phone || "N/A",
-                traits: traits // Add traits to the player object
+            if (searchTrait) {
+                const trait = searchTrait.toLowerCase();
+                filtered = filtered.filter(p =>
+                    p.traits && p.traits.some(t => t.toLowerCase() === trait)
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = "<p style='color: red; text-align: center;'>No partners found.</p>";
+                return;
+            }
+
+            filtered.forEach(partner => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
+                    <p>${partner.name}</p>
+                `;
+                container.appendChild(card);
+
+                card.addEventListener("click", () => {
+                    document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+                    card.classList.add("selected");
+
+                    document.getElementById("profile-title").innerText = partner.name;
+                    document.getElementById("character-name").innerText = partner.name;
+                    document.getElementById("profile-img").src = partner.imgUrl;
+                    document.querySelector(".contact").innerHTML = `
+                        <strong>Contact:</strong><br>
+                        Email: ${partner.email}<br>
+                        Phone: ${partner.phone}
+                    `;
+                    document.querySelector(".traits").innerHTML = `
+                        <strong>Traits:</strong><br>
+                        ${partner.traits.length > 0 ? partner.traits.join(", ") : "No traits available"}
+                    `;
+                });
             });
         }
 
-        console.log("All partners with traits:", allPartners); // Debugging output
-        renderCards("all");
-    } catch (error) {
-        console.error("Error loading partners:", error);
-    }
-}
-
-        console.log("All Partners Data:", allPartners);
-
-    // Function to render cards
-    function renderCards(gender) {
-    container.innerHTML = ""; // Clear the card container
-
-    console.log("Selected gender:", gender); // Debugging output
-
-    const filtered = gender === "all"
-        ? allPartners
-        : allPartners.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
-
-    console.log("Filtered partners:", filtered); // Debugging output
-
-    if (filtered.length === 0) {
-        container.innerHTML = "<p>No partners found for the selected gender.</p>";
-        return;
-    }
-
-    filtered.forEach(partner => {
-        console.log("Rendering partner:", partner); // Debugging output
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-            <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
-            <p>${partner.name}</p>
-        `;
-        container.appendChild(card);
-
-        // Add click event to display details
-        card.addEventListener("click", () => {
-            document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-            card.classList.add("selected");
-
-            console.log("Selected partner:", partner); // Debugging output
-
-            document.getElementById("profile-title").innerText = partner.name;
-            document.getElementById("character-name").innerText = partner.name;
-            document.getElementById("profile-img").src = partner.imgUrl;
-            document.querySelector(".contact").innerHTML = `
-                <strong>Contact:</strong><br>
-                Email: ${partner.email}<br>
-                Phone: ${partner.phone}
-            `;
-            document.querySelector(".traits").innerHTML = `
-                <strong>Traits:</strong><br>
-                ${partner.traits.length > 0 ? partner.traits.join(", ") : "No traits available"}
-            `;
+        // Event Listeners
+        searchButton.addEventListener("click", () => {
+            const searchValue = searchInput.value.trim();
+            const selectedGender = genderFilter.value || "all";
+            renderCards(selectedGender, searchValue);
         });
-    });
-}
-    // Load players on page load
-    document.addEventListener("DOMContentLoaded", function () {
-        loadPartners(); // Load player data
-    });
 
-    // Filter cards by gender
-    document.getElementById("genderFilter").addEventListener("change", (e) => {
-        const selectedGender = e.target.value || "all";
-        console.log("Gender filter changed to:", selectedGender); // Debugging output
-        renderCards(selectedGender);
-    });
-</script>
+        genderFilter.addEventListener("change", () => {
+            const selectedGender = genderFilter.value || "all";
+            const searchValue = searchInput.value.trim();
+            renderCards(selectedGender, searchValue);
+        });
+
+        // Load all partners on page load
+        document.addEventListener("DOMContentLoaded", loadPartners);
+    </script>
 </body>
 
 </html>
