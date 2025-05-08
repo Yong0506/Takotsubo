@@ -600,6 +600,10 @@
             <img src="../Asset Manager/images/punch/right-punch.png" alt="right-punch">
         </div>
 
+
+    </div>
+
+
         <!-- PAUSE SCREEN -->
         <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -620,7 +624,22 @@
                 </div>
             </div>
         </div>
-    </div>
+
+    <script>
+        function openSettings() {
+            const confirmed = window.confirm("Your current progress will all be lost, are you sure?");
+            if (confirmed) {
+                window.location.href = 'setting.html';
+            }
+        }
+
+        function goToMainMenu() {
+            const confirmed = window.confirm("Your current progress will all be lost, are you sure?");
+            if (confirmed) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+    </script>
 
     <!--START MENU-->
     <div class="startGameInstruction">
@@ -652,21 +671,6 @@
 
         <button class="startButton">START</button>
     </div>
-    <script>
-        function openSettings() {
-            const confirmed = window.confirm("Your current progress will all be lost, are you sure?");
-            if (confirmed) {
-                window.location.href = 'setting.html';
-            }
-        }
-
-        function goToMainMenu() {
-            const confirmed = window.confirm("Your current progress will all be lost, are you sure?");
-            if (confirmed) {
-                window.location.href = 'dashboard.html';
-            }
-        }
-    </script>
 </body>
 
 <script type="module">
@@ -701,7 +705,7 @@
 
     // Health values
     let playerHealth = 100;
-    let opponentHealth = 10;
+    let opponentHealth = 50;
     const playerHealthNumber = document.querySelector('.player-section .health-number');
     const opponentHealthNumber = document.querySelector('.opponent-section .health-number');
 
@@ -928,7 +932,7 @@
     // Reset health values for both player and opponent
     function resetHealth() {
         playerHealth = 100;
-        opponentHealth = 10;
+        opponentHealth = 50;
         updatePlayerHealthUI();
         updateOpponentHealthUI();
     }
