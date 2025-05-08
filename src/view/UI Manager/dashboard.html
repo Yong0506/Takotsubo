@@ -311,7 +311,6 @@
         function openSettings() {
             window.location.href = 'setting.html'
         }
-
     </script>
 
     <script type="module">
@@ -339,7 +338,7 @@
         const db = getFirestore(app);
 
         const deviceId = localStorage.getItem("deviceId");
-        console.log(deviceId);
+
         const docRef = doc(db, "players", deviceId);
         const docSnap = await getDoc(docRef);
 
@@ -510,8 +509,15 @@
                 phone: document.getElementById("editPhone").value,
             };
 
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
             if (!name || !gender || !birthDate || !email || !phone) {
                 alert("Please fill out all fields before proceeding.");
+                return;
+            }
+
+            if (!emailPattern.test(email)) {
+                alert("Please enter a valid email address.");
                 return;
             }
 
@@ -532,9 +538,15 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
+                const savedChap = parseInt(localStorage.getItem("gameSavedChap"));
+
                 await updateDoc(docRef, { newGame: "No" });
 
-                window.location.href = 'chapter.html';
+                if (savedChap > 0) {
+                    window.location.href = "storyline.html"
+                } else {
+                    window.location.href = "chapter.html";
+                }
             } else {
                 console.log("No such document!");
             }

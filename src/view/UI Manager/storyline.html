@@ -83,7 +83,7 @@
         .pause-button {
             width: 70px;
             height: 70px;
-            background: rgba(255, 255, 255, 0.15);
+            background-color: rgba(169, 169, 169, 0.6);
             border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             color: white;
@@ -102,15 +102,8 @@
             transform: scale(1.05);
         }
 
-        .chapter-title {
-            color: white;
-            font-size: 42px;
-            font-weight: 600;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .skip-button {
-            background: rgba(255, 255, 255, 0.15);
+            background-color: rgba(169, 169, 169, 0.6);
             color: white;
             padding: 20px 40px;
             border-radius: 20px;
@@ -136,21 +129,20 @@
         .progress-bar {
             position: absolute;
             left: 60px;
-            top: 50%;
+            top: 40%;
             transform: translateY(-50%);
             width: 20px;
             height: 400px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.2);
         }
 
         .progress-fill {
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 40%;
+            height: 0%;
             background: linear-gradient(to top,
                     #FF0000 0%,
                     #FF4500 30%,
@@ -221,9 +213,9 @@
             font-size: 36px;
             font-weight: 600;
             padding: 10px 30px;
-            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            background: white;
+            color: black;
             border-radius: 12px;
-            color: #FFFFFF;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
@@ -269,7 +261,8 @@
 
         .choice-btn:hover {
             transform: translateX(-10px);
-            background: white;
+            color: white;
+            background: rgb(61, 61, 61);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
@@ -335,7 +328,6 @@
 
         .btn-custom i {
             margin-right: 8px;
-            /* Add space between the icon and the text */
         }
     </style>
 </head>
@@ -345,10 +337,10 @@
         <div class="background-layer"></div>
         <div class="top-nav">
             <div class="button-group">
-                <button class="pause-button" data-bs-toggle="modal" data-bs-target="#pauseModal">⏸</button>
+                <button class="pause-button" data-bs-toggle="modal" data-bs-target="#pauseModal"><i
+                        class="fas fa-pause"></i></button>
             </div>
-            <div class="chapter-title">Hang Out Together</div>
-            <div class="skip-button">SKIP <span>►</span></div>
+            <div class="skip-button">SKIP<span></span><i class="fas fa-play"></i></div>
         </div>
 
         <!-- 进度条 -->
@@ -358,8 +350,7 @@
 
 
         <div class="character-container">
-            <img src="../Asset Manager/images/main/character_sayuri.png" class="character" id="characterLeft"
-                alt="Sayuri">
+            <img class="character" id="characterLeft">
         </div>
 
         <!-- 选项 -->
@@ -401,7 +392,7 @@
         const characterContainer = document.querySelector(".character-container");
 
         // 新增：当前对话ID
-        let currentDialogueId = null;
+        let currentProgress = "";
         let isTyping = false;
         let currentTimeout = null;
         let choicesTimeout = null;
@@ -438,7 +429,6 @@
             await loadTraitsFromFirebase();
         }
 
-
         // 从对应章节的 Firebase Collection 加载特征
         async function loadTraitsFromFirebase() {
             if (!currentUserId) return;
@@ -464,6 +454,12 @@
             }
         }
 
+        function loadTraitsFromLocal() {
+            const savedTraits = localStorage.getItem('playerTraits');
+            if (savedTraits) {
+                Object.assign(playerTraits, JSON.parse(savedTraits));
+            }
+        }
 
         async function saveTraitsToFirebase() {
             if (!currentUserId) return;
@@ -487,15 +483,8 @@
             localStorage.setItem('playerTraits', JSON.stringify(playerTraits));
         }
 
-        function loadTraitsFromLocal() {
-            const savedTraits = localStorage.getItem('playerTraits');
-            if (savedTraits) {
-                Object.assign(playerTraits, JSON.parse(savedTraits));
-            }
-        }
-
         // 更新特征值
-        async function updateTraits(traits, chapterId) {
+        async function updateTraits(traits) {
             if (!traits) return;
 
             try {
@@ -508,7 +497,7 @@
                 });
 
                 // 保存到 Firebase
-                await saveTraitsToFirebase(chapterId);
+                await saveTraitsToFirebase();
                 // 同时保存到本地作为备份
                 saveTraitsToLocal();
 
@@ -550,6 +539,7 @@
             typingEffect();
         }
 
+
         // function validateLocalStorage() {
         //     const savedDialog = localStorage.getItem('gameSavedDialog');
         //     if (savedDialog === "0") {
@@ -566,11 +556,11 @@
 
         // validateLocalStorage();
 
+       
         // 新增：从 Firebase 获取对话节点
         async function loadDialogueFromFirebase(dialogueId) {
-            
-            const currentStory = localStorage.getItem('currentStory') || 'defaultStory'; // 默认故事为 defaultStory
-            console.log('Loading dialogue from Firebase:', { currentStory, dialogueId });
+            const currentStory = localStorage.getItem("currentStory");
+
             if (!dialogueId || dialogueId === "0") {
                 console.error(`Invalid dialogue ID: ${dialogueId}`);
                 return null;
@@ -605,21 +595,6 @@
             // 保存当前对话 ID 到 localStorage
             localStorage.setItem('gameSavedDialog', dialogueId);
 
-            // 保存 overallProgress 和 progressBar 到 localStorage
-            if (dialogue.overallProgress) {
-                localStorage.setItem('overallProgress', dialogue.overallProgress);
-            }
-            if (dialogue.progressBar) {
-                localStorage.setItem('progressBar', dialogue.progressBar);
-            }
-
-            // 如果是 HTML 页面，跳转到该页面
-            if (typeof nextDialogueId === 'string' && nextDialogueId.endsWith('.html')) {
-                console.log('Detected HTML page, redirecting to:',);
-                window.location.href = nextDialogueId;
-                return;
-            }
-
             // 更新进度条
             updateProgress(dialogue.progressBar, dialogue.overallProgress);
 
@@ -629,41 +604,12 @@
 
             // 如果当前对话是拼图类型，直接开始拼图
             if (dialogue.type === 'puzzle') {
-                console.log('Current dialogue is puzzle type, starting puzzle game:', dialogue);
-                startPuzzleGame(dialogue.chapter || 2, dialogue.imagePath || 1);
+                startPuzzleGame(dialogue.imagePath);
                 return;
             }
 
-            // 如果下一个对话是拼图类型，显示当前对话后自动开始拼图
-            if (dialogue.next && typeof dialogue.next === 'object' && dialogue.next.type === 'puzzle') {
-                console.log('Next dialogue is puzzle type:', dialogue.next);
-                // 先显示当前对话
-                characterNameElement.innerText = renderCharName(dialogue.charName);
-                if (dialogue.type === "monologue") {
-                    dialogueTextElement.classList.add("monologue");
-                } else {
-                    dialogueTextElement.classList.remove("monologue");
-                }
-                dialogueTextElement.innerHTML = dialogue.dialog || "";
-
-                // 渲染角色图片
-                if (dialogue.charImg) {
-                    characterLeftElement.src = dialogue.charImg;
-                    characterContainer.classList.add('show');
-                } else {
-                    characterContainer.classList.remove('show');
-                }
-
-                // 渲染背景
-                if (dialogue.backgroundImg) {
-                    await changeBackground(dialogue.backgroundImg);
-                }
-
-                // 等待一小段时间后自动开始拼图
-                setTimeout(() => {
-                    startPuzzleGame(dialogue.next.chapter, dialogue.next.imagePath);
-                }, 2000); // 等待2秒后自动进入拼图
-                return;
+            if (dialogue.type === 'maze') {
+                window.location.href = 'maze.html'
             }
 
             // 渲染角色名、对话内容
@@ -673,6 +619,7 @@
             } else {
                 dialogueTextElement.classList.remove("monologue");
             }
+
             typeText(dialogue.dialog || "");
 
             // 渲染角色图片
@@ -721,36 +668,6 @@
             if (!hasOptions) {
                 choicesContainer.innerHTML = '';
             }
-
-            // 更新进度
-            if (dialogue.chapterProgress) {
-                updateProgress(dialogue.chapterProgress, dialogue.overallProgress);
-            }
-        }
-
-        async function completeChapter(chapterId) {
-            const deviceId = localStorage.getItem("deviceId");
-            const docRef = doc(db, "players", deviceId);
-
-            try {
-                // 更新 Firebase 中的解锁状态
-                if (chapterId === 1) {
-                    await updateDoc(docRef, { memories: "Yes" }); // 解锁第二章
-                } else if (chapterId === 2) {
-                    await updateDoc(docRef, { lettingGo: "Yes" }); // 解锁第三章
-                }
-
-                console.log(`Chapter ${chapterId} completed. Next chapter unlocked.`);
-            } catch (error) {
-                console.error("Error updating chapter unlock status:", error);
-            }
-
-            // 清除当前对话保存，并更新章节
-            localStorage.removeItem('gameSavedDialog');
-            localStorage.setItem('gameSavedChap', chapterId + 1); // 解锁下一章节
-
-            // 跳转回章节选择页面
-            window.location.href = "chapter.html";
         }
 
         // 修改 handleChoice 逻辑：用对话ID跳转
@@ -759,7 +676,6 @@
             console.log('handleChoice nextDialogueId value:', nextDialogueId);
 
             // 更新 trait
-            const currentChapter = getCurrentChapterFromId(nextDialogueId);
             if (traits) {
                 // 收集所有可能的 trait
                 const allTraits = {
@@ -772,37 +688,9 @@
                 };
 
                 // 更新并保存 traits
-                await updateTraits(allTraits, currentChapter);
-            }
-
-            if (typeof nextDialogueId === 'string' && nextDialogueId.endsWith('.html')) {
-                console.log('Detected HTML page, redirecting to:', nextDialogueId);
-                window.location.href = nextDialogueId;
-                return;
-            }
-
-            // 如果是对象并且类型是 puzzle
-            if (typeof nextDialogueId === 'object' && nextDialogueId.type === "puzzle") {
-                console.log('Puzzle type detected:', nextDialogueId);
-                console.log('Current dialogue ID:', currentDialogueId);
-
-                // 直接使用 nextDialogueId 中的值
-                if (nextDialogueId.chapter && nextDialogueId.imagePath) {
-                    console.log('Starting puzzle with:', {
-                        chapter: nextDialogueId.chapter,
-                        imagePath: nextDialogueId.imagePath
-                    });
-                    startPuzzleGame(nextDialogueId.chapter, nextDialogueId.imagePath);
-                } else {
-                    console.error('Missing puzzle parameters in nextDialogueId:', nextDialogueId);
-                }
-            } else if (typeof nextDialogueId === 'string') {
-                console.log('String type detected, changing dialogue to:', nextDialogueId);
-                // 普通对话跳转
-                currentDialogueId = nextDialogueId;
-                showDialogue(currentDialogueId);
-            } else {
-                console.error('Unexpected nextDialogueId type:', typeof nextDialogueId);
+                await updateTraits(allTraits);
+                showDialogue(nextDialogueId)
+                currentProgress = nextDialogueId;
             }
         }
 
@@ -846,59 +734,112 @@
             img.src = imagePath;
         }
 
-        // Skip 按钮：快速跳过对话直到遇到选项或小游戏
-        document.querySelector('.skip-button').addEventListener('click', async function skipToInteraction() {
-            async function checkAndSkipDialogue(dialogueId) {
-                const dialogue = await loadDialogueFromFirebase(dialogueId);
-                if (!dialogue) return false;
+        // // Skip 按钮：快速跳过对话直到遇到选项或小游戏
+        // document.querySelector('.skip-button').addEventListener('click', async function skipToInteraction() {
+        //     async function checkAndSkipDialogue(dialogueId) {
+        //         const dialogue = await loadDialogueFromFirebase(dialogueId);
+        //         if (!dialogue) return false;
 
-                // 检查是否有选项
-                let hasOptions = false;
-                for (let i = 1; i <= 3; i++) {
-                    if (dialogue[`option${i}`]) {
-                        hasOptions = true;
-                        break;
-                    }
-                }
+        //         // 检查是否有选项
+        //         let hasOptions = false;
+        //         for (let i = 1; i <= 3; i++) {
+        //             if (dialogue[`option${i}`]) {
+        //                 hasOptions = true;
+        //                 break;
+        //             }
+        //         }
 
-                // 如果有选项，停在这里
-                if (hasOptions) {
-                    currentDialogueId = dialogueId;
-                    showDialogue(currentDialogueId);
-                    return true;
-                }
+        //         // 如果有选项，停在这里
+        //         if (hasOptions) {
+        //             currentProgress = dialogueId;
+        //             showDialogue(currentProgress);
+        //             return true;
+        //         }
 
-                // 如果是拼图，直接开始拼图
-                if (dialogue.type === 'puzzle') {
-                    startPuzzleGame(dialogue.chapter || 2, dialogue.imagePath || 1);
-                    return true;
-                }
+        //         if (dialogue.type === 'punch') {
+        //             window.location.href = 'punch.html'
+        //         }
 
-                // 检查下一个对话
-                if (dialogue.next) {
-                    if (typeof dialogue.next === 'object' && dialogue.next.type === 'puzzle') {
-                        // 如果下一个是拼图，直接开始拼图
-                        startPuzzleGame(dialogue.next.chapter || 2, dialogue.next.imagePath || 1);
-                        return true;
-                    } else if (typeof dialogue.next === 'string') {
-                        // 继续检查下一个对话
-                        return await checkAndSkipDialogue(dialogue.next);
-                    }
-                }
+        //         // 如果当前对话是拼图类型，直接开始拼图
+        //         if (dialogue.type === 'puzzle') {
+        //             startPuzzleGame(dialogue.imagePath);
+        //             return;
+        //         }
 
-                return false;
+        //         if (dialogue.type === 'maze') {
+        //             window.location.href = 'maze.html'
+        //         }
+
+        //         return false;
+        //     }
+
+        //     // 开始跳过对话
+        //     const found = await checkAndSkipDialogue(currentProgress);
+        //     if (!found) {
+        //         console.log('No interaction point found');
+        //     }
+        // });
+
+async function skipToInteraction() {
+    async function checkAndSkipDialogue(dialogueId) {
+        const dialogue = await loadDialogueFromFirebase(dialogueId);
+        if (!dialogue) return false;
+
+        // 检查是否有选项
+        let hasOptions = false;
+        for (let i = 1; i <= 3; i++) {
+            if (dialogue[`option${i}`]) {
+                hasOptions = true;
+                break;
             }
+        }
 
-            // 开始跳过对话
-            const found = await checkAndSkipDialogue(currentDialogueId);
-            if (!found) {
-                console.log('No interaction point found');
-            }
-        });
+        // 如果有选项，停在这里
+        if (hasOptions) {
+            currentProgress = dialogueId;
+            showDialogue(currentProgress);
+            return true;
+        }
+
+        // 根据对话类型处理特殊跳转
+        if (dialogue.type === 'punch') {
+            window.location.href = 'punch.html';
+            return true;
+        }
+
+        if (dialogue.type === 'puzzle') {
+            startPuzzleGame(dialogue.imagePath);
+            return true;
+        }
+
+        if (dialogue.type === 'maze') {
+            window.location.href = 'maze.html';
+            return true;
+        }
+
+        // 跳到下一个对话
+        if (dialogue.next) {
+            currentProgress = dialogue.next;
+            return await checkAndSkipDialogue(dialogue.next);
+        }
+
+        return false;
+    }
+
+    // 开始跳过对话
+    const found = await checkAndSkipDialogue(currentProgress);
+    if (!found) {
+        console.log('No interaction point found');
+    }
+}
+
+// 绑定到跳过按钮
+document.querySelector('.skip-button').addEventListener('click', skipToInteraction);
+
 
         // 对话框点击事件：只处理无选项时的下一句
         dialogueBox.addEventListener('click', async () => {
-            const dialogue = await loadDialogueFromFirebase(currentDialogueId);
+            const dialogue = await loadDialogueFromFirebase(currentProgress);
             console.log('Click event - Current dialogue:', dialogue);
 
             if (!dialogue) return;
@@ -920,13 +861,6 @@
             }
             if (hasOptions) return;
 
-            // 检查当前对话是否是拼图类型
-            if (dialogue.type === 'puzzle') {
-                console.log('Current dialogue is puzzle type:', dialogue);
-                startPuzzleGame(dialogue.chapter || 2, dialogue.imagePath || 1);
-                return;
-            }
-
             // 跳到下一个
             if (dialogue.next) {
                 console.log('Processing next:', dialogue.next);
@@ -935,8 +869,8 @@
                 if (typeof dialogue.next === 'string') {
                     // 正常切换对话
                     console.log('Normal dialogue transition to:', dialogue.next);
-                    currentDialogueId = dialogue.next;
-                    showDialogue(currentDialogueId);
+                    currentProgress = dialogue.next;
+                    showDialogue(currentProgress);
                 } else if (typeof dialogue.next === 'object') {
                     console.log('Object type detected:', dialogue.next);
                     // 清理type字段中的额外引号
@@ -945,8 +879,12 @@
 
                     if (cleanType === 'puzzle') {
                         // 直接开始拼图，不需要额外点击
-                        console.log('Starting puzzle game with:', dialogue.next);
-                        startPuzzleGame(dialogue.next.chapter, dialogue.next.imagePath);
+                        startPuzzleGame(dialogue.next.imagePath);
+                    } else if (cleanType === 'punch') {
+                        window.location.href = 'punch.html'
+                    } else if (cleanType === 'maze') {
+                        window.location.href = 'maze.html'
+
                     } else {
                         console.log('Unknown object type:', dialogue.next);
                     }
@@ -958,60 +896,34 @@
             }
         });
 
-        function openPause() {
-            // 保存当前状态
-            localStorage.setItem('lastDialogueIndex', currentDialogueId);
-            // 跳转到设置页面
-            window.location.href = 'pause.html';
-        }
-
         // 添加进度更新函数
         function updateProgress(chapterProgress, overallProgress) {
             const progressFill = document.querySelector('.progress-fill');
 
             // 更新进度条
             if (progressFill && chapterProgress) {
-                progressFill.style.height = `${(chapterProgress / 100) * 100}%`;
+                progressFill.style.height = `${chapterProgress}%`;
             }
 
             // 保存到 localStorage
-            if (chapterProgress) {
-                localStorage.setItem('progressBar', chapterProgress);
-            }
-            if (overallProgress) {
-                localStorage.setItem('overallProgress', overallProgress);
-            }
+            localStorage.setItem('progressBar', chapterProgress);
+            localStorage.setItem('overallProgress', overallProgress);
         }
 
         // 添加拼图游戏触发函数
-        async function startPuzzleGame(chapter, imagePath) {
-            console.log('startPuzzleGame called with:', { chapter, imagePath });
+        async function startPuzzleGame(imagePath) {
 
-            if (!chapter || !imagePath) {
-                console.error('Invalid puzzle parameters:', { chapter, imagePath });
+            if (!imagePath) {
+                console.error(imagePath);
                 return;
             }
 
-            const currentStory = localStorage.getItem('currentStory');
-
-            // 保存当前特征值到 Firebase 和本地存储
-            await saveTraitsToFirebase(chapter);
-            saveTraitsToLocal();
-
-            // 保存当前对话索引
-            localStorage.setItem('lastDialogueIndex', currentDialogueId);
-
             // 获取当前对话数据
-            const dialogue = await loadDialogueFromFirebase(currentDialogueId);
-            console.log('Loaded dialogue in startPuzzleGame:', dialogue);
-
-            // 保存当前章节
-            localStorage.setItem('currentChapter', String(chapter));
+            const dialogue = await loadDialogueFromFirebase(currentProgress);
 
             // 保存拼图完成后应该返回的对话 ID
             if (dialogue && dialogue.next && dialogue.next.onComplete) {
-                console.log('Saving currentProgress:', dialogue.next.onComplete);
-                localStorage.setItem('currentProgress', dialogue.next.onComplete);
+                localStorage.setItem('gameSavedDialog', dialogue.next.onComplete);
             } else {
                 console.error('onComplete is missing or invalid in dialogue.next:', dialogue.next);
             }
@@ -1019,19 +931,12 @@
             // 保存当前章节和图片路径
             localStorage.setItem('puzzleImagePath', String(imagePath));
 
-            console.log('Saved to localStorage:', {
-                currentStory,
-                currentChapter: localStorage.getItem('currentChapter'),
-                currentProgress: localStorage.getItem('currentProgress'),
-                puzzleImagePath: localStorage.getItem('puzzleImagePath')
-            });
-
             // 跳转到拼图页面
             window.location.href = 'memories.html';
         }
 
         function renderCharName(rawCharName) {
-            const playerName = localStorage.getItem('playerName') || "You";
+            const playerName = "You";
             if (!rawCharName) return playerName;
             return rawCharName.replace(/\{playerName\}/g, playerName);
         }
@@ -1043,7 +948,7 @@
             // 检查是否有保存的章节和对话
             const savedChapter = parseInt(localStorage.getItem("gameSavedChap"));
             const savedDialog = localStorage.getItem('gameSavedDialog');
-            let currentStory, currentProgress;
+            let currentStory;
 
             if (savedChapter === 1) {
                 currentStory = "denyAnger";
@@ -1056,7 +961,7 @@
                 localStorage.setItem('currentStory', "memoriesTogether");
                 currentProgress = savedDialog !== "" ? savedDialog : "memories1";
                 if (savedDialog === "") localStorage.setItem('gameSavedDialog', "memories1");
-                
+
             } else if (savedChapter === 3) {
                 currentStory = "lettingGo";
                 localStorage.setItem('currentStory', "lettingGo");
@@ -1071,27 +976,7 @@
                 currentProgress,
             });
 
-            if (currentProgress && currentProgress !== "0") {
-                console.log(`Returning from puzzle, loading dialogue: ${currentProgress}`);
-                currentDialogueId = currentProgress;
-                localStorage.removeItem('currentProgress'); // 清除 currentProgress
-            } else if (savedDialog && savedDialog !== "0") {
-                console.log(`Loading saved dialog: ${savedDialog}`);
-                currentDialogueId = savedDialog;
-            } else if (savedChapter) {
-                console.log(`Loading saved chapter: ${savedChapter}`);
-                currentDialogueId = `${currentStory}_dialogue`; // 动态生成对话 ID
-            } else {
-                console.log('No saved chapter or dialog found, starting from default.');
-                currentDialogueId = `${currentStory}_dialogue`; // 默认从第1章第1对话开始
-            }
-
-            if (!currentDialogueId || currentDialogueId === "0") {
-                console.error('Failed to initialize currentDialogueId. Setting to default.');
-                currentDialogueId = `${currentStory}_dialogue`; // 设置为默认值
-            }
-
-            showDialogue(currentDialogueId);
+            showDialogue(currentProgress);
         };
 
         function openSettings() {

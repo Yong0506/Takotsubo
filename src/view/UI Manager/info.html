@@ -160,20 +160,30 @@
         });
 
         async function saveInfo() {
+            // user information
             const name = document.getElementById("playerName").value;
             const gender = document.querySelector('input[name="gender"]:checked')?.value;
             const birthDate = document.getElementById("birthDate").value;
             const email = document.getElementById("email").value;
             const phone = document.getElementById("phone").value;
+            // default game chapter
             const newGame = "Yes";
             const allChapUnlock = "No";
             const denyAnger = "Yes";
             const memories = "No";
             const lettingGo = "No";
+            // doughnut chart
             const overallProgress = 0;
+            // validate email pattern
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (!name || !gender || !birthDate || !email || !phone) {
                 alert("Please fill out all fields before proceeding.");
+                return;
+            }
+
+            if (!emailPattern.test(email)) {
+                alert("Please enter a valid email address.");
                 return;
             }
 
@@ -203,7 +213,7 @@
 
             let gameSavedDialog = localStorage.getItem("gameSavedDialog");
             if (!gameSavedDialog) {
-                gameSavedDialog = 0;
+                gameSavedDialog = "";
                 localStorage.setItem("gameSavedDialog", gameSavedDialog);
             }
 
@@ -221,8 +231,6 @@
                     memories: memories,
                     lettingGo: lettingGo,
                     overallProgress: overallProgress,
-                    gameSavedChap: gameSavedChap,
-                    gameSavedDialog: gameSavedDialog,
                     createdAt: new Date()
                 });
 
