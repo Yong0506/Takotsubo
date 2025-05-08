@@ -550,25 +550,27 @@
             typingEffect();
         }
 
-        function validateLocalStorage() {
-            const savedDialog = localStorage.getItem('gameSavedDialog');
-            if (savedDialog === "0") {
-                console.warn('Invalid gameSavedDialog value detected. Clearing it.');
-                localStorage.removeItem('gameSavedDialog');
-            }
+        // function validateLocalStorage() {
+        //     const savedDialog = localStorage.getItem('gameSavedDialog');
+        //     if (savedDialog === "0") {
+        //         console.warn('Invalid gameSavedDialog value detected. Clearing it.');
+        //         localStorage.removeItem('gameSavedDialog');
+        //     }
 
-            const currentProgress = localStorage.getItem('currentProgress');
-            if (currentProgress === "0") {
-                console.warn('Invalid currentProgress value detected. Clearing it.');
-                localStorage.removeItem('currentProgress');
-            }
-        }
+        //     const currentProgress = localStorage.getItem('currentProgress');
+        //     if (currentProgress === "0") {
+        //         console.warn('Invalid currentProgress value detected. Clearing it.');
+        //         localStorage.removeItem('currentProgress');
+        //     }
+        // } 
 
-        validateLocalStorage();
+        // validateLocalStorage();
 
         // 新增：从 Firebase 获取对话节点
         async function loadDialogueFromFirebase(dialogueId) {
+            
             const currentStory = localStorage.getItem('currentStory') || 'defaultStory'; // 默认故事为 defaultStory
+            console.log('Loading dialogue from Firebase:', { currentStory, dialogueId });
             if (!dialogueId || dialogueId === "0") {
                 console.error(`Invalid dialogue ID: ${dialogueId}`);
                 return null;
@@ -577,7 +579,8 @@
             try {
                 const doc = await db.collection(`${currentStory}_dialogue`).doc(dialogueId).get();
                 if (doc.exists) {
-                    return doc.data();
+                    console.log('Dialogue data loaded:', doc.data());
+                    return doc.data(); 
                 } else {
                     console.error(`No dialogue found for ID: ${dialogueId} in story: ${currentStory}`);
                     return null;
@@ -1065,7 +1068,7 @@
                 savedChapter,
                 savedDialog,
                 currentStory,
-                currentProgress
+                currentProgress,
             });
 
             if (currentProgress && currentProgress !== "0") {
