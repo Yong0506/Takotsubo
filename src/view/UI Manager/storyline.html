@@ -624,22 +624,11 @@
 
             // 渲染角色图片
             if (dialogue.charImg) {
-                if (dialogue.type === 'hit' && dialogue.effectImg) {
-                // 如果是hit_narrator类型的对话，显示特效图片
-                characterLeftElement.src = dialogue.effectImg;
-                characterContainer.classList.add('show');
-
-                setTimeout(() => {
-                    characterLeftElement.src = dialogue.charImg;
-                }, dialogue.effectDuration || 3000);
-            } else {
                 characterLeftElement.src = dialogue.charImg;
                 characterContainer.classList.add('show');
+            } else {
+                characterContainer.classList.remove('show');
             }
-        } else {
-            characterContainer.classList.remove('show');
-        }
-            
 
             // 渲染背景
             if (dialogue.backgroundImg) {
