@@ -347,24 +347,6 @@
             }
             alert("Congratulations, Puzzle Completed!");
 
-            const currentChapter = localStorage.getItem('currentChapter');
-            const currentProgress = localStorage.getItem('currentProgress');
-
-            console.log('Puzzle completed - Current state:', {
-                currentChapter,
-                currentProgress
-            });
-
-            if (!currentProgress || !currentChapter) {
-                console.error('Missing progress information:', {
-                    currentProgress,
-                    currentChapter
-                });
-                alert("Error: Could not determine next dialogue. Returning to story.");
-                window.location.href = 'storyline.html';
-                return;
-            }
-
             if (memoriesPuzzle == 1) {
                 localStorage.setItem("gameSavedDialog", "memories17");
                 window.location.href = 'storyline.html';
