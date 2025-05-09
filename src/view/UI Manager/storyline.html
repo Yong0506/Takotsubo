@@ -556,7 +556,7 @@
 
         // validateLocalStorage();
 
-       
+
         // 新增：从 Firebase 获取对话节点
         async function loadDialogueFromFirebase(dialogueId) {
             const currentStory = localStorage.getItem("currentStory");
@@ -570,7 +570,7 @@
                 const doc = await db.collection(`${currentStory}_dialogue`).doc(dialogueId).get();
                 if (doc.exists) {
                     console.log('Dialogue data loaded:', doc.data());
-                    return doc.data(); 
+                    return doc.data();
                 } else {
                     console.error(`No dialogue found for ID: ${dialogueId} in story: ${currentStory}`);
                     return null;
@@ -780,61 +780,61 @@
         //     }
         // });
 
-async function skipToInteraction() {
-    async function checkAndSkipDialogue(dialogueId) {
-        const dialogue = await loadDialogueFromFirebase(dialogueId);
-        if (!dialogue) return false;
+        async function skipToInteraction() {
+            async function checkAndSkipDialogue(dialogueId) {
+                const dialogue = await loadDialogueFromFirebase(dialogueId);
+                if (!dialogue) return false;
 
-        // 检查是否有选项
-        let hasOptions = false;
-        for (let i = 1; i <= 3; i++) {
-            if (dialogue[`option${i}`]) {
-                hasOptions = true;
-                break;
+                // 检查是否有选项
+                let hasOptions = false;
+                for (let i = 1; i <= 3; i++) {
+                    if (dialogue[`option${i}`]) {
+                        hasOptions = true;
+                        break;
+                    }
+                }
+
+                // 如果有选项，停在这里
+                if (hasOptions) {
+                    currentProgress = dialogueId;
+                    showDialogue(currentProgress);
+                    return true;
+                }
+
+                // 根据对话类型处理特殊跳转
+                if (dialogue.type === 'punch') {
+                    window.location.href = 'punch.html';
+                    return true;
+                }
+
+                if (dialogue.type === 'puzzle') {
+                    startPuzzleGame(dialogue.imagePath);
+                    return true;
+                }
+
+                if (dialogue.type === 'maze') {
+                    window.location.href = 'maze.html';
+                    return true;
+                }
+
+                // 跳到下一个对话
+                if (dialogue.next) {
+                    currentProgress = dialogue.next;
+                    return await checkAndSkipDialogue(dialogue.next);
+                }
+
+                return false;
+            }
+
+            // 开始跳过对话
+            const found = await checkAndSkipDialogue(currentProgress);
+            if (!found) {
+                console.log('No interaction point found');
             }
         }
 
-        // 如果有选项，停在这里
-        if (hasOptions) {
-            currentProgress = dialogueId;
-            showDialogue(currentProgress);
-            return true;
-        }
-
-        // 根据对话类型处理特殊跳转
-        if (dialogue.type === 'punch') {
-            window.location.href = 'punch.html';
-            return true;
-        }
-
-        if (dialogue.type === 'puzzle') {
-            startPuzzleGame(dialogue.imagePath);
-            return true;
-        }
-
-        if (dialogue.type === 'maze') {
-            window.location.href = 'maze.html';
-            return true;
-        }
-
-        // 跳到下一个对话
-        if (dialogue.next) {
-            currentProgress = dialogue.next;
-            return await checkAndSkipDialogue(dialogue.next);
-        }
-
-        return false;
-    }
-
-    // 开始跳过对话
-    const found = await checkAndSkipDialogue(currentProgress);
-    if (!found) {
-        console.log('No interaction point found');
-    }
-}
-
-// 绑定到跳过按钮
-document.querySelector('.skip-button').addEventListener('click', skipToInteraction);
+        // 绑定到跳过按钮
+        document.querySelector('.skip-button').addEventListener('click', skipToInteraction);
 
 
         // 对话框点击事件：只处理无选项时的下一句
@@ -897,7 +897,7 @@ document.querySelector('.skip-button').addEventListener('click', skipToInteracti
         });
 
         // 添加进度更新函数
-        function updateProgress(chapterProgress, overallProgress) {
+        async function updateProgress(chapterProgress, overallProgress) {
             const progressFill = document.querySelector('.progress-fill');
 
             // 更新进度条
@@ -908,6 +908,14 @@ document.querySelector('.skip-button').addEventListener('click', skipToInteracti
             // 保存到 localStorage
             localStorage.setItem('progressBar', chapterProgress);
             localStorage.setItem('overallProgress', overallProgress);
+
+            try {
+                await db.collection('players').doc(currentUserId).update({ 
+                    overallProgress: overallProgress
+                });
+            } catch (error) {
+                console.error(`Error:`, error);
+            }
         }
 
         // 添加拼图游戏触发函数

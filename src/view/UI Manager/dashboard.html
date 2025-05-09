@@ -380,13 +380,20 @@
             document.getElementById("chapterProgress").style.width = `${percent}%`;
             document.getElementById("chapterCount").textContent = `${unlocked}/3`;
 
+            let overallProgress = 0;
+            if (data.allChapUnlock === "Yes") {
+                overallProgress = 100;
+            } else {
+                overallProgress = data.overallProgress
+            }
+
             var ctx = document.getElementById('doughnutChart').getContext('2d');
             var doughnutChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     datasets: [{
                         label: 'Progress',
-                        data: [data.overallProgress, 100 - data.overallProgress],
+                        data: [overallProgress, 100 - overallProgress],
                         backgroundColor: ['green', 'grey'],
                         borderColor: ['#ffffff', '#ffffff'],
                         borderWidth: 2
