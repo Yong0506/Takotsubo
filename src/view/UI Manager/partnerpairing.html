@@ -5,175 +5,171 @@
     <meta charset="UTF-8">
     <title>Partner Pairing</title>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: url('../Asset Manager/images/partnerpairing/partner.png') no-repeat center center/cover;
-            color: black;
-        }
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: url('../Asset Manager/images/partnerpairing/partner.png') no-repeat center center/cover;
+    color: black;
+}
 
-        .container {
-            display: flex;
-            justify-content: space-between;
-            padding: 30px 50px;
-        }
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 50px;
+}
 
-        .grid-scroll {
-            height: 500px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
+.grid-scroll {
+    height: 500px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
 
-        .grid-wrapper {
-            padding-right: 10px;
-            /* Prevent scrollbar overlay */
-        }
+.grid-wrapper {
+    padding-right: 10px;
+    /* Prevent scrollbar overlay */
+}
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            width: 800px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            height: 520px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-right: 10px;
-            box-sizing: border-box;
-     
-        }
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 800px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    height: 520px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
 
-        .card {
-            text-align: center;
-        }
+.card {
+    text-align: center;
+}
 
-        .card img {
-            width: 100px;
-            height: 130px;
-            border: 4px solid black;
-            border-radius: 50%;
-            background-color: #f8c1c1;
-        }
+.card img {
+    width: 100px;
+    height: 130px;
+    border: 4px solid black;
+    border-radius: 50%;
+    background-color: #f8c1c1;
+}
 
-        .card p {
-            margin-top: 10px;
-            font-weight: bold;
-            color: black;
-        }
+.card p {
+    margin-top: 10px;
+    font-weight: bold;
+    color: black;
+}
 
-        .profile-panel {
-            width: 35%;
-            background: linear-gradient(145deg, #ffffff, #e6e6e6);
-            padding: 20px;
-            border-radius: 15px;
-            color: black;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-        }
+.profile-panel {
+    width: 35%;
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    padding: 20px;
+    border-radius: 15px;
+    color: black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
 
-        .profile-panel:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
-        }
+.profile-panel:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
 
+.profile-panel h2 {
+    margin-top: 0;
+    font-size: 2em;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    color: #3b215f;
+    text-align: center;
+}
 
-        .profile-panel h2 {
-            margin-top: 0;
-            font-size: 2em;
-            font-weight: 700;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-            color: #3b215f;
-            text-align: center;
-        }
+.profile-panel .card {
+    text-align: center;
+    margin: 20px 0;
+}
 
-        .profile-panel .card {
-            text-align: center;
-            margin: 20px 0;
-        }
+.profile-panel .card img {
+    width: 120px;
+    height: 150px;
+    border: 4px solid #a278da;
+    border-radius: 50%;
+    background-color: #f8c1c1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 
-        .profile-panel .card img {
-            width: 120px;
-            height: 150px;
-            border: 4px solid #a278da;
-            border-radius: 50%;
-            background-color: #f8c1c1;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+.profile-panel .traits,
+.profile-panel .contact,
+.profile-panel .notes {
+    margin-top: 20px;
+    font-size: 1em;
+    line-height: 1.5;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        .profile-panel .traits,
-        .profile-panel .contact,
-        .profile-panel .notes {
-            margin-top: 20px;
-            font-size: 1em;
-            line-height: 1.5;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+.profile-panel .traits strong,
+.profile-panel .contact strong,
+.profile-panel .notes strong {
+    font-weight: bold;
+    color: #3b215f;
+}
 
-        .profile-panel .traits strong,
-        .profile-panel .contact strong,
-        .profile-panel .notes strong {
-            font-weight: bold;
-            color: #3b215f;
-        }
+.profile-panel .hearts {
+    margin: 15px 0;
+    font-size: 1.2em;
+    text-align: center;
+}
 
+.profile-panel .hearts span {
+    font-size: 28px;
+    color: purple;
+}
 
-        .profile-panel .hearts {
-            margin: 15px 0;
-            font-size: 1.2em;
-            text-align: center;
-        }
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(153, 102, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #6633cc;
+    text-decoration: none;
+    border: 2px solid #b399ff;
+    transition: all 0.3s ease;
+}
 
-        .profile-panel .hearts span {
-            font-size: 28px;
-            color: purple;
-        }
+.back-btn:hover {
+    background-color: rgba(153, 102, 255, 0.4);
+    color: white;
+    border-color: #9966ff;
+    box-shadow: 0 0 8px #b399ff;
+}
 
+.title {
+    text-align: center;
+    font-size: 2.8em;
+    font-weight: 800;
+    margin-top: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.50);
+    color: #3b215f;
+}
 
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: rgba(153, 102, 255, 0.2);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #6633cc;
-            text-decoration: none;
-            border: 2px solid #b399ff;
-            transition: all 0.3s ease;
-        }
+.grid-container .card:nth-child(-n+4) {
+    padding-top: 20px;
+}
 
-        .back-btn:hover {
-            background-color: rgba(153, 102, 255, 0.4);
-            color: white;
-            border-color: #9966ff;
-            box-shadow: 0 0 8px #b399ff;
-        }
-
-        .title {
-            text-align: center;
-            font-size: 2.8em;
-            font-weight: 800;
-            margin-top: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.50);
-            color: #3b215f;
-        }
-
-        .grid-container .card:nth-child(-n+4) {
-            padding-top: 20px;
-        }
-
-        .card.selected {
-            border: 3px solid #a278da;
-            box-shadow: 0 0 8px rgba(162, 120, 218, 0.6);
-            transform: scale(0.9);
-        }
+.card.selected {
+    border: 3px solid #a278da;
+    box-shadow: 0 0 8px rgba(162, 120, 218, 0.6);
+    transform: scale(0.9);
+}
 
 .filter-bar {
     display: flex;
@@ -187,21 +183,21 @@
 }
 
 .gender-filter,
-.trait-search {
+.trait-filter {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .gender-filter label,
-.trait-search label {
+.trait-filter label {
     font-size: 1em;
     font-weight: bold;
     color: #3b215f;
 }
 
 #genderFilter,
-#traitSearch {
+#traitFilter {
     padding: 10px;
     border: 2px solid #b399ff;
     border-radius: 8px;
@@ -212,27 +208,10 @@
 }
 
 #genderFilter:focus,
-#traitSearch:focus {
+#traitFilter:focus {
     border-color: #6633cc;
     box-shadow: 0 0 8px rgba(153, 102, 255, 0.6);
     outline: none;
-}
-
-#searchButton {
-    padding: 10px 20px;
-    background-color: #6633cc;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#searchButton:hover {
-    background-color: #9966ff;
-    box-shadow: 0 4px 8px rgba(153, 102, 255, 0.4);
 }
     </style>
 </head>
@@ -251,10 +230,17 @@
             </select>
         </div>
     
-        <div class="trait-search">
-            <label for="traitSearch">Search by Trait:</label>
-            <input type="text" id="traitSearch" placeholder="e.g., Kind, Humorous" />
-            <button id="searchButton">Search</button>
+        <div class="trait-filter">
+            <label for="traitFilter">Filter by Trait:</label>
+            <select id="traitFilter">
+                <option value="all">All</option>
+                <option value="direct">Direct</option>
+                <option value="humorous">Humorous</option>
+                <option value="kind">Kind</option>
+                <option value="optimistic">Optimistic</option>
+                <option value="romantic">Romantic</option>
+                <option value="shy">Shy</option>
+            </select>
         </div>
     </div>
 
@@ -361,68 +347,67 @@
             }
         }
 
-        function renderCards(gender = "all", searchTrait = "") {
-            container.innerHTML = "";
+        function renderCards(gender = "all", trait = "all") {
+    container.innerHTML = "";
 
-            let filtered = allPartners;
+    let filtered = allPartners;
 
-            if (gender !== "all") {
-                filtered = filtered.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
-            }
+    if (gender !== "all") {
+        filtered = filtered.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
+    }
 
-            if (searchTrait) {
-                const trait = searchTrait.toLowerCase();
-                filtered = filtered.filter(p =>
-                    p.traits && p.traits.some(t => t.toLowerCase() === trait)
-                );
-            }
+    if (trait !== "all") {
+        filtered = filtered.filter(p =>
+            p.traits && p.traits.some(t => t.toLowerCase() === trait.toLowerCase())
+        );
+    }
 
-            if (filtered.length === 0) {
-                container.innerHTML = "<p style='color: red; text-align: center;'>No partners found.</p>";
-                return;
-            }
+    if (filtered.length === 0) {
+        container.innerHTML = "<p style='color: red; text-align: center;'>No partners found.</p>";
+        return;
+    }
 
-            filtered.forEach(partner => {
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = `
-                    <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
-                    <p>${partner.name}</p>
-                `;
-                container.appendChild(card);
+    filtered.forEach(partner => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
+            <p>${partner.name}</p>
+        `;
+        container.appendChild(card);
 
-                card.addEventListener("click", () => {
-                    document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-                    card.classList.add("selected");
+        card.addEventListener("click", () => {
+            document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
 
-                    document.getElementById("profile-title").innerText = partner.name;
-                    document.getElementById("character-name").innerText = partner.name;
-                    document.getElementById("profile-img").src = partner.imgUrl;
-                    document.querySelector(".contact").innerHTML = `
-                        <strong>Contact:</strong><br>
-                        Email: ${partner.email}<br>
-                        Phone: ${partner.phone}
-                    `;
-                    document.querySelector(".traits").innerHTML = `
-                        <strong>Traits:</strong><br>
-                        ${partner.traits.length > 0 ? partner.traits.join(", ") : "No traits available"}
-                    `;
-                });
-            });
-        }
+            document.getElementById("profile-title").innerText = partner.name;
+            document.getElementById("character-name").innerText = partner.name;
+            document.getElementById("profile-img").src = partner.imgUrl;
+            document.querySelector(".contact").innerHTML = `
+                <strong>Contact:</strong><br>
+                Email: ${partner.email}<br>
+                Phone: ${partner.phone}
+            `;
+            document.querySelector(".traits").innerHTML = `
+                <strong>Traits:</strong><br>
+                ${partner.traits.length > 0 ? partner.traits.join(", ") : "No traits available"}
+            `;
+        });
+    });
+}
 
         // Event Listeners
-        searchButton.addEventListener("click", () => {
-            const searchValue = searchInput.value.trim();
-            const selectedGender = genderFilter.value || "all";
-            renderCards(selectedGender, searchValue);
-        });
-
         genderFilter.addEventListener("change", () => {
-            const selectedGender = genderFilter.value || "all";
-            const searchValue = searchInput.value.trim();
-            renderCards(selectedGender, searchValue);
-        });
+    const selectedGender = genderFilter.value || "all";
+    const selectedTrait = traitFilter.value || "all";
+    renderCards(selectedGender, selectedTrait);
+});
+
+traitFilter.addEventListener("change", () => {
+    const selectedGender = genderFilter.value || "all";
+    const selectedTrait = traitFilter.value || "all";
+    renderCards(selectedGender, selectedTrait);
+});
 
         // Load all partners on page load
         document.addEventListener("DOMContentLoaded", loadPartners);
