@@ -226,7 +226,7 @@
             align-items: center;
             padding: 20px;
             border-radius: 10px;
-            z-index: 9999;
+            z-index: 999;
             text-align: center;
         }
 
@@ -604,26 +604,26 @@
     </div>
 
 
-        <!-- PAUSE SCREEN -->
-        <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
-                    </div>
-                    <div class="modal-body">
-                        <div class="d-flex flex-column align-items-center">
-                            <button type="button" class="btn-custom" data-bs-dismiss="modal"><i
-                                    class="fas fa-play"></i>Resume</button>
-                            <button type="button" class="btn-custom" onclick="openSettings()"><i
-                                    class="fas fa-cogs"></i>Settings</button>
-                            <button type="button" class="btn-custom" onclick="goToMainMenu()"><i
-                                    class="fas fa-home"></i>Main Menu</button>
-                        </div>
+    <!-- PAUSE SCREEN -->
+    <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column align-items-center">
+                        <button type="button" class="btn-custom" data-bs-dismiss="modal"><i
+                                class="fas fa-play"></i>Resume</button>
+                        <button type="button" class="btn-custom" onclick="openSettings()"><i
+                                class="fas fa-cogs"></i>Settings</button>
+                        <button type="button" class="btn-custom" onclick="goToMainMenu()"><i
+                                class="fas fa-home"></i>Main Menu</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <script>
         function openSettings() {
@@ -955,11 +955,7 @@
     function endMatch() {
         isMatchActive = false;  // Deactivate the match
         hideDodgeContainer();   // Hide the dodge container if visible
-        resetHealth();          // Reset healths if necessary for the next round
         resetDodgeTimer();      // Reset dodge timer for the next round
-        resetStamina();
-
-        setTimeout(startNewMatch, 2000);
     }
 
     // Function to update the match timer on the screen
@@ -976,7 +972,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // All your setup code here
         const startButton = document.querySelector('.startButton');
         const startScreen = document.querySelector('.startGameInstruction');
         const gameUI = document.querySelector('.gameUI');
@@ -999,6 +994,8 @@
 
         matchTimer = 60;                // THEN reset timer to 60
         document.querySelector('.time div').textContent = matchTimer;  //  Update the screen immediately
+        resetHealth();          // Reset healths if necessary for the next round
+        resetStamina();
         isMatchActive = true; //  Mark match as active
         matchInterval = setInterval(updateMatchTimer, 1000);  //  Start a new interval
         document.addEventListener('keydown', handleArrowKeyInput);
@@ -1125,7 +1122,7 @@
         // Check for opponent KO
         if (opponentHealth <= 0) {
             console.log('Opponent knocked out!');
-            determineMatchWinner(); // Assuming you already have an endMatch function
+            determineMatchWinner();
         }
 
         // Start stamina regen after small delay if player stops punching
@@ -1136,6 +1133,11 @@
         if (staminaRegenInterval) clearInterval(staminaRegenInterval);
 
         staminaRegenInterval = setInterval(() => {
+            if (!isMatchActive) {
+                stopStaminaRegen();
+                return;
+            }
+
             if (playerStamina < maxStamina) {
                 playerStamina += staminaRegenAmount;
                 if (playerStamina > maxStamina) playerStamina = maxStamina;
@@ -1273,9 +1275,6 @@
         playerScoreElement.textContent = `0 |`;
         opponentScoreElement.textContent = `| 0`;
         saveChp();
-
-
-
     };
 
     async function saveChp() {
@@ -1398,7 +1397,6 @@
         .addEventListener('click', resumeGame);
 
     document.getElementById('btn btn-success').addEventListener('click', () => {
-
         pauseGame(); // This will pause everything as defined earlier
     });
 
