@@ -930,11 +930,11 @@
             const dialogue = await loadDialogueFromFirebase(currentProgress);
 
             // 保存拼图完成后应该返回的对话 ID
-            if (dialogue && dialogue.next && dialogue.next.onComplete) {
-                localStorage.setItem('gameSavedDialog', dialogue.next.onComplete);
-            } else {
-                console.error('onComplete is missing or invalid in dialogue.next:', dialogue.next);
-            }
+            // if (dialogue && dialogue.next && dialogue.next.onComplete) {
+            //     localStorage.setItem('gameSavedDialog', dialogue.next.onComplete);
+            // } else {
+            //     console.error('onComplete is missing or invalid in dialogue.next:', dialogue.next);
+            // }
 
             // 保存当前章节和图片路径
             localStorage.setItem('puzzleImagePath', String(imagePath));
