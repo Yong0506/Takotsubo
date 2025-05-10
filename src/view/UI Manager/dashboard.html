@@ -344,7 +344,29 @@
 
         function partnerPairing() {
             window.location.href = 'partnerpairing.html'
-        } 
+        }
+
+        window.onload = function () {
+            playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
+        };
+
+        let currentBGM = null;
+
+        function playBackgroundMusic(filePath) {
+            if (currentBGM) {
+                currentBGM.pause();
+                currentBGM.currentTime = 0;
+            }
+
+            gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+
+            currentBGM = new Audio(filePath);
+            currentBGM.loop = true;
+            currentBGM.volume = gameVolume;
+            currentBGM.play().catch((err) => {
+                console.warn("Autoplay blocked or error occurred:", err);
+            });
+        }
     </script>
 
     <script type="module">
