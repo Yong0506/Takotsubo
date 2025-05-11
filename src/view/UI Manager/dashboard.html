@@ -346,10 +346,6 @@
             window.location.href = 'partnerpairing.html'
         }
 
-        window.onload = function () {
-            playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
-        };
-
         let currentBGM = null;
 
         function playBackgroundMusic(filePath) {
@@ -622,13 +618,14 @@
         window.saveEditedProfile = saveEditedProfile;
         window.handleStoryButton = handleStoryButton;
     </script>
-    
+
     <!-- validate character setup -->
     <script>
-        window.onload = async function () {
+        window.onload = function () {
             if (!localStorage.getItem("deviceId")) {
                 window.location.href = "error.html";
             }
+            playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
         }
     </script>
 

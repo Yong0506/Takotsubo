@@ -180,6 +180,10 @@
         }
 
         window.onload = function () {
+            if (!localStorage.getItem("deviceId")) {
+                window.location.href = "error.html";
+            }
+
             const title = document.querySelector(".chapter-title");
             const summary = document.querySelector(".chapter-summary");
             const footer = document.querySelector(".chapter-footer");
@@ -202,15 +206,6 @@
                 footer.textContent = "~ End Chapter Unknown ~";
             }
         };
-    </script>
-
-    <!-- validate character setup -->
-    <script>
-        window.onload = async function () {
-            if (!localStorage.getItem("deviceId")) {
-                window.location.href = "error.html";
-            }
-        }
     </script>
 </body>
 
