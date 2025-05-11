@@ -52,14 +52,14 @@ h1 {
 }
 
 .player {
-    background-image: url('character.png'); /* Path to your character image */
+    background-image: url('../Asset Manager/images/maze/character.png'); /* Path to your character image */
     background-size: 130%; /* Scale the image to fit the cell */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the image from repeating */
 }
 
 .trigger {
-    background-image: url('treasure.png'); /* Path to your treasure image */
+    background-image: url('../Asset Manager/images/maze/treasure.png'); /* Path to your treasure image */
     background-size: 90%; /* Scale the image to fit the cell */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the image from repeating */
@@ -78,7 +78,7 @@ h1 {
 }
 
 .red-end {
-    background-image: url('door.png'); /* Path to your door image */
+    background-image: url('../Asset Manager/images/maze/door.png'); /* Path to your door image */
     background-size: cover; /* Scale the image to fit the cell */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the image from repeating */
