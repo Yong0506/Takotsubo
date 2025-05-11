@@ -1,564 +1,634 @@
 <!DOCTYPE html> <html lang="en"> <head> <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> <meta charset="UTF-8"> <title>Partner Pairing</title> <style> /* Your original styles are unchanged */ body { margin: 0; font-family: 'Poppins', sans-serif; background: url('../Asset Manager/images/partnerpairing/partner.png') no-repeat center center/cover; color: black; }
     
-    .container {
-    display: flex;
-    justify-content: space-between;
-    padding: 30px 50px;
-    }
-    
-    .grid-scroll {
-    height: 500px;
-    overflow-y: auto;
-    padding-right: 10px;
-    }
-    
-    .grid-wrapper {
-    padding-right: 10px;
-    }
-    
-    .grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    width: 800px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 15px;
-    height: 520px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 10px;
-    box-sizing: border-box;
-    }
-    
-    .card {
-    text-align: center;
-    cursor: pointer;
-    }
-    
-    .card img {
-    width: 100px;
-    height: 130px;
-    border: 4px solid black;
-    border-radius: 50%;
-    background-color: #f8c1c1;
-    }
-    
-    .card p {
-    margin-top: 10px;
-    font-weight: bold;
-    color: black;
-    }
-    
-    .profile-panel {
-    width: 35%;
-    background: linear-gradient(145deg, #ffffff, #e6e6e6);
-    padding: 20px;
-    border-radius: 15px;
-    color: black;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-    }
-    
-    .profile-panel:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
-    }
-    
-    .profile-panel h2 {
-    margin-top: 0;
-    font-size: 2em;
-    font-weight: 700;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    color: #3b215f;
-    text-align: center;
-    }
-    
-    .profile-panel .card {
-    text-align: center;
-    margin: 20px 0;
-    }
-    
-    .profile-panel .card img {
-    width: 120px;
-    height: 150px;
-    border: 4px solid #a278da;
-    border-radius: 50%;
-    background-color: #f8c1c1;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .profile-panel .traits,
-    .profile-panel .contact,
-    .profile-panel .notes {
-    margin-top: 20px;
-    font-size: 1em;
-    line-height: 1.5;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .profile-panel .traits strong,
-    .profile-panel .contact strong,
-    .profile-panel .notes strong {
-    font-weight: bold;
-    color: #3b215f;
-    }
-    
-    .profile-panel .hearts {
-    margin: 15px 0;
-    font-size: 1.2em;
-    text-align: center;
-    }
-    
-    .profile-panel .hearts span {
-    font-size: 28px;
-    color: purple;
-    }
-    
-    .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background-color: rgba(153, 102, 255, 0.2);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #6633cc;
-    text-decoration: none;
-    border: 2px solid #b399ff;
-    transition: all 0.3s ease;
-    }
-    
-    .back-btn:hover {
-    background-color: rgba(153, 102, 255, 0.4);
-    color: white;
-    border-color: #9966ff;
-    box-shadow: 0 0 8px #b399ff;
-    }
-    
-    .title {
-    text-align: center;
-    font-size: 2.8em;
-    font-weight: 800;
-    margin-top: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.50);
-    color: #3b215f;
-    }
-    
-    .card.selected {
-    border: 3px solid #a278da;
-    box-shadow: 0 0 8px rgba(162, 120, 218, 0.6);
-    transform: scale(1.05); /* or remove transform entirely */
-    max-width: 220px; /* Adjust based on your layout */
-    transition: transform 0.3s ease
-    }
-    
-    .filter-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px 50px;
-    padding: 15px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .gender-filter,
-    .trait-filter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    }
-    
-    .gender-filter label,
-    .trait-filter label {
-    font-size: 1em;
-    font-weight: bold;
-    color: #3b215f;
-    }
-    
-    #genderFilter,
-    #traitFilter {
-    padding: 10px;
-    border: 2px solid #b399ff;
-    border-radius: 8px;
-    font-size: 1em;
-    width: 200px;
-    box-shadow: 0 2px 4px rgba(153, 102, 255, 0.6);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fff;
-    color: #3b215f;
-    }
-    
-    #genderFilter:focus,
-    #traitFilter:focus {
-    border-color: #6633cc;
-    box-shadow: 0 0 8px rgba(153, 102, 255, 0.6);
-    outline: none;
-    }
-    
-    #searchButton {
-    padding: 10px 20px;
-    background-color: #6633cc;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    #searchButton:hover {
-    background-color: #9966ff;
-    box-shadow: 0 4px 8px rgba(153, 102, 255, 0.4);
-    }
-    
-    .select2-container--default .select2-selection--multiple {
-    background-color: #fff;
-    border: 2px solid #b399ff;
-    border-radius: 8px;
-    font-size: 1em;
-    width: 200px;
-    box-shadow: 0 2px 4px rgba(153, 102, 255, 0.6);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fff;
-    color: #3b215f;
-    }
-    
-    .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background-color: #6633cc;
-    border: none;
-    color: white;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin: 2px;
-    }
-    
-    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-    color: white;
-    margin-right: 5px;
-    cursor: pointer;
-    }
-    
-    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
-    color: #ffcccc;
-    }
-    
-    #traitFilter {
-    padding: 10px;
-    border: 2px solid #b399ff;
-    border-radius: 8px;
-    font-size: 1em;
-    width: 200px;
-    height: auto; 
-    }
-    
-    #traitFilter:focus {
-    border-color: #6633cc;
-    box-shadow: 0 0 8px rgba(153, 102, 255, 0.6);
-    outline: none;
-    }
-
-    input[type="radio"] {
-            display: none;
-        }
-
-        #profiles-container {
+  .container {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 30px 50px;
+  }
+  
+  .grid-scroll {
+  height: 500px;
+  overflow-y: auto;
+  padding-right: 10px;
+  }
+  
+  .grid-wrapper {
+  padding-right: 10px;
+  }
+  
+  .grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+  width: 800px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  height: 520px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+  box-sizing: border-box;
+  }
+  
+  .card {
+  text-align: center;
+  cursor: pointer;
+  }
+  
+  .card img {
+  width: 100px;
+  height: 130px;
+  border: 4px solid black;
+  border-radius: 50%;
+  background-color: #f8c1c1;
+  }
+  
+  .card p {
+  margin-top: 10px;
+  font-weight: bold;
+  color: black;
+  }
+  
+  .profile-panel {
+  width: 35%;
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  padding: 20px;
+  border-radius: 15px;
+  color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  }
+  
+  .profile-panel:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+  
+  .profile-panel h2 {
+  margin-top: 0;
+  font-size: 2em;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  color: #3b215f;
+  text-align: center;
+  }
+  
+  .profile-panel .card {
+  text-align: center;
+  margin: 20px 0;
+  }
+  
+  .profile-panel .card img {
+  width: 120px;
+  height: 150px;
+  border: 4px solid #a278da;
+  border-radius: 50%;
+  background-color: #f8c1c1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-panel .traits,
+  .profile-panel .contact,
+  .profile-panel .notes {
+  margin-top: 20px;
+  font-size: 1em;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-panel .traits strong,
+  .profile-panel .contact strong,
+  .profile-panel .notes strong {
+  font-weight: bold;
+  color: #3b215f;
+  }
+  
+  .profile-panel .hearts {
+  margin: 15px 0;
+  font-size: 1.2em;
+  text-align: center;
+  }
+  
+  .profile-panel .hearts span {
+  font-size: 28px;
+  color: purple;
+  }
+  
+  .back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(153, 102, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #6633cc;
+  text-decoration: none;
+  border: 2px solid #b399ff;
+  transition: all 0.3s ease;
+  }
+  
+  .back-btn:hover {
+  background-color: rgba(153, 102, 255, 0.4);
+  color: white;
+  border-color: #9966ff;
+  box-shadow: 0 0 8px #b399ff;
+  }
+  
+  .title {
+  text-align: center;
+  font-size: 2.8em;
+  font-weight: 800;
+  margin-top: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.50);
+  color: #3b215f;
+  }
+  
+  .card.selected {
+  border: 3px solid #a278da;
+  box-shadow: 0 0 8px rgba(162, 120, 218, 0.6);
+  transform: scale(1.05); /* or remove transform entirely */
+  max-width: 220px; /* Adjust based on your layout */
+  transition: transform 0.3s ease
+  }
+  
+  .filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 50px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .gender-filter,
+  .trait-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  }
+  
+  .gender-filter label,
+  .trait-filter label {
+  font-size: 1em;
+  font-weight: bold;
+  color: #3b215f;
+  }
+  
+  #genderFilter,
+  #traitFilter {
+  padding: 10px;
+  border: 2px solid #b399ff;
+  border-radius: 8px;
+  font-size: 1em;
+  width: 200px;
+  box-shadow: 0 2px 4px rgba(153, 102, 255, 0.6);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  color: #3b215f;
+  }
+  
+  #genderFilter:focus,
+  #traitFilter:focus {
+  border-color: #6633cc;
+  box-shadow: 0 0 8px rgba(153, 102, 255, 0.6);
+  outline: none;
+  }
+  
+  #searchButton {
+  padding: 10px 20px;
+  background-color: #6633cc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  #searchButton:hover {
+  background-color: #9966ff;
+  box-shadow: 0 4px 8px rgba(153, 102, 255, 0.4);
+  }
+  
+  .select2-container--default .select2-selection--multiple {
+  background-color: #fff;
+  border: 2px solid #b399ff;
+  border-radius: 8px;
+  font-size: 1em;
+  width: 200px;
+  box-shadow: 0 2px 4px rgba(153, 102, 255, 0.6);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  color: #3b215f;
+  }
+  
+  .select2-container--default .select2-selection--multiple .select2-selection__choice {
+  background-color: #6633cc;
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 2px;
+  }
+  
+  .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+  color: white;
+  margin-right: 5px;
+  cursor: pointer;
+  }
+  
+  .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+  color: #ffcccc;
+  }
+  
+  #traitFilter {
+  padding: 10px;
+  border: 2px solid #b399ff;
+  border-radius: 8px;
+  font-size: 1em;
+  width: 200px;
+  height: auto; 
+  }
+  
+  #traitFilter:focus {
+  border-color: #6633cc;
+  box-shadow: 0 0 8px rgba(153, 102, 255, 0.6);
+  outline: none;
+  }
+
+  input[type="radio"] {
+          display: none;
+      }
+
+    #profiles-container {
+display: flex;
+flex-wrap: wrap;
+gap: 20px;
 }
 
 .profile-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  width: 250px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+background-color: #fff;
+border: 1px solid #ddd;
+border-radius: 8px;
+padding: 15px;
+width: 250px;
+box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .profile-card h3 {
-  margin-top: 0;
+margin-top: 0;
 }
 
 .heart-container {
-  margin-top: 10px;
+margin-top: 10px;
 }
 
 .heart {
-  color: #e25555;
-  font-size: 24px;
-  margin-right: 5px;
+color: #e25555;
+font-size: 24px;
+margin-right: 5px;
 }
-    </style>
+  </style>
 
 </head>
 <body>
-    <a class="back-btn" href="#">&larr;</a>
-    <div class="title">PARTNER PAIRING</div>
-    <div class="filter-bar">
-      <div class="gender-filter">
-        <label for="genderFilter">Filter by Gender:</label>
-        <select id="genderFilter">
-          <option value="all">All</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
-      <div class="trait-filter">
-        <label for="traitFilter">Filter by Traits:</label>
-        <select id="traitFilter" name="traits[]" multiple>
-          <option value="direct">Direct</option>
-          <option value="humorous">Humorous</option>
-          <option value="kind">Kind</option>
-          <option value="optimistic">Optimistic</option>
-          <option value="romantic">Romantic</option>
-          <option value="shy">Shy</option>
-        </select>
-      </div>
-      <button id="searchButton">Search</button>
+  <a class="back-btn" href="dashboard.html">&larr;</a>
+  <div class="title">PARTNER PAIRING</div>
+  <div class="filter-bar">
+    <div class="gender-filter">
+      <label for="genderFilter">Filter by Gender:</label>
+      <select id="genderFilter">
+        <option value="all">All</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
     </div>
-    <div class="container">
-        <div class="grid-wrapper">
-          <div class="grid-container" id="card-container"></div>
-        </div>
-        <div class="profile-panel">
-          <h2 id="profile-title">Loading...</h2>
-          <div class="card">
-            <img src="../Asset Manager/images/partnerpairing/kate.jpg" id="profile-img">
-            <p id="character-name">Loading...</p>
-          </div>
-          <div class="hearts" id="matching-level">Matching Level: <span>💜💜💜🤍🤍</span></div>
-          <div class="traits" id="traits"></div>
-          <div class="contact" id="contact-info"></div>
-          <div class="notes" id="notes"></div>
-        </div>
+    <div class="trait-filter">
+      <label for="traitFilter">Filter by Traits:</label>
+      <select id="traitFilter" name="traits[]" multiple>
+        <option value="direct">Direct</option>
+        <option value="humorous">Humorous</option>
+        <option value="kind">Kind</option>
+        <option value="optimistic">Optimistic</option>
+        <option value="romantic">Romantic</option>
+        <option value="shy">Shy</option>
+      </select>
+    </div>
+    <button id="searchButton">Search</button>
+  </div>
+  <div class="container">
+      <div class="grid-wrapper">
+        <div class="grid-container" id="card-container"></div>
       </div>
+      <div class="profile-panel">
+        <h2 id="profile-title">Loading...</h2>
+        <div class="card">
+          <img src="../Asset Manager/images/partnerpairing/kate.jpg" id="profile-img">
+          <p id="character-name">Loading...</p>
+        </div>
+        <div class="hearts" id="matching-level">Matching Level: <span>💜💜💜🤍🤍</span></div>
+        <div class="traits" id="traits"></div>
+        <div class="contact" id="contact-info"></div>
+        <div class="notes" id="notes"></div>
+      </div>
+    </div>
 
-    <script>
-         window.onload = function () {
-            playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
-        };
-
-        let currentBGM = null;
-
-        function playBackgroundMusic(filePath) {
-            if (currentBGM) {
-                currentBGM.pause();
-                currentBGM.currentTime = 0;
-            }
-
-            gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
-
-            currentBGM = new Audio(filePath);
-            currentBGM.loop = true;
-            currentBGM.volume = gameVolume;
-            currentBGM.play().catch((err) => {
-                console.warn("Autoplay blocked or error occurred:", err);
-            });
-        
-        };
-
-    </script>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-      import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-  
-      const firebaseConfig = {
-        apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
-        authDomain: "takotsubo-4f61d.firebaseapp.com",
-        projectId: "takotsubo-4f61d",
-        storageBucket: "takotsubo-4f61d.appspot.com",
-        messagingSenderId: "59472372412",
-        appId: "1:59472372412:web:a192e23b031683988266b9",
-        measurementId: "G-QQ6VXX1M7C"
+  <script>
+       window.onload = function () {
+          playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
       };
-  
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-      const db = getFirestore(app);
-  
-      const container = document.getElementById("card-container");
-      const genderFilter = document.getElementById("genderFilter");
-      const traitFilter = $('#traitFilter');
-      const searchButton = document.getElementById("searchButton");
-      traitFilter.select2();
-  
-      let allPartners = [];
-  
-      async function fetchTraitsByDeviceId(deviceId) {
-        try {
-          const traitsQuery = query(collection(db, "traits"), where("deviceId", "==", deviceId));
-          const traitsSnapshot = await getDocs(traitsQuery);
-          if (!traitsSnapshot.empty) {
-            const traitsData = traitsSnapshot.docs[0].data();
-            const allowedTraits = ["direct", "humorous", "kind", "optimistic", "romantic", "shy"];
-            return Object.entries(traitsData)
-              .filter(([key, value]) => allowedTraits.includes(key) && value > 0)
-              .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
+
+      let currentBGM = null;
+
+      function playBackgroundMusic(filePath) {
+          if (currentBGM) {
+              currentBGM.pause();
+              currentBGM.currentTime = 0;
           }
-        } catch (error) {
-          console.error(`Error fetching traits for deviceId ${deviceId}:`, error);
-        }
-        return [];
-      }
-  
-      async function loadPartners() {
-        try {
-          const querySnapshot = await getDocs(collection(db, "players"));
-          allPartners = [];
-          for (const docSnap of querySnapshot.docs) {
-            const data = docSnap.data();
-            let traits = [];
-            if (data.deviceId) {
-              traits = await fetchTraitsByDeviceId(data.deviceId);
-            }
-            allPartners.push({
-              id: docSnap.id,
-              name: data.name || "Unknown",
-              gender: data.gender || "Unknown",
-              imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
-              email: data.email || "N/A",
-              phone: data.phone || "N/A",
-              traits: traits
-            });
-          }
-          renderCards();
-        } catch (error) {
-          console.error("Error loading partners:", error);
-        }
-      }
-  
-      function renderCards(gender = "all", traits = []) {
-        container.innerHTML = "";
-        let filtered = allPartners;
-        if (gender !== "all") {
-          filtered = filtered.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
-        }
-        if (traits.length > 0) {
-          filtered = filtered.filter(p =>
-            p.traits && traits.some(trait => p.traits.map(t => t.toLowerCase()).includes(trait.toLowerCase()))
-          );
-        }
-        if (filtered.length === 0) {
-          container.innerHTML = "<p style='color: red; text-align: center;'>No partners found.</p>";
-          return;
-        }
-        filtered.forEach(partner => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `<img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'"><p>${partner.name}</p>`;
-          card.addEventListener("click", () => {
-            document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-            card.classList.add("selected");
-            document.getElementById("profile-title").textContent = partner.name;
-            document.getElementById("character-name").textContent = partner.name;
-            document.getElementById("profile-img").src = partner.imgUrl;
-            document.querySelector(".profile-panel .traits").innerHTML = `<strong>Traits:</strong><br>${partner.traits.join(", ")}`;
-            document.querySelector(".profile-panel .contact").innerHTML = `<strong>Contact:</strong><br>Email: ${partner.email}<br>Phone: ${partner.phone}`;
+
+          gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+
+          currentBGM = new Audio(filePath);
+          currentBGM.loop = true;
+          currentBGM.volume = gameVolume;
+          currentBGM.play().catch((err) => {
+              console.warn("Autoplay blocked or error occurred:", err);
           });
-          container.appendChild(card);
-        });
-      }
-  
-      searchButton.addEventListener("click", () => {
-        const gender = genderFilter.value;
-        const traits = traitFilter.val();
-        renderCards(gender, traits);
-      });
-  
-      loadPartners();
+      
+      };
 
-      async function loadPlayerProfile() {
-    const querySnapshot = await getDocs(collection(db, "players"));
-    if (!querySnapshot.empty) {
-      const firstDoc = querySnapshot.docs[0];
-      const player = firstDoc.data();
+  </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-      document.getElementById("profile-title").textContent = player.name || "No Name";
-      document.getElementById("character-name").textContent = player.name || "Unknown";
-      document.getElementById("contact-info").innerHTML =
-        `<strong>Contact:</strong><br>Email: ${player.email || 'N/A'}<br>Phone: ${player.phone || 'N/A'}`;
-      document.getElementById("traits").innerHTML =
-        `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits listed"}`;
-      document.getElementById("notes").innerHTML =
-        `<strong>NOTES</strong><br>Has class on Tuesdays.`; // Replace or customize if notes field exists
+    const firebaseConfig = {
+      apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+      authDomain: "takotsubo-4f61d.firebaseapp.com",
+      projectId: "takotsubo-4f61d",
+      storageBucket: "takotsubo-4f61d.appspot.com",
+      messagingSenderId: "59472372412",
+      appId: "1:59472372412:web:a192e23b031683988266b9",
+      measurementId: "G-QQ6VXX1M7C"
+    };
 
-      // You can dynamically update the image if URLs are stored in the DB
-      // document.getElementById("profile-img").src = player.imageURL || "default.jpg";
-    }
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    const container = document.getElementById("card-container");
+    const genderFilter = document.getElementById("genderFilter");
+    const traitFilter = $('#traitFilter');
+    const searchButton = document.getElementById("searchButton");
+    traitFilter.select2();
+
+    let allPartners = [];
+
+    // ... existing code ...
+
+async function fetchTraitsByDeviceId(deviceId) {
+try {
+  const traitsQuery = query(collection(db, "traits"), where("deviceId", "==", deviceId));
+  const traitsSnapshot = await getDocs(traitsQuery);
+  if (!traitsSnapshot.empty) {
+    const traitsData = traitsSnapshot.docs[0].data();
+    const allowedTraits = ["direct", "humorous", "kind", "optimistic", "romantic", "shy"];
+    // 返回特征和对应的值
+    return Object.entries(traitsData)
+      .filter(([key, value]) => allowedTraits.includes(key))
+      .reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {});
   }
+} catch (error) {
+  console.error(`获取设备ID ${deviceId} 的特征时出错:`, error);
+}
+return {};
+}
 
-  loadPlayerProfile();
+// 计算匹配分数
+function calculateMatchingScore(selectedTraits, partnerTraits) {
+let totalScore = 0;
+let maxPossibleScore = 0;
+
+// 如果没有选择特征，使用所有特征计算
+if (selectedTraits.length === 0) {
+  Object.entries(partnerTraits).forEach(([trait, value]) => {
+    totalScore += value;
+    maxPossibleScore += 10;
+  });
+} else {
+  // 只计算选中的特征
+  selectedTraits.forEach(trait => {
+    const traitLower = trait.toLowerCase();
+    if (partnerTraits[traitLower] !== undefined) {
+      totalScore += partnerTraits[traitLower];
+      maxPossibleScore += 10;
+    }
+  });
+}
+
+// 如果没有可计算的特征，返回默认值
+if (maxPossibleScore === 0) return 3; // 返回中等匹配度
+
+// 计算最终得分（1-5颗心）
+const normalizedScore = (totalScore / maxPossibleScore) * 5;
+// 确保分数在1-5之间，且高分值得到更好的显示
+return Math.max(1, Math.min(5, Math.round(normalizedScore)));
+}
+
+function generateHearts(count) {
+return '💜'.repeat(count) + '🤍'.repeat(5 - count);
+}
+
+async function loadPartners() {
+try {
+  const querySnapshot = await getDocs(collection(db, "players"));
+  allPartners = [];
+  for (const docSnap of querySnapshot.docs) {
+    const data = docSnap.data();
+    let traits = {};
+    if (data.deviceId) {
+      traits = await fetchTraitsByDeviceId(data.deviceId);
+    }
+    allPartners.push({
+      id: docSnap.id,
+      name: data.name || "unknown",
+      gender: data.gender || "unknown",
+      imgUrl: data.imgUrl || "../Asset Manager/images/partnerpairing/kate.jpg",
+      email: data.email || "Null",
+      phone: data.phone || "Null",
+      traits: traits
+    });
+  }
+  renderCards();
+} catch (error) {
+  console.error("加载伙伴数据时出错:", error);
+  container.innerHTML = "<p style='color: red; text-align: center;'>Loading failed, please try again</p>";
+}
+}
+
+function renderCards(gender = "all", selectedTraits = []) {
+container.innerHTML = "";
+let filtered = allPartners;
+
+// 性别筛选
+if (gender !== "all") {
+  filtered = filtered.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
+}
+
+// 特征筛选
+if (selectedTraits.length > 0) {
+  filtered = filtered.filter(p => 
+    selectedTraits.some(trait => 
+      p.traits && Object.keys(p.traits).includes(trait.toLowerCase())
+    )
+  );
+}
+
+if (filtered.length === 0) {
+  container.innerHTML = "<p style='color: red; text-align: center;'>No partner found!</p>";
+  return;
+}
+
+filtered.forEach(partner => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
+    <p>${partner.name}</p>
+  `;
+
+  card.addEventListener("click", () => {
+    document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+
+    // 使用选中的特征计算匹配分数
+    const matchingScore = calculateMatchingScore(selectedTraits, partner.traits);
+
+    // 更新个人资料面板
+    document.getElementById("profile-title").textContent = partner.name;
+    document.getElementById("character-name").textContent = partner.name;
+    document.getElementById("profile-img").src = partner.imgUrl;
+    
+    // 显示特征和匹配级别
+    const traitsList = Object.entries(partner.traits)
+      .map(([trait, value]) => `${trait.charAt(0).toUpperCase() + trait.slice(1)}: ${value}`)
+      .join(", ");
+    
+    document.getElementById("traits").innerHTML = `<strong>Trait:</strong><br>${traitsList}`;
+    document.getElementById("matching-level").innerHTML = `Matching level: <span>${generateHearts(matchingScore)}</span>`;
+    document.getElementById("contact-info").innerHTML = `<strong>Contact:</strong><br>Email: ${partner.email}<br>Phone: ${partner.phone}`;
+    document.getElementById("notes").innerHTML = `<strong>Note</strong><br>周二有课。`;
+  });
+
+  container.appendChild(card);
+});
+}
+
+// ... existing code ...
+
+    searchButton.addEventListener("click", () => {
+      const gender = genderFilter.value;
+      const traits = traitFilter.val();
+      renderCards(gender, traits);
+    });
+
+    loadPartners();
+
+async function loadPlayerProfile() {
+  const querySnapshot = await getDocs(collection(db, "players"));
+  if (!querySnapshot.empty) {
+    const firstDoc = querySnapshot.docs[0];
+    const player = firstDoc.data();
+
+    document.getElementById("profile-title").textContent = player.name || "No Name";
+    document.getElementById("character-name").textContent = player.name || "Unknown";
+    document.getElementById("contact-info").innerHTML =
+      `<strong>Contact:</strong><br>Email: ${player.email || 'N/A'}<br>Phone: ${player.phone || 'N/A'}`;
+    document.getElementById("traits").innerHTML =
+      `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits listed"}`;
+    document.getElementById("notes").innerHTML =
+      `<strong>NOTES</strong><br>Has class on Tuesdays.`; // Replace or customize if notes field exists
+
+    // You can dynamically update the image if URLs are stored in the DB
+    // document.getElementById("profile-img").src = player.imageURL || "default.jpg";
+  }
+}
+
+loadPlayerProfile();
 
 const maxTraitValue = 10;
 const maxTotalScore = Object.keys(traitWeights).length * maxTraitValue;
 
 // Function to calculate total score for a user
 function calculateTotalScore(traits) {
-  let total = 0;
-  for (let trait in traitWeights) {
-    const traitValue = traits[trait] || 0;
-    total += traitValue * traitWeights[trait];
-  }
-  return total;
+let total = 0;
+for (let trait in traitWeights) {
+  const traitValue = traits[trait] || 0;
+  total += traitValue * traitWeights[trait];
+}
+return total;
 }
 
 // Function to normalize score to a scale of 0 to 6
 function normalizeScore(score) {
-  return Math.round((score / maxTotalScore) * 6);
+return Math.round((score / maxTotalScore) * 6);
 }
 
 // Function to create heart icons
 function createHearts(count) {
-  const heartContainer = document.createElement('div');
-  heartContainer.classList.add('heart-container');
-  for (let i = 0; i < count; i++) {
-    const heart = document.createElement('span');
-    heart.classList.add('heart');
-    heart.innerHTML = '&#10084;'; // Unicode for heart symbol
-    heartContainer.appendChild(heart);
-  }
-  return heartContainer;
+const heartContainer = document.createElement('div');
+heartContainer.classList.add('heart-container');
+for (let i = 0; i < count; i++) {
+  const heart = document.createElement('span');
+  heart.classList.add('heart');
+  heart.innerHTML = '&#10084;'; // Unicode for heart symbol
+  heartContainer.appendChild(heart);
+}
+return heartContainer;
 }
 
 // Function to render user profiles
 function renderProfiles(users) {
-  const container = document.getElementById('profiles-container');
-  users.forEach(user => {
-    const totalScore = calculateTotalScore(user.traits);
-    const heartCount = normalizeScore(totalScore);
+const container = document.getElementById('profiles-container');
+users.forEach(user => {
+  const totalScore = calculateTotalScore(user.traits);
+  const heartCount = normalizeScore(totalScore);
 
-    const card = document.createElement('div');
-    card.classList.add('profile-card');
+  const card = document.createElement('div');
+  card.classList.add('profile-card');
 
-    const name = document.createElement('h3');
-    name.textContent = user.name;
+  const name = document.createElement('h3');
+  name.textContent = user.name;
 
-    const hearts = createHearts(heartCount);
+  const hearts = createHearts(heartCount);
 
-    card.appendChild(name);
-    card.appendChild(hearts);
-    container.appendChild(card);
-  });
+  card.appendChild(name);
+  card.appendChild(hearts);
+  container.appendChild(card);
+});
 }
 
 // Initialize rendering
 renderProfiles(users);
 
 function calculateMatchingLevel(traits1, traits2) {
-  let matches = traits1.filter(trait => traits2.includes(trait));
-  return matches.length / Math.max(traits1.length, traits2.length);
+let matches = traits1.filter(trait => traits2.includes(trait));
+return matches.length / Math.max(traits1.length, traits2.length);
 }
 
 const selectedProfiles = [profile1, profile2]; // assume these are your selected objects
@@ -567,18 +637,22 @@ const level = calculateMatchingLevel(selectedProfiles[0].traits, selectedProfile
 console.log("Matching Level:", level);
 
 $('.card').on('click', function () {
-  // collect selected cards
-  const selected = $('.card.selected');
-  if (selected.length === 2) {
-    const profile1 = selected.eq(0).data('profile');
-    const profile2 = selected.eq(1).data('profile');
-    
-    const level = calculateMatchingLevel(profile1.traits, profile2.traits);
-    alert(`Matching Level: ${(level * 100).toFixed(2)}%`);
-  }
+// collect selected cards
+const selected = $('.card.selected');
+if (selected.length === 2) {
+  const profile1 = selected.eq(0).data('profile');
+  const profile2 = selected.eq(1).data('profile');
+  
+  const level = calculateMatchingLevel(profile1.traits, profile2.traits);
+  alert(`Matching Level: ${(level * 100).toFixed(2)}%`);
+}
 });
 
-    
-    </script>
-  </body>
-  </html>
+window.onload = async function () {
+            if (!localStorage.getItem("deviceId")) {
+                window.location.href = "error.html";
+            }
+        }
+  </script>
+</body>
+</html>
