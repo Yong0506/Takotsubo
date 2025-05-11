@@ -574,14 +574,16 @@
                 phone: document.getElementById("editPhone").value,
             };
 
+            console.log(updatedData)
+
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            if (!name || !gender || !birthDate || !email || !phone) {
+            if (!updatedData.name || !updatedData.gender || !updatedData.birthDate || !updatedData.email || !updatedData.phone) {
                 alert("Please fill out all fields before proceeding.");
                 return;
             }
 
-            if (!emailPattern.test(email)) {
+            if (!emailPattern.test(updatedData.email)) {
                 alert("Please enter a valid email address.");
                 return;
             }

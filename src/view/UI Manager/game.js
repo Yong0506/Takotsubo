@@ -12,6 +12,8 @@ let lastReachableCell = { x: 0, y: 0 }; // Track the last reachable cell
 let currentTriggerIndex = 0; // Track how many triggers have been activated
 let redEndpointGenerated = false; // Track if the red endpoint has been generated
 let playerHealth = 3; // Initialize player health
+const deviceId = localStorage.getItem("deviceId");
+
 
 // Generate the maze grid with a single path
 function generateMaze() {
@@ -78,7 +80,7 @@ function generateMaze() {
 }
 
 // Move the player
-function movePlayer(dx, dy) {
+async function movePlayer(dx, dy) {
     const newX = player.x + dx;
     const newY = player.y + dy;
 
@@ -118,6 +120,16 @@ function movePlayer(dx, dy) {
     // Check if the player reaches the red endpoint
     if (maze[player.y][player.x].classList.contains('red-end')) {
         alert('🎉 Congratulations! You have completed the maze!');
+        try {
+            await db.collection('players').doc(deviceId).update({
+                allChapUnlock: "Yes"
+            });
+            localStorage.setItem("gameSavedDialog", "");
+            localStorage.setItem("currentStory", "");
+            window.location.href = 'storyEnd.html';
+        } catch (error) {
+            console.error(`Error:`, error);
+        }
         maze[player.y][player.x].classList.remove('red-end'); // Remove the red endpoint
     }
 }
@@ -133,7 +145,7 @@ function generateRedEndpoint() {
     maze[ey][ex].classList.add('red-end'); // Add the red endpoint class
     redEndpointGenerated = true;
 
-    alert('🎯 The red endpoint has been generated! Move your player icon to trigger it and complete the maze!');
+    alert('🎯 The red endpoint wil be generate after answering the last scenario! Move your player icon to trigger it and complete the maze!');
 }
 
 // Function to handle health loss
@@ -200,12 +212,12 @@ function showFeedback(correct, feedbackId) {
 
 // Function to open a modal
 function openModal(id) {
-  document.getElementById(id).style.display = 'flex';
+    document.getElementById(id).style.display = 'flex';
 }
 
 // Function to close a modal
 function closeModal(id) {
-  document.getElementById(id).style.display = 'none';
+    document.getElementById(id).style.display = 'none';
 }
 
 // Handle keyboard input

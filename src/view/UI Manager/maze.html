@@ -134,7 +134,7 @@
     }
 
     body {
-      background: url('background.jpg') no-repeat center center fixed;
+      background: url('../Asset Manager/images/maze/background.jpg') no-repeat center center fixed;
       background-size: cover;
       margin: 0;
       font-family: Arial, sans-serif;
@@ -164,9 +164,9 @@
 
     <div id="maze"></div>
     <div id="heart-container">
-      <img id="heart3" src="heart.png" alt="Heart" class="heart">
-      <img id="heart2" src="heart.png" alt="Heart" class="heart">
-      <img id="heart1" src="heart.png" alt="Heart" class="heart">
+      <img id="heart3" src="../Asset Manager/images/maze/heart.png" alt="Heart" class="heart">
+      <img id="heart2" src="../Asset Manager/images/maze/heart.png" alt="Heart" class="heart">
+      <img id="heart1" src="../Asset Manager/images/maze/heart.png" alt="Heart" class="heart">
     </div>
   </div>
 
@@ -363,6 +363,26 @@
   </div>
 
   <script src="game.js"></script>
+
+      <!-- firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+            authDomain: "takotsubo-4f61d.firebaseapp.com",
+            projectId: "takotsubo-4f61d",
+            storageBucket: "takotsubo-4f61d.firebasestorage.app",
+            messagingSenderId: "59472372412",
+            appId: "1:59472372412:web:a192e23b031683988266b9",
+            measurementId: "G-QQ6VXX1M7C"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
 
 </body>
 
