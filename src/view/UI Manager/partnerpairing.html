@@ -267,6 +267,10 @@
     box-shadow: 0 0 8px rgba(153, 102, 255, 0.6);
     outline: none;
     }
+
+    input[type="radio"] {
+            display: none;
+        }
     </style>
 
 </head>
@@ -311,6 +315,32 @@
         <div class="notes"><strong>NOTES</strong><br>Has class on Tuesdays.</div>
       </div>
     </div>
+
+    <script>
+         window.onload = function () {
+            playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
+        };
+
+        let currentBGM = null;
+
+        function playBackgroundMusic(filePath) {
+            if (currentBGM) {
+                currentBGM.pause();
+                currentBGM.currentTime = 0;
+            }
+
+            gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+
+            currentBGM = new Audio(filePath);
+            currentBGM.loop = true;
+            currentBGM.volume = gameVolume;
+            currentBGM.play().catch((err) => {
+                console.warn("Autoplay blocked or error occurred:", err);
+            });
+        
+        };
+
+    </script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
