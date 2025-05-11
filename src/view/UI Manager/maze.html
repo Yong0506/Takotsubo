@@ -401,6 +401,8 @@
       playBackgroundMusic("../Asset Manager/musics/maze/bgm.mp3");
     }
 
+    let currentBGM = null;
+
     function playBackgroundMusic(filePath) {
       if (currentBGM) {
         currentBGM.pause();
