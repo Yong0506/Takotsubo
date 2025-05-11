@@ -281,6 +281,8 @@
                 window.location.href = "error.html";
             }
 
+            playBackgroundMusic("../Asset Manager/musics/memories/bgm.mp3");
+
             if (localStorage.getItem("puzzleImagePath")) {
                 memoriesPuzzle = parseInt(localStorage.getItem("puzzleImagePath"));
             }
@@ -376,6 +378,22 @@
             document.getElementById("pieces").innerHTML = "";
             createBoard();
             shufflePieces();
+        }
+
+        function playBackgroundMusic(filePath) {
+            if (currentBGM) {
+                currentBGM.pause();
+                currentBGM.currentTime = 0;
+            }
+
+            gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+
+            currentBGM = new Audio(filePath);
+            currentBGM.loop = true;
+            currentBGM.volume = gameVolume;
+            currentBGM.play().catch((err) => {
+                console.warn("Autoplay blocked or error occurred:", err);
+            });
         }
 
         window.checkSolution = checkSolution;
