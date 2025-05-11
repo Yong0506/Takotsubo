@@ -118,6 +118,7 @@ function movePlayer(dx, dy) {
     // Check if the player reaches the red endpoint
     if (maze[player.y][player.x].classList.contains('red-end')) {
         alert('🎉 Congratulations! You have completed the maze!');
+        window.location.href = 'storyEnd.html';
         maze[player.y][player.x].classList.remove('red-end'); // Remove the red endpoint
     }
 }
@@ -200,12 +201,12 @@ function showFeedback(correct, feedbackId) {
 
 // Function to open a modal
 function openModal(id) {
-  document.getElementById(id).style.display = 'flex';
+    document.getElementById(id).style.display = 'flex';
 }
 
 // Function to close a modal
 function closeModal(id) {
-  document.getElementById(id).style.display = 'none';
+    document.getElementById(id).style.display = 'none';
 }
 
 // Handle keyboard input
