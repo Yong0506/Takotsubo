@@ -126,7 +126,7 @@ async function movePlayer(dx, dy) {
             });
             localStorage.setItem("gameSavedDialog", "");
             localStorage.setItem("currentStory", "");
-            window.location.href = 'storyEnd.html';
+            window.location.href = 'partnerpairing.html';
         } catch (error) {
             console.error(`Error:`, error);
         }
