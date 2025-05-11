@@ -1,5 +1,12 @@
-<!DOCTYPE html> <html lang="en"> <head> <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> <meta charset="UTF-8"> <title>Partner Pairing</title> <style> /* Your original styles are unchanged */ body { margin: 0; font-family: 'Poppins', sans-serif; background: url('../Asset Manager/images/partnerpairing/partner.png') no-repeat center center/cover; color: black; }
-    
+<!DOCTYPE html> <html lang="en"> <head>    
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+ <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> 
+ <meta charset="UTF-8"> <title>Partner Pairing</title> <style> /* Your original styles are unchanged */
+
+  body { margin: 0; font-family: 'Poppins', sans-serif; background: url('../Asset Manager/images/partnerpairing/partner.png') no-repeat center center/cover; color: black; }
+
+
   .container {
   display: flex;
   justify-content: space-between;
@@ -299,10 +306,33 @@ color: #e25555;
 font-size: 24px;
 margin-right: 5px;
 }
+
+.settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 50px;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            background-color: rgba(169, 169, 169, 0.6);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .settings-btn:hover
+        { background-color: rgba(169, 169, 169, 1);
+            transform: scale(1.05);}
+    
+           
+        
   </style>
 
 </head>
 <body>
+  <button type="button" class="settings-btn" onclick="openSettings()"><i class="fas fa-cogs"></i></button>
   <a class="back-btn" href="dashboard.html">&larr;</a>
   <div class="title">PARTNER PAIRING</div>
   <div class="filter-bar">
@@ -345,6 +375,11 @@ margin-right: 5px;
     </div>
 
   <script>
+
+function openSettings() {
+            window.location.href = 'setting.html'
+        }
+        
        window.onload = function () {
           playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
       };
@@ -526,10 +561,13 @@ filtered.forEach(partner => {
     
     // 显示特征和匹配级别
     const traitsList = Object.entries(partner.traits)
-      .map(([trait, value]) => `${trait.charAt(0).toUpperCase() + trait.slice(1)}: ${value}`)
-      .join(", ");
-    
-    document.getElementById("traits").innerHTML = `<strong>Trait:</strong><br>${traitsList}`;
+    .filter(([_, value]) => value > 0) // Only include traits with non-zero values
+    .map(([trait, value]) => `${trait.charAt(0).toUpperCase() + trait.slice(1)}: ${value}`)
+    .join(", ");
+
+    const traitsContent = traitsList || "No trait available";
+
+    document.getElementById("traits").innerHTML = `<strong>Trait:</strong><br>${traitsContent}`;
     document.getElementById("matching-level").innerHTML = `Matching level: <span>${generateHearts(matchingScore)}</span>`;
     document.getElementById("contact-info").innerHTML = `<strong>Contact:</strong><br>Email: ${partner.email}<br>Phone: ${partner.phone}`;
     document.getElementById("notes").innerHTML = `<strong>Note</strong><br>周二有课。`;
