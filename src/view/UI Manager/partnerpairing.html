@@ -1,4 +1,5 @@
 <!DOCTYPE html> <html lang="en"> <head> <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> <meta charset="UTF-8"> <title>Partner Pairing</title> <style> /* Your original styles are unchanged */ body { margin: 0; font-family: 'Poppins', sans-serif; background: url('../Asset Manager/images/partnerpairing/partner.png') no-repeat center center/cover; color: black; }
+    
     .container {
     display: flex;
     justify-content: space-between;
@@ -269,6 +270,35 @@
     input[type="radio"] {
             display: none;
         }
+
+        #profiles-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.profile-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  width: 250px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.profile-card h3 {
+  margin-top: 0;
+}
+
+.heart-container {
+  margin-top: 10px;
+}
+
+.heart {
+  color: #e25555;
+  font-size: 24px;
+  margin-right: 5px;
+}
     </style>
 
 </head>
@@ -470,6 +500,85 @@
   }
 
   loadPlayerProfile();
+
+const maxTraitValue = 10;
+const maxTotalScore = Object.keys(traitWeights).length * maxTraitValue;
+
+// Function to calculate total score for a user
+function calculateTotalScore(traits) {
+  let total = 0;
+  for (let trait in traitWeights) {
+    const traitValue = traits[trait] || 0;
+    total += traitValue * traitWeights[trait];
+  }
+  return total;
+}
+
+// Function to normalize score to a scale of 0 to 6
+function normalizeScore(score) {
+  return Math.round((score / maxTotalScore) * 6);
+}
+
+// Function to create heart icons
+function createHearts(count) {
+  const heartContainer = document.createElement('div');
+  heartContainer.classList.add('heart-container');
+  for (let i = 0; i < count; i++) {
+    const heart = document.createElement('span');
+    heart.classList.add('heart');
+    heart.innerHTML = '&#10084;'; // Unicode for heart symbol
+    heartContainer.appendChild(heart);
+  }
+  return heartContainer;
+}
+
+// Function to render user profiles
+function renderProfiles(users) {
+  const container = document.getElementById('profiles-container');
+  users.forEach(user => {
+    const totalScore = calculateTotalScore(user.traits);
+    const heartCount = normalizeScore(totalScore);
+
+    const card = document.createElement('div');
+    card.classList.add('profile-card');
+
+    const name = document.createElement('h3');
+    name.textContent = user.name;
+
+    const hearts = createHearts(heartCount);
+
+    card.appendChild(name);
+    card.appendChild(hearts);
+    container.appendChild(card);
+  });
+}
+
+// Initialize rendering
+renderProfiles(users);
+
+function calculateMatchingLevel(traits1, traits2) {
+  let matches = traits1.filter(trait => traits2.includes(trait));
+  return matches.length / Math.max(traits1.length, traits2.length);
+}
+
+const selectedProfiles = [profile1, profile2]; // assume these are your selected objects
+
+const level = calculateMatchingLevel(selectedProfiles[0].traits, selectedProfiles[1].traits);
+console.log("Matching Level:", level);
+
+$('.card').on('click', function () {
+  // collect selected cards
+  const selected = $('.card.selected');
+  if (selected.length === 2) {
+    const profile1 = selected.eq(0).data('profile');
+    const profile2 = selected.eq(1).data('profile');
+    
+    const level = calculateMatchingLevel(profile1.traits, profile2.traits);
+    alert(`Matching Level: ${(level * 100).toFixed(2)}%`);
+  }
+});
+
+    
     </script>
   </body>
   </html>
