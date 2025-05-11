@@ -1400,8 +1400,14 @@
         pauseGame(); // This will pause everything as defined earlier
     });
 
-
 </script>
-
+<!-- validate character setup -->
+<script>
+    window.onload = async function () {
+        if (!localStorage.getItem("deviceId")) {
+            window.location.href = "error.html";
+        }
+    }
+</script>
 
 </html>

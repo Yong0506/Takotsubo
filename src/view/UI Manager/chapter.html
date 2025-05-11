@@ -189,6 +189,15 @@
             console.log("No such document!");
         }
     </script>
+
+    <!-- validate character setup -->
+    <script>
+        window.onload = async function () {
+            if (!localStorage.getItem("deviceId")) {
+                window.location.href = "error.html";
+            }
+        }
+    </script>
 </body>
 
 </html>

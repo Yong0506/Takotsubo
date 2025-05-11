@@ -12,7 +12,8 @@
       display: none;
       position: fixed;
       top: 0;
-      bottom: 0; /* Ensure it covers full height on all screens */
+      bottom: 0;
+      /* Ensure it covers full height on all screens */
       left: 0;
       width: 100%;
       height: 100%;
@@ -28,6 +29,7 @@
         opacity: 0;
         transform: scale(0.9) translateY(20px);
       }
+
       to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -43,9 +45,11 @@
       color: white;
       text-align: center;
       animation-name: modalContentAppear;
-      animation-duration: 0.7s; /* Adjust speed as desired */
+      animation-duration: 0.7s;
+      /* Adjust speed as desired */
       animation-timing-function: ease-out;
-      animation-fill-mode: forwards; /* Keeps the 'to' state after animation */
+      animation-fill-mode: forwards;
+      /* Keeps the 'to' state after animation */
     }
 
     .close {
@@ -76,25 +80,29 @@
 
     /* Info Icon Styling */
     #info-icon {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        font-size: 28px;
-        cursor: pointer;
-        color: white;
-        background: #444;
-        padding: 15px;
-        border-radius: 50%;
-        text-align: center;
-        z-index: 999;
-        border: 2px solid #888; /* Add a circular frame */
-        transition: all 0.3s ease; /* Add smooth hover effect */
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      background: #444;
+      padding: 15px;
+      border-radius: 50%;
+      text-align: center;
+      z-index: 999;
+      border: 2px solid #888;
+      /* Add a circular frame */
+      transition: all 0.3s ease;
+      /* Add smooth hover effect */
     }
 
     #info-icon:hover {
-        background: #666;
-        border-color: #fff; /* Change border color on hover */
-        transform: scale(1.1); /* Slightly enlarge on hover */
+      background: #666;
+      border-color: #fff;
+      /* Change border color on hover */
+      transform: scale(1.1);
+      /* Slightly enlarge on hover */
     }
 
     /* Info Modal Styling */
@@ -364,25 +372,34 @@
 
   <script src="game.js"></script>
 
-      <!-- firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <!-- firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
-            authDomain: "takotsubo-4f61d.firebaseapp.com",
-            projectId: "takotsubo-4f61d",
-            storageBucket: "takotsubo-4f61d.firebasestorage.app",
-            messagingSenderId: "59472372412",
-            appId: "1:59472372412:web:a192e23b031683988266b9",
-            measurementId: "G-QQ6VXX1M7C"
-        };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
+      authDomain: "takotsubo-4f61d.firebaseapp.com",
+      projectId: "takotsubo-4f61d",
+      storageBucket: "takotsubo-4f61d.firebasestorage.app",
+      messagingSenderId: "59472372412",
+      appId: "1:59472372412:web:a192e23b031683988266b9",
+      measurementId: "G-QQ6VXX1M7C"
+    };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-    </script>
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <!-- validate character setup -->
+  <script>
+    window.onload = async function () {
+      if (!localStorage.getItem("deviceId")) {
+        window.location.href = "error.html";
+      }
+    }
+  </script>
 
 </body>
 
