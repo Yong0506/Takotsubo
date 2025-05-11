@@ -750,6 +750,7 @@
 
     //BGM
     let currentBGM = null;
+    let globalVolume = 0.5;
 
 
     //PAUSE VALUES
@@ -884,9 +885,9 @@
 
         // Play appropriate sound
         if (isCorrect) {
-            playSoundEffect('../Asset Manager/images/punch/snd_egg.wav');
+            playSoundEffect('../Asset Manager/musics/punch/snd_egg.wav');
         } else {
-            playSoundEffect('../Asset Manager/images/punch/snd_error.wav');
+            playSoundEffect('../Asset Manager/musics/punch/snd_error.wav');
         }
 
         setTimeout(() => {
@@ -977,7 +978,7 @@
         const gameUI = document.querySelector('.gameUI');
 
         startButton.addEventListener('click', () => {
-            playBackgroundMusic('../Asset Manager/images/punch/punchBGM.mp3')
+            playBackgroundMusic('../Asset Manager/musics/punch/punchBGM.mp3')
             startScreen.classList.add('fade-out');
 
             setTimeout(() => {
@@ -1082,8 +1083,8 @@
 
         // 🎵 Play one of two punch sound effects randomly
         const punchSounds = [
-            '../Asset Manager/images/punch/punch_ish_1.wav',
-            '../Asset Manager/images/punch/punch_ish_1_bc.wav'
+            '../Asset Manager/musics/punch/punch_ish_1.wav',
+            '../Asset Manager/musics/punch/punch_ish_1_bc.wav'
         ];
         const randomSound = punchSounds[Math.floor(Math.random() * punchSounds.length)];
         playSoundEffect(randomSound);
@@ -1315,7 +1316,11 @@
         // Create new audio element
         currentBGM = new Audio(filePath);
         currentBGM.loop = true;
-        currentBGM.volume = 0.5; // Adjust volume as needed
+
+        // Set volume based on the saved setting or default to 0.5
+        const savedVolume = localStorage.getItem("gameVolume");
+        currentBGM.volume = savedVolume !== null ? savedVolume / 100 : 0.5;
+
         currentBGM.play().catch((err) => {
             console.warn("Autoplay blocked or error occurred:", err);
         });
@@ -1323,11 +1328,32 @@
 
     function playSoundEffect(filePath) {
         const sfx = new Audio(filePath);
-        sfx.volume = 0.7; // Adjust volume as needed
+
+        // Set volume based on the saved setting or default to 0.5 (same as BGM)
+        const savedVolume = localStorage.getItem("gameVolume");
+        sfx.volume = savedVolume !== null ? savedVolume / 100 : 0.5;
+
         sfx.play().catch((err) => {
             console.warn("Sound effect failed to play:", err);
         });
     }
+
+    // Refresh BGM volume when returning from settings
+    function refreshBGMVolume() {
+        if (currentBGM) {
+            const savedVolume = localStorage.getItem("gameVolume");
+            currentBGM.volume = savedVolume !== null ? savedVolume / 100 : 0.5;
+        }
+    }
+
+    // Ensure volume is refreshed when returning from settings
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+            refreshBGMVolume();
+        }
+    });
+
+
 
     //
     //
