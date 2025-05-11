@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 3,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1746943157868,
@@ -20,6 +20,10 @@
                 {
                     "date": 1746943503725,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -163,10 +163,10 @@\n     </div>\r\n \r\n     <div id=\"maze\"></div>\r\n     <div id=\"heart-container\">\r\n-      <img id=\"heart3\" src=\"styles/heart.png\" alt=\"Heart\" class=\"heart\">\r\n-      <img id=\"heart2\" src=\"styles/heart.png\" alt=\"Heart\" class=\"heart\">\r\n+      <img id=\"heart3\" src=\"heart.png\" alt=\"Heart\" class=\"heart\">\r\n+      <img id=\"heart2\" src=\"heart.png\" alt=\"Heart\" class=\"heart\">\r\n       <img id=\"heart1\" src=\"styles/heart.png\" alt=\"Heart\" class=\"heart\">\r\n     </div>\r\n   </div>\r\n \r\n"
+                },
+                {
+                    "date": 1746943569920,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -165,9 +165,9 @@\n     <div id=\"maze\"></div>\r\n     <div id=\"heart-container\">\r\n       <img id=\"heart3\" src=\"heart.png\" alt=\"Heart\" class=\"heart\">\r\n       <img id=\"heart2\" src=\"heart.png\" alt=\"Heart\" class=\"heart\">\r\n-      <img id=\"heart1\" src=\"styles/heart.png\" alt=\"Heart\" class=\"heart\">\r\n+      <img id=\"heart1\" src=\"heart.png\" alt=\"Heart\" class=\"heart\">\r\n     </div>\r\n   </div>\r\n \r\n   <!-- START OF MODALS -->\r\n"
                 }
             ],
             "date": 1746943157868,
