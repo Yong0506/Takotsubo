@@ -300,21 +300,21 @@
       <button id="searchButton">Search</button>
     </div>
     <div class="container">
-      <div class="grid-wrapper">
-        <div class="grid-container" id="card-container"></div>
-      </div>
-      <div class="profile-panel">
-        <h2 id="profile-title">Rosaline</h2>
-        <div class="card">
-          <img src="../Asset Manager/images/partnerpairing/kate.jpg" id="profile-img">
-          <p id="character-name">Rosaline</p>
+        <div class="grid-wrapper">
+          <div class="grid-container" id="card-container"></div>
         </div>
-        <div class="hearts">Matching Level: <span>💜💜💜🤍🤍</span></div>
-        <div class="traits"><strong>Traits:</strong><br>Humorous, Kind, Independent</div>
-        <div class="contact"><strong>Contact:</strong><br>Email: Rosaline123@gmail.com<br>Phone: 0101234567</div>
-        <div class="notes"><strong>NOTES</strong><br>Has class on Tuesdays.</div>
+        <div class="profile-panel">
+          <h2 id="profile-title">Loading...</h2>
+          <div class="card">
+            <img src="../Asset Manager/images/partnerpairing/kate.jpg" id="profile-img">
+            <p id="character-name">Loading...</p>
+          </div>
+          <div class="hearts" id="matching-level">Matching Level: <span>💜💜💜🤍🤍</span></div>
+          <div class="traits" id="traits"></div>
+          <div class="contact" id="contact-info"></div>
+          <div class="notes" id="notes"></div>
+        </div>
       </div>
-    </div>
 
     <script>
          window.onload = function () {
@@ -450,6 +450,28 @@
       });
   
       loadPartners();
+
+      async function loadPlayerProfile() {
+    const querySnapshot = await getDocs(collection(db, "players"));
+    if (!querySnapshot.empty) {
+      const firstDoc = querySnapshot.docs[0];
+      const player = firstDoc.data();
+
+      document.getElementById("profile-title").textContent = player.name || "No Name";
+      document.getElementById("character-name").textContent = player.name || "Unknown";
+      document.getElementById("contact-info").innerHTML =
+        `<strong>Contact:</strong><br>Email: ${player.email || 'N/A'}<br>Phone: ${player.phone || 'N/A'}`;
+      document.getElementById("traits").innerHTML =
+        `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits listed"}`;
+      document.getElementById("notes").innerHTML =
+        `<strong>NOTES</strong><br>Has class on Tuesdays.`; // Replace or customize if notes field exists
+
+      // You can dynamically update the image if URLs are stored in the DB
+      // document.getElementById("profile-img").src = player.imageURL || "default.jpg";
+    }
+  }
+
+  loadPlayerProfile();
     </script>
   </body>
   </html>
