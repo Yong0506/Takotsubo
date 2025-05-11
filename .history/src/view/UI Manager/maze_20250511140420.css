@@ -1,0 +1,125 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex; /* Use flexbox to center content */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Make the body take the full viewport height */
+}
+
+h1 {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+}
+
+#game-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    border: 2px solid #333;
+    background-color: #fff;
+}
+
+#frame {
+    display: inline-block;
+    padding: 10px; /* Space between the maze and the frame */
+    border: 10px solid #333; /* Frame border */
+    border-radius: 15px; /* Optional: Rounded corners for the frame */
+    background-color: #ddd; /* Frame background color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add a shadow for a 3D effect */
+}
+
+#maze {
+    display: grid;
+    grid-template-columns: repeat(20, 30px);
+    grid-template-rows: repeat(20, 30px);
+    gap: 0; /* Remove gaps between cells */
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+}
+
+.wall {
+    background-color: black;
+}
+
+.player {
+    background-image: url('character.png'); /* Path to your character image */
+    background-size: 130%; /* Scale the image to fit the cell */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+.trigger {
+    background-image: url('treasure.png'); /* Path to your treasure image */
+    background-size: 90%; /* Scale the image to fit the cell */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+/* Hide parts of the maze initially */
+.hidden-cell {
+    background-color: black; /* Hide cells with a black background */
+    visibility: hidden; /* Make the cell invisible */
+}
+
+/* Endpoint styling */
+.end {
+    background-color: red; /* Make the endpoint a red box */
+    border: 2px solid black; /* Optional: Add a border for better visibility */
+}
+
+.red-end {
+    background-image: url('door.png'); /* Path to your door image */
+    background-size: cover; /* Scale the image to fit the cell */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    border: 2px solid black; /* Optional: Add a border for better visibility */
+    background-color: transparent; /* Make the background transparent */
+}
+
+
+
+#heart-container {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    display: flex;
+    gap: 10px;
+}
+
+.heart {
+    width: 60px;
+    height: 60px;
+}
+/* Breathing animation for treasure/trigger points */
+@keyframes breathing {
+  0% {
+    transform: scale(1.1);
+    box-shadow: 0 0 5px rgba(255, 255, 100, 0.5); /* Optional: subtle glow */
+  }
+  50% {
+    transform: scale(1.2); /* Scale up slightly */
+    box-shadow: 0 0 15px rgba(255, 255, 100, 0.8); /* Optional: brighter glow */
+  }
+  100% {
+    transform: scale(1.1);
+    box-shadow: 0 0 5px rgba(255, 255, 100, 0.5); /* Optional: subtle glow */
+  }
+}
+
+.trigger, .red-endpoint {
+  /* Ensure existing styles for .trigger and .red-endpoint are preserved */
+  animation-name: breathing;
+  animation-duration: 2.5s; /* Duration of one full breathing cycle */
+  animation-iteration-count: infinite; /* Loop indefinitely */
+  animation-timing-function: ease-in-out; /* Smooth start and end */
+}
