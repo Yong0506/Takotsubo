@@ -133,7 +133,7 @@
         <p class="chapter-summary">Please wait while we load your story progress.</p>
         <h1 class="chapter-footer">~ End of the Chapter ~</h1>
     </div>
-    
+
     <button type="button" class="btn-next" onclick="nextChap()">Let's Proceed Next Chapter</button>
 
     <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
@@ -159,6 +159,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        const savedChap = parseInt(localStorage.getItem('gameSavedChap'));
+
         function openSettings() {
             window.location.href = 'setting.html'
         }
@@ -168,16 +170,19 @@
         }
 
         function nextChap() {
-            localStorage.setItem("gameSavedChap", 0);
-            window.location.href = 'dashboard.html'
+            if (savedChap === 3) {
+                localStorage.setItem("gameSavedChap", 0);
+                window.location.href = 'partnerpairing.html'
+            } else {
+                localStorage.setItem("gameSavedChap", 0);
+                window.location.href = 'dashboard.html'
+            }
         }
 
         window.onload = function () {
-            const savedChap = parseInt(localStorage.getItem('gameSavedChap'));
             const title = document.querySelector(".chapter-title");
             const summary = document.querySelector(".chapter-summary");
             const footer = document.querySelector(".chapter-footer");
-
 
             if (savedChap === 1) {
                 title.textContent = "Chapter 1: Deny And Anger";
@@ -199,34 +204,13 @@
         };
     </script>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-        import { getFirestore, collection, getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
-            authDomain: "takotsubo-4f61d.firebaseapp.com",
-            projectId: "takotsubo-4f61d",
-            storageBucket: "takotsubo-4f61d.firebasestorage.app",
-            messagingSenderId: "59472372412",
-            appId: "1:59472372412:web:a192e23b031683988266b9",
-            measurementId: "G-QQ6VXX1M7C"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app);
-
-        const deviceId = localStorage.getItem("deviceId");
-        const docRef = doc(db, "players", deviceId);
-        const docSnap = await getDoc(docRef);
-
+    <!-- validate character setup -->
+    <script>
+        window.onload = async function () {
+            if (!localStorage.getItem("deviceId")) {
+                window.location.href = "error.html";
+            }
+        }
     </script>
 </body>
 
