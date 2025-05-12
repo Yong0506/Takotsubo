@@ -198,14 +198,33 @@
                 footer.textContent = "~ End of the Chapter 2 ~";
             } else if (savedChap === 3) {
                 title.textContent = "Chapter 3: Letting Go";
-                summary.textContent = "Things start to shift. Misunderstandings and emotional distance challenge the relationship, pushing both to reflect on what brought them together—and what might drive them apart.";
+                summary.textContent = "People remain attached to the person they've experienced the deepest sense of love with so far. We accept this love, even if it comes with a ton of hardship. We accept it, even if the person doesn't feel like a good fit.The other stuff—the flaws, the humanity, the reality of whether or not the relationship works—are important details, too, ones that get overshadowed by moments of pure, deep love.And yes, it's true, they might not be the right person for you. But this is one of the most difficult learning experiences in relationships.We all deserve to be in relationships that feel good to us. Find love within yourself. You need to take the time to invest in learning how to love yourself again after your breakup. Even if you think this is silly and you have all the confidence in the world, don't overlook this step.";
                 footer.textContent = "~ End of the Chapter 3 ~";
             } else {
                 title.textContent = "Chapter Unknown";
                 summary.textContent = "No saved progress found. Start a new story to unveil its path.";
                 footer.textContent = "~ End Chapter Unknown ~";
             }
+            playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
         };
+
+        let currentBGM = null;
+
+        function playBackgroundMusic(filePath) {
+            if (currentBGM) {
+                currentBGM.pause();
+                currentBGM.currentTime = 0;
+            }
+
+            gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+
+            currentBGM = new Audio(filePath);
+            currentBGM.loop = true;
+            currentBGM.volume = gameVolume;
+            currentBGM.play().catch((err) => {
+                console.warn("Autoplay blocked or error occurred:", err);
+            });
+        }
     </script>
 </body>
 
