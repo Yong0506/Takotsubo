@@ -118,13 +118,12 @@ function calculateMatchingScore(selectedTraits, partnertraits) {
     ? selectedTraits.map(t => t.toLowerCase())
     : Object.keys(partnertraits);
 
-  let totalHearts = 0;
+  let totalHearts = 0;  
   let count = 0;
 
   traitsToCheck.forEach(trait => {
     const value = partnertraits[trait];
-    if (value < 20) {
-      let hearts = 1;
+    let hearts = 1;
       if (value > 20 && value <= 60) {
         hearts = 3;
       } else if (value > 60) {
@@ -132,14 +131,16 @@ function calculateMatchingScore(selectedTraits, partnertraits) {
       }
       totalHearts += hearts;
       count++;
-    }
-    console.log(value, hearts);
+    
+    console.log(`Trait: ${trait}, Value: ${value}, Hearts: ${hearts}`);
   });
 
   console.log(selectedTraits) ;
   console.log(partnertraits) ;
+  console.log('Total Hearts:', totalHearts);
+  console.log('Count:', count);
   // If no traits were valid, return 3 as neutral match
-  if (count === 0) return 3;
+  if (count === 0) return 0;
 
   // Return average, rounded to nearest integer, between 1 and 5
   return Math.max(1, Math.min(5, Math.round(totalHearts / count)));
