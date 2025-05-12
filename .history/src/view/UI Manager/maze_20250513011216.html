@@ -391,29 +391,7 @@
     </div>
   </div>
 
-  <!-- Pause Modal -->
-  <div id="pauseModal" class="modal"> <!-- Using 'modal' class like scenarios for consistent JS handling -->
-    <div class="modal-content" style="max-width: 400px;"> <!-- Inline style for specific width -->
-      <div class="modal-header"> <!-- Bootstrap class structure for styling if needed -->
-        <h5 class="modal-title">Paused</h5>
-      </div>
-      <div class="modal-body"> <!-- Bootstrap class structure -->
-        <div class="d-flex flex-column align-items-center">
-          <button type="button" class="btn-custom" onclick="closePauseModal()">
-            <i class="fas fa-play"></i>Resume
-          </button>
-          <button type="button" class="btn-custom" onclick="openSettings()">
-            <i class="fas fa-cogs"></i>Settings
-          </button>
-          <button type="button" class="btn-custom" onclick="goToMainMenu()">
-            <i class="fas fa-home"></i>Main Menu
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="game.js"></script>
+  <script src="../../controller/Mini-Game Manager/game.js"></script>
 
   <!-- firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
