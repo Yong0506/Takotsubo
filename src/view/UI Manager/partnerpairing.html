@@ -125,28 +125,6 @@
   color: purple;
   }
   
-  .back-btn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background-color: rgba(153, 102, 255, 0.2);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #6633cc;
-  text-decoration: none;
-  border: 2px solid #b399ff;
-  transition: all 0.3s ease;
-  }
-  
-  .back-btn:hover {
-  background-color: rgba(153, 102, 255, 0.4);
-  color: white;
-  border-color: #9966ff;
-  box-shadow: 0 0 8px #b399ff;
-  }
-  
   .title {
   text-align: center;
   font-size: 2.8em;
@@ -321,8 +299,24 @@ margin-right: 5px;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
         }
+        
+  .back-btn {
+    position: absolute;
+            top: 20px;
+            left: 50px;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            background-color: rgba(169, 169, 169, 0.6);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+  }
 
-        .settings-btn:hover
+  .back-btn:hover,
+  .settings-btn:hover
         { background-color: rgba(169, 169, 169, 1);
             transform: scale(1.05);}
     
@@ -370,7 +364,6 @@ margin-right: 5px;
         <div class="hearts" id="matching-level">Matching Level: <span>💜💜💜🤍🤍</span></div>
         <div class="traits" id="traits"></div>
         <div class="contact" id="contact-info"></div>
-        <div class="notes" id="notes"></div>
       </div>
     </div>
 
@@ -379,7 +372,7 @@ margin-right: 5px;
 function openSettings() {
             window.location.href = 'setting.html'
         }
-        
+
        window.onload = function () {
           playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
       };
@@ -517,66 +510,74 @@ try {
 }
 
 function renderCards(gender = "all", selectedTraits = []) {
-container.innerHTML = "";
-let filtered = allPartners;
+    container.innerHTML = "";
+    let filtered = allPartners;
 
-// 性别筛选
-if (gender !== "all") {
-  filtered = filtered.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
-}
+    // Gender filter
+    if (gender !== "all") {
+        filtered = filtered.filter(p => p.gender.toLowerCase() === gender.toLowerCase());
+    }
 
-// 特征筛选
-if (selectedTraits.length > 0) {
-  filtered = filtered.filter(p => 
-    selectedTraits.some(trait => 
-      p.traits && Object.keys(p.traits).includes(trait.toLowerCase())
-    )
-  );
-}
+    // Trait filter (only include cards with non-zero trait values for selected traits)
+    if (selectedTraits.length > 0) {
+        filtered = filtered.filter(p =>
+            selectedTraits.every(trait =>
+                p.traits && p.traits[trait.toLowerCase()] > 0 // Check if the trait exists and has a value greater than 0
+            )
+        );
+    }
 
-if (filtered.length === 0) {
-  container.innerHTML = "<p style='color: red; text-align: center;'>No partner found!</p>";
-  return;
-}
+    if (filtered.length === 0) {
+        container.innerHTML = "<p style='color: red; text-align: center;'>No partner found!</p>";
+        return;
+    }
 
-filtered.forEach(partner => {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.innerHTML = `
-    <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
-    <p>${partner.name}</p>
-  `;
+    filtered.forEach(partner => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <img src="${partner.imgUrl}" alt="${partner.name}" onerror="this.src='../Asset Manager/images/partnerpairing/kate.jpg'">
+            <p>${partner.name}</p>
+        `;
 
-  card.addEventListener("click", () => {
+        card.addEventListener("click", () => {
     document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
     card.classList.add("selected");
 
-    // 使用选中的特征计算匹配分数
+    // Calculate matching score
     const matchingScore = calculateMatchingScore(selectedTraits, partner.traits);
 
-    // 更新个人资料面板
+    // Update profile panel
     document.getElementById("profile-title").textContent = partner.name;
     document.getElementById("character-name").textContent = partner.name;
     document.getElementById("profile-img").src = partner.imgUrl;
-    
-    // 显示特征和匹配级别
-    const traitsList = Object.entries(partner.traits)
-    .filter(([_, value]) => value > 0) // Only include traits with non-zero values
-    .map(([trait, value]) => `${trait.charAt(0).toUpperCase() + trait.slice(1)}: ${value}`)
-    .join(", ");
+
+    // Calculate total score of all traits
+    const totalScore = Object.values(partner.traits).reduce((sum, value) => sum + value, 0);
+
+    // Sort traits by value in descending order
+    const sortedTraits = Object.entries(partner.traits)
+        .filter(([_, value]) => value > 0) // Only include traits with non-zero values
+        .sort((a, b) => b[1] - a[1]); // Sort by value in descending order
+
+    // Display sorted traits as percentages
+    const traitsList = sortedTraits
+        .map(([trait, value]) => {
+            const percentage = parseInt((value / totalScore) * 100); // Convert to percentage
+            return `${trait.charAt(0).toUpperCase() + trait.slice(1)}: ${percentage}%`;
+        })
+        .join(", ");
 
     const traitsContent = traitsList || "No trait available";
 
     document.getElementById("traits").innerHTML = `<strong>Trait:</strong><br>${traitsContent}`;
     document.getElementById("matching-level").innerHTML = `Matching level: <span>${generateHearts(matchingScore)}</span>`;
     document.getElementById("contact-info").innerHTML = `<strong>Contact:</strong><br>Email: ${partner.email}<br>Phone: ${partner.phone}`;
-    document.getElementById("notes").innerHTML = `<strong>Note</strong><br>周二有课。`;
-  });
-
-  container.appendChild(card);
 });
-}
 
+        container.appendChild(card);
+    });
+}
 // ... existing code ...
 
     searchButton.addEventListener("click", () => {
@@ -598,7 +599,7 @@ async function loadPlayerProfile() {
     document.getElementById("contact-info").innerHTML =
       `<strong>Contact:</strong><br>Email: ${player.email || 'N/A'}<br>Phone: ${player.phone || 'N/A'}`;
     document.getElementById("traits").innerHTML =
-      `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits listed"}`;
+      `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits available"}`;
     document.getElementById("notes").innerHTML =
       `<strong>NOTES</strong><br>Has class on Tuesdays.`; // Replace or customize if notes field exists
 
