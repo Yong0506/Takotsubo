@@ -246,7 +246,13 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
+ const choiceButtons = document.querySelectorAll(`#${modalId} .choice button`);
+    choiceButtons.forEach(button => button.disabled = true);
 
+    // Check if all scenarios are now completed
+    if (scenarioPoints.every(p => p.triggered)) {
+        allScenariosCompleted = true;
+    }
 
 function openInfoModal() {
     document.getElementById('info-modal').style.display = 'block';
