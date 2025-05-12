@@ -148,6 +148,8 @@
       font-family: Arial, sans-serif;
       color: white;
     }
+
+    
   </style>
 </head>
 
@@ -177,6 +179,37 @@
       <img id="heart1" src="../Asset Manager/images/maze/heart.png" alt="Heart" class="heart">
     </div>
   </div>
+
+
+      <button class="pause-btn" data-bs-toggle="modal" data-bs-target="#pauseModal"><i class="fas fa-pause"></i></button>
+
+    <div class="chapter-info text-center">
+        <h1 class="chapter-title">Loading...</h1>
+        <p class="chapter-summary">Please wait while we load your story progress.</p>
+        <h1 class="chapter-footer">~ End of the Chapter ~</h1>
+    </div>
+
+    <button type="button" class="btn-next" onclick="nextChap()">Let's Proceed Next Chapter</button>
+
+    <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column align-items-center">
+                        <button type="button" class="btn-custom" data-bs-dismiss="modal"><i
+                                class="fas fa-play"></i>Resume</button>
+                        <button type="button" class="btn-custom" onclick="openSettings()"><i
+                                class="fas fa-cogs"></i>Settings</button>
+                        <button type="button" class="btn-custom" onclick="goToMainMenu()"><i
+                                class="fas fa-home"></i>Main Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
   <!-- START OF MODALS -->
   <!-- Scenario 1 -->

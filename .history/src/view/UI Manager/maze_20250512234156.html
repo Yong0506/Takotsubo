@@ -148,6 +148,90 @@
       font-family: Arial, sans-serif;
       color: white;
     }
+
+    .pause-btn {
+      position: absolute;
+      top: 20px;
+      left: 50px;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      background-color: rgba(169, 169, 169, 0.6);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .pause-btn:hover {
+      background-color: rgba(169, 169, 169, 1);
+      transform: scale(1.05);
+    }
+
+            .chapter-info {
+            position: absolute;
+            top: 100px;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .chapter-title,
+        .chapter-footer {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .chapter-summary {
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid white;
+        }
+
+        .modal-title {
+            color: white;
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .btn-custom {
+            background-color: white;
+            color: rgb(78, 78, 78);
+            font-size: 1.2em;
+            padding: 12px 20px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: white;
+            color: rgb(0, 0, 0);
+            transform: scale(1.05);
+        }
+
+        .btn-custom i {
+            margin-right: 8px;
+        }
   </style>
 </head>
 
@@ -178,6 +262,34 @@
     </div>
   </div>
 
+
+  <button class="pause-btn" data-bs-toggle="modal" data-bs-target="#pauseModal"><i class="fas fa-pause"></i></button>
+
+  <div class="chapter-info text-center">
+    <h1 class="chapter-title">Loading...</h1>
+    <p class="chapter-summary">Please wait while we load your story progress.</p>
+    <h1 class="chapter-footer">~ End of the Chapter ~</h1>
+  </div>
+
+  <div class="modal fade" id="pauseModal" tabindex="-1" aria-labelledby="pauseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center" id="pauseModalLabel">Paused</h5>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex flex-column align-items-center">
+            <button type="button" class="btn-custom" data-bs-dismiss="modal"><i class="fas fa-play"></i>Resume</button>
+            <button type="button" class="btn-custom" onclick="openSettings()"><i
+                class="fas fa-cogs"></i>Settings</button>
+            <button type="button" class="btn-custom" onclick="goToMainMenu()"><i class="fas fa-home"></i>Main
+              Menu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- START OF MODALS -->
   <!-- Scenario 1 -->
   <div id="scenario1" class="modal">
@@ -186,13 +298,15 @@
       <p><strong>Scenario 1:</strong> "You never say 'I love you' anymore... Do you still feel the same?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q1o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
-           <p>Say she’s being needy</p>
+          <img src="../Asset Manager/images/maze/q1o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
+          <p>Say she’s being needy</p>
           <button onclick="showFeedback(false, 'feedback1')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q1o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
-                    <p>Ask her about her love language and try to adapt</p>
+          <img src="../Asset Manager/images/maze/q1o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
+          <p>Ask her about her love language and try to adapt</p>
           <button onclick="showFeedback(true, 'feedback1')">Choose</button>
         </div>
       </div>
@@ -206,13 +320,15 @@
       <p><strong>Scenario 2:</strong> "Why did you like her photo? Do you like her more than me?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q2o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q2o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Get angry and argue</p>
           <button onclick="showFeedback(false, 'feedback2')">Choose</button>
         </div>
         <div class="choice">
-          
-          <img src="../Asset Manager/images/maze/q2o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+
+          <img src="../Asset Manager/images/maze/q2o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Reassure her and explain calmly</p>
           <button onclick="showFeedback(true, 'feedback2')">Choose</button>
         </div>
@@ -228,12 +344,14 @@
       <p><strong>Scenario 3:</strong> "You forgot our anniversary... again."</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q3o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q3o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Say she's too emotional and it’s not a big deal</p>
           <button onclick="showFeedback(false, 'feedback3')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q3o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q3o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Apologize sincerely and plan a surprise</p>
           <button onclick="showFeedback(true, 'feedback3')">Choose</button>
         </div>
@@ -248,12 +366,14 @@
       <p><strong>Scenario 4:</strong> "We won’t be able to meet for months... What do we do?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q4o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q4o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Break up before it hurts more</p>
           <button onclick="showFeedback(false, 'feedback4')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q4o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q4o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Make time to video call and plan future meetups</p>
           <button onclick="showFeedback(true, 'feedback4')">Choose</button>
         </div>
@@ -268,12 +388,14 @@
       <p><strong>Scenario 5:</strong> "Your partner apologizes after a big argument. What's your reaction?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q5o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q5o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Accept the apology and talk things through</p>
           <button onclick="showFeedback(true, 'feedback5')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q5o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q5o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Say it's fine but secretly hold a grudge</p>
           <button onclick="showFeedback(false, 'feedback5')">Choose</button>
         </div>
@@ -288,12 +410,14 @@
       <p><strong>Scenario 6:</strong> "Your anniversary is coming, but you’re low on budget. What do you do?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q6o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q6o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Plan a meaningful low-budget surprise</p>
           <button onclick="showFeedback(true, 'feedback6')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q6o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q6o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Do nothing and hope they won’t notice</p>
           <button onclick="showFeedback(false, 'feedback6')">Choose</button>
         </div>
@@ -308,12 +432,14 @@
       <p><strong>Scenario 7:</strong> "Your partner posts a photo with someone you don’t know. What's your move?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q7o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q7o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Ask them calmly who the person is</p>
           <button onclick="showFeedback(true, 'feedback7')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q7o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q7o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Comment passive-aggressively under the post</p>
           <button onclick="showFeedback(false, 'feedback7')">Choose</button>
         </div>
@@ -328,12 +454,14 @@
       <p><strong>Scenario 8:</strong> "Your partner did something that bothered you. What do you do?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q8o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q8o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Talk calmly and express your feelings directly</p>
           <button onclick="showFeedback(true, 'feedback8')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q8o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q8o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Give them the silent treatment and hope they get it</p>
           <button onclick="showFeedback(false, 'feedback8')">Choose</button>
         </div>
@@ -348,12 +476,14 @@
       <p><strong>Scenario 9:</strong> "Your partner is upset but won’t tell you why. What do you do?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q9o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q9o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Give them space and wait for them to open up</p>
           <button onclick="showFeedback(true, 'feedback9')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q9o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q9o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Keep asking until they get annoyed</p>
           <button onclick="showFeedback(false, 'feedback9')">Choose</button>
         </div>
@@ -368,12 +498,14 @@
       <p><strong>Scenario 10:</strong> "You’re busy with work, and your partner feels neglected. What do you do?"</p>
       <div class="choices">
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q10o1.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q10o1.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Plan quality time together after work</p>
           <button onclick="showFeedback(true, 'feedback10')">Choose</button>
         </div>
         <div class="choice">
-          <img src="../Asset Manager/images/maze/q10o2.png" alt="Choice Image" style="width:100px; height:auto; margin-bottom:5px;">
+          <img src="../Asset Manager/images/maze/q10o2.png" alt="Choice Image"
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Tell them to stop being clingy</p>
           <button onclick="showFeedback(false, 'feedback10')">Choose</button>
         </div>

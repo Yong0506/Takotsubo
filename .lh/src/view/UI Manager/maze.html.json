@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 7,
+            "activePatchIndex": 8,
             "patches": [
                 {
                     "date": 1747056166477,
@@ -36,6 +36,10 @@
                 {
                     "date": 1747056230284,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -205,9 +205,9 @@\n     <div class=\"modal-content\">\r\n       <p><strong>Scenario 2:</strong> \"Why did you like her photo? Do you like her more than me?\"</p>\r\n       <div class=\"choices\">\r\n         <div class=\"choice\">\r\n-          <img src=\"../Asset Manager/images/maze/2_o1.png\" alt=\"Choice Image\" style=\"width:100px; height:auto; margin-bottom:5px;\">\r\n+          <img src=\"../Asset Manager/images/maze/q2_o1.png\" alt=\"Choice Image\" style=\"width:100px; height:auto; margin-bottom:5px;\">\r\n           <p>q2o1</p>\r\n           <button onclick=\"showFeedback(false, 'feedback2')\">Choose</button>\r\n         </div>\r\n         <div class=\"choice\">\r\n"
+                },
+                {
+                    "date": 1747064521823,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -207,8 +207,9 @@\n     <h1 class=\"chapter-footer\">~ End of the Chapter ~</h1>\r\n   </div>\r\n \r\n \r\n+\r\n   <div class=\"modal fade\" id=\"pauseModal\" tabindex=\"-1\" aria-labelledby=\"pauseModalLabel\" aria-hidden=\"true\">\r\n     <div class=\"modal-dialog\">\r\n       <div class=\"modal-content\">\r\n         <div class=\"modal-header\">\r\n"
                 }
             ],
             "date": 1747056166477,
