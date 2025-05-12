@@ -13,7 +13,6 @@ let currentTriggerIndex = 0; // Track how many triggers have been activated
 let redEndpointGenerated = false; // Track if the red endpoint has been generated
 let playerHealth = 3; // Initialize player health
 const deviceId = localStorage.getItem("deviceId");
-let isScenarioPopupActive = false; // Flag to track if a scenario popup is active
 
 
 // Generate the maze grid with a single path
@@ -214,22 +213,15 @@ function showFeedback(correct, feedbackId) {
 // Function to open a modal
 function openModal(id) {
     document.getElementById(id).style.display = 'flex';
-    if (id.startsWith('scenario')) {
-        isScenarioPopupActive = true;
-    }
 }
 
 // Function to close a modal
 function closeModal(id) {
     document.getElementById(id).style.display = 'none';
-    if (id.startsWith('scenario')) {
-        isScenarioPopupActive = false;
-    }
 }
 
 // Handle keyboard input
 document.addEventListener('keydown', (event) => {
-    if (isScenarioPopupActive) return; // If a scenario popup is active, do not process movement
     switch (event.key) {
         case 'ArrowUp':
             movePlayer(0, -1);
