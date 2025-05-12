@@ -227,4 +227,25 @@ async function saveEditedProfile() {
     }
 }
 
+async function handleStoryButton() {
+    const docRef = doc(db, "players", deviceId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        const savedChap = parseInt(localStorage.getItem("gameSavedChap"));
+
+        await updateDoc(docRef, { newGame: "No" });
+
+        if (savedChap > 0) {
+            window.location.href = "storyline.html"
+        } else {
+            window.location.href = "chapter.html";
+        }
+    } else {
+        console.log("No such document!");
+    }
+}
+
 window.saveEditedProfile = saveEditedProfile;
+window.handleStoryButton = handleStoryButton;
