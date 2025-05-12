@@ -252,7 +252,7 @@ document.addEventListener('keydown', (event) => {
     // Check if all scenarios are now completed
     if (scenarioPoints.every(p => p.triggered)) {
         allScenariosCompleted = true;
-    }
+
 
 function openInfoModal() {
     document.getElementById('info-modal').style.display = 'block';
