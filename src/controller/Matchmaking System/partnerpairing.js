@@ -118,13 +118,12 @@ function calculateMatchingScore(selectedTraits, partnertraits) {
     ? selectedTraits.map(t => t.toLowerCase())
     : Object.keys(partnertraits);
 
-  let totalHearts = 0;
+  let totalHearts = 0;  
   let count = 0;
 
   traitsToCheck.forEach(trait => {
     const value = partnertraits[trait];
-    if (value < 20) {
-      let hearts = 1;
+    let hearts = 1;
       if (value > 20 && value <= 60) {
         hearts = 3;
       } else if (value > 60) {
@@ -132,14 +131,20 @@ function calculateMatchingScore(selectedTraits, partnertraits) {
       }
       totalHearts += hearts;
       count++;
-    }
+    
+    console.log(`Trait: ${trait}, Value: ${value}, Hearts: ${hearts}`);
   });
 
+  console.log(selectedTraits) ;
+  console.log(partnertraits) ;
+  console.log('Total Hearts:', totalHearts);
+  console.log('Count:', count);
   // If no traits were valid, return 3 as neutral match
-  if (count === 0) return 3;
+  if (count === 0) return 0;
 
   // Return average, rounded to nearest integer, between 1 and 5
   return Math.max(1, Math.min(5, Math.round(totalHearts / count)));
+  
 }
 
 function generateHearts(count) {
@@ -265,9 +270,6 @@ async function loadPlayerProfile() {
       `<strong>Contact:</strong><br>Email: ${player.email || 'N/A'}<br>Phone: ${player.phone || 'N/A'}`;
     document.getElementById("traits").innerHTML =
       `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits available"}`;
-    document.getElementById("notes").innerHTML =
-      `<strong>NOTES</strong><br>Has class on Tuesdays.`; // Replace or customize if notes field exists
-
     // You can dynamically update the image if URLs are stored in the DB
     // document.getElementById("profile-img").src = player.imageURL || "default.jpg";
   }
