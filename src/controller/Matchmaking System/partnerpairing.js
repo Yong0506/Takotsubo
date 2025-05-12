@@ -133,13 +133,17 @@ function calculateMatchingScore(selectedTraits, partnertraits) {
       totalHearts += hearts;
       count++;
     }
+    console.log(value, hearts);
   });
 
+  console.log(selectedTraits) ;
+  console.log(partnertraits) ;
   // If no traits were valid, return 3 as neutral match
   if (count === 0) return 3;
 
   // Return average, rounded to nearest integer, between 1 and 5
   return Math.max(1, Math.min(5, Math.round(totalHearts / count)));
+  
 }
 
 function generateHearts(count) {
@@ -265,9 +269,6 @@ async function loadPlayerProfile() {
       `<strong>Contact:</strong><br>Email: ${player.email || 'N/A'}<br>Phone: ${player.phone || 'N/A'}`;
     document.getElementById("traits").innerHTML =
       `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits available"}`;
-    document.getElementById("notes").innerHTML =
-      `<strong>NOTES</strong><br>Has class on Tuesdays.`; // Replace or customize if notes field exists
-
     // You can dynamically update the image if URLs are stored in the DB
     // document.getElementById("profile-img").src = player.imageURL || "default.jpg";
   }
