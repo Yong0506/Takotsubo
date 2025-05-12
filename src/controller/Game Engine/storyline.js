@@ -1,5 +1,3 @@
-// filepath: c:\Users\Asus\Documents\GitHub\CHIANGJP\Takotsubo\src\view\Game Engine\storyline.js
-
 // Firebase 配置
 const firebaseConfig = {
     apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
@@ -184,6 +182,7 @@ async function showDialogue(dialogueId) {
     }
 
     characterNameElement.innerText = renderCharName(dialogue.charName);
+    
     if (dialogue.type === "monologue") {
         dialogueTextElement.classList.add("monologue");
     } else {
@@ -301,9 +300,31 @@ async function skipToInteraction() {
     }
 }
 
-document.querySelector('.skip-button').addEventListener('click', skipToInteraction);
+// document.querySelector('.skip-button').addEventListener('click', skipToInteraction);
 
-dialogueBox.addEventListener('click', async () => {
+// dialogueBox.addEventListener('click', async () => {
+//     const dialogue = await loadDialogueFromFirebase(currentProgress);
+//     if (!dialogue) return;
+//     if (isTyping) {
+//         if (currentTimeout) {
+//             clearTimeout(currentTimeout);
+//         }
+//         dialogueTextElement.innerHTML = dialogue.dialog;
+//         isTyping = false;
+//         return;
+//     }
+//     let hasOptions = false;
+//     for (let i = 1; i <= 3; i++) {
+//         if (dialogue[`option${i}`]) hasOptions = true;
+//     }
+//     if (hasOptions) return;
+//     if (dialogue.next) {
+//         currentProgress = dialogue.next;
+//         showDialogue(currentProgress);
+//     }
+// });
+
+async function dialogueBoxClick() {
     const dialogue = await loadDialogueFromFirebase(currentProgress);
     if (!dialogue) return;
     if (isTyping) {
@@ -323,7 +344,7 @@ dialogueBox.addEventListener('click', async () => {
         currentProgress = dialogue.next;
         showDialogue(currentProgress);
     }
-});
+}
 
 async function updateProgress(chapterProgress, overallProgress) {
     const progressFill = document.querySelector('.progress-fill');
@@ -334,67 +355,68 @@ async function updateProgress(chapterProgress, overallProgress) {
     localStorage.setItem('overallProgress', overallProgress);
 
     try {
-                await db.collection('players').doc(currentUserId).update({
-                    overallProgress: overallProgress
-                });
-            } catch (error) {
-                console.error(`Error:`, error);
-            }
+        await db.collection('players').doc(currentUserId).update({
+            overallProgress: overallProgress
+        });
+    } catch (error) {
+        console.error(`Error:`, error);
+    }
 }
 
 async function startPuzzleGame(imagePath) {
     if (!imagePath) return;
     const dialogue = await loadDialogueFromFirebase(currentProgress);
-     localStorage.setItem('puzzleImagePath', String(imagePath));
-     window.location.href = 'memories.html';
+    localStorage.setItem('puzzleImagePath', String(imagePath));
+    window.location.href = 'memories.html';
 }
 
 function renderCharName(rawCharName) {
     const playerName = "You";
-            if (!rawCharName) return playerName;
-            return rawCharName.replace(/\{playerName\}/g, playerName);
+    if (!rawCharName) return playerName;
+    return rawCharName.replace(/\{playerName\}/g, playerName);
 }
- window.onload = async function () {
-            await initializeUser();
 
-            // 检查是否有保存的章节和对话
-            const savedChapter = parseInt(localStorage.getItem("gameSavedChap"));
-            const savedDialog = localStorage.getItem('gameSavedDialog');
-            let currentStory;
+window.onload = async function () {
+    await initializeUser();
 
-            if (savedChapter === 1) {
-                currentStory = "denyAnger";
-                localStorage.setItem('currentStory', "denyAnger");
-                currentProgress = savedDialog !== "" ? savedDialog : "deny1";
-                if (savedDialog === "") localStorage.setItem('gameSavedDialog', "deny1");
+    // 检查是否有保存的章节和对话
+    const savedChapter = parseInt(localStorage.getItem("gameSavedChap"));
+    const savedDialog = localStorage.getItem('gameSavedDialog');
+    let currentStory;
 
-            } else if (savedChapter === 2) {
-                currentStory = "memoriesTogether";
-                localStorage.setItem('currentStory', "memoriesTogether");
-                currentProgress = savedDialog !== "" ? savedDialog : "memories1";
-                if (savedDialog === "") localStorage.setItem('gameSavedDialog', "memories1");
+    if (savedChapter === 1) {
+        currentStory = "denyAnger";
+        localStorage.setItem('currentStory', "denyAnger");
+        currentProgress = savedDialog !== "" ? savedDialog : "deny1";
+        if (savedDialog === "") localStorage.setItem('gameSavedDialog', "deny1");
 
-            } else if (savedChapter === 3) {
-                currentStory = "lettingGo";
-                localStorage.setItem('currentStory', "lettingGo");
-                currentProgress = savedDialog !== "" ? savedDialog : "letting1";
-                if (savedDialog === "") localStorage.setItem('gameSavedDialog', "letting1");
-            }
+    } else if (savedChapter === 2) {
+        currentStory = "memoriesTogether";
+        localStorage.setItem('currentStory', "memoriesTogether");
+        currentProgress = savedDialog !== "" ? savedDialog : "memories1";
+        if (savedDialog === "") localStorage.setItem('gameSavedDialog', "memories1");
 
-            console.log('Initialization - Current state:', {
-                savedChapter,
-                savedDialog,
-                currentStory,
-                currentProgress,
-            });
+    } else if (savedChapter === 3) {
+        currentStory = "lettingGo";
+        localStorage.setItem('currentStory', "lettingGo");
+        currentProgress = savedDialog !== "" ? savedDialog : "letting1";
+        if (savedDialog === "") localStorage.setItem('gameSavedDialog', "letting1");
+    }
 
-            showDialogue(currentProgress);
-        };
+    console.log('Initialization - Current state:', {
+        savedChapter,
+        savedDialog,
+        currentStory,
+        currentProgress,
+    });
 
-        function openSettings() {
-            window.location.href = 'setting.html';
-        }
+    showDialogue(currentProgress);
+};
 
-        function goToMainMenu() {
-            window.location.href = 'dashboard.html';
-        }
+function openSettings() {
+    window.location.href = 'setting.html';
+}
+
+function goToMainMenu() {
+    window.location.href = 'dashboard.html';
+}
