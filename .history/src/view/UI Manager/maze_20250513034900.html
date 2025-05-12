@@ -7,7 +7,6 @@
   <title>Maze Game</title>
   <link rel="stylesheet" href="maze.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Righteous&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <style>
     /* Modal styling */
@@ -20,30 +19,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.85); /* Slightly darker overlay */
+      background: rgba(0, 0, 0, 0.8);
       justify-content: center;
       align-items: center;
       z-index: 9999;
     }
-        .choice button {
-      background: linear-gradient(135deg, #6e8efb, #a777e3); /* Gradient background */
-      color: white;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-      transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions */
-    }
-
-    .choice button:hover {
-      transform: translateY(-2px); /* Slight lift on hover */
-      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-    }
-    
 
     /* Animation for modal content appearing */
     @keyframes modalContentAppear {
@@ -59,37 +39,19 @@
     }
 
     .modal-content {
-      background: #1a1a1a; /* Darker, slightly desaturated background */
-      padding: 25px 30px; /* Increased padding */
-      border-radius: 15px; /* More rounded corners */
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
       max-width: 800px;
       width: 90%;
       color: white;
       text-align: center;
       animation-name: modalContentAppear;
-      animation-duration: 0.5s; /* Slightly faster animation */
+      animation-duration: 0.7s;
       /* Adjust speed as desired */
       animation-timing-function: ease-out;
       animation-fill-mode: forwards;
       /* Keeps the 'to' state after animation */
-      border: 3px solid #4A00E0; /* Example: Purple neon-like border */
-      box-shadow: 0 0 15px #8E2DE2, /* Outer glow */
-                  0 0 5px #4A00E0 inset; /* Inner subtle glow */
-      position: relative; /* For potential pseudo-elements if needed for more complex frames */
-    }
-    .modal-content > p:first-child { /* Targets the main scenario question paragraph */
-      font-family: 'Righteous', cursive;
-      font-size: 1.2em; /* Larger font for the question */
-      color: #f0f0f0;   /* Light grey for readability */
-      margin-bottom: 25px; /* More space below the question */
-      line-height: 1.5;
-    }
-    .modal-content p strong {
-      font-family: 'Bungee', cursive;
-      color: #FFD700; /* Brighter golden color for "Scenario X:" */
-      /* font-weight: 700; Bungee is inherently bold */
-      font-size: 1.1em; /* Slightly adjust size if needed with Bungee */
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.6); /* Shadow for depth */
     }
 
     .close {
@@ -110,22 +72,12 @@
     }
 
     .choice p {
-      margin-top: 5px; /* Adjusted margin */
-      margin-bottom: 10px;
-      font-family: 'Righteous', cursive;
-      font-size: 1.05em; /* Slightly larger option text */
-      color: #e8e8e8;    /* Off-white for options */
-      font-weight: 500;  /* Medium weight */
+      margin: 10px 0;
     }
 
     .feedback {
-      font-family: 'Righteous', cursive;
-      margin-top: 20px; /* More space above feedback */
+      margin-top: 15px;
       font-weight: bold;
-      font-size: 1.1em;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Shadow for feedback text */
-      padding: 10px;
-      border-radius: 5px;
     }
 
     /* Info Icon Styling */
@@ -199,10 +151,6 @@
       color: white;
     }
 
-    #frame {
-      margin-top: 20px; /* Adjust this value to move the maze further down or up */
-    }
-
     .pause-btn {
       position: absolute;
       top: 20px;
@@ -266,7 +214,7 @@
 </head>
 
 <body>
-  <h1 style="font-family: 'Bungee', cursive; text-align: center; font-size: 3.5em; margin-top: 5px; margin-bottom: 10px; text-shadow: 2px 2px 0px #000, 4px 4px 0px #4A00E0; color: white;">Maze of Love</h1>
+  <h1>Maze Game</h1>
   <div id="frame">
     <!-- Info Icon -->
     <div id="info-icon" onclick="openInfoModal()">ℹ️</div>
@@ -323,13 +271,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q1o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Say she’s being needy</p>
           <button onclick="showFeedback(false, 'feedback1')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q1o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Ask her about her love language and try to adapt</p>
           <button onclick="showFeedback(true, 'feedback1')">Choose</button>
         </div>
@@ -345,14 +293,14 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q2o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Get angry and argue</p>
           <button onclick="showFeedback(false, 'feedback2')">Choose</button>
         </div>
         <div class="choice">
 
           <img src="../Asset Manager/images/maze/q2o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Reassure her and explain calmly</p>
           <button onclick="showFeedback(true, 'feedback2')">Choose</button>
         </div>
@@ -369,13 +317,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q3o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Say she's too emotional and it’s not a big deal</p>
           <button onclick="showFeedback(false, 'feedback3')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q3o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Apologize sincerely and plan a surprise</p>
           <button onclick="showFeedback(true, 'feedback3')">Choose</button>
         </div>
@@ -391,13 +339,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q4o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Break up before it hurts more</p>
           <button onclick="showFeedback(false, 'feedback4')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q4o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Make time to video call and plan future meetups</p>
           <button onclick="showFeedback(true, 'feedback4')">Choose</button>
         </div>
@@ -413,13 +361,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q5o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Accept the apology and talk things through</p>
           <button onclick="showFeedback(true, 'feedback5')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q5o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Say it's fine but secretly hold a grudge</p>
           <button onclick="showFeedback(false, 'feedback5')">Choose</button>
         </div>
@@ -435,13 +383,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q6o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Plan a meaningful low-budget surprise</p>
           <button onclick="showFeedback(true, 'feedback6')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q6o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Do nothing and hope they won’t notice</p>
           <button onclick="showFeedback(false, 'feedback6')">Choose</button>
         </div>
@@ -457,13 +405,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q7o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Ask them calmly who the person is</p>
           <button onclick="showFeedback(true, 'feedback7')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q7o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Comment passive-aggressively under the post</p>
           <button onclick="showFeedback(false, 'feedback7')">Choose</button>
         </div>
@@ -479,13 +427,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q8o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Talk calmly and express your feelings directly</p>
           <button onclick="showFeedback(true, 'feedback8')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q8o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Give them the silent treatment and hope they get it</p>
           <button onclick="showFeedback(false, 'feedback8')">Choose</button>
         </div>
@@ -501,13 +449,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q9o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Give them space and wait for them to open up</p>
           <button onclick="showFeedback(true, 'feedback9')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q9o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Keep asking until they get annoyed</p>
           <button onclick="showFeedback(false, 'feedback9')">Choose</button>
         </div>
@@ -523,13 +471,13 @@
       <div class="choices">
         <div class="choice">
           <img src="../Asset Manager/images/maze/q10o1.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Plan quality time together after work</p>
           <button onclick="showFeedback(true, 'feedback10')">Choose</button>
         </div>
         <div class="choice">
           <img src="../Asset Manager/images/maze/q10o2.png" alt="Choice Image"
-            style="width:200px; height:auto; margin-bottom:5px;">
+            style="width:100px; height:auto; margin-bottom:5px;">
           <p>Tell them to stop being clingy</p>
           <button onclick="showFeedback(false, 'feedback10')">Choose</button>
         </div>
