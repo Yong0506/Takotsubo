@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where,  doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
@@ -34,6 +34,16 @@ window.goBack = function () {
 };
 
 window.onload = function () {
+ 
+    if (localStorage.getItem("overallProgress") != 100) {
+      window.history.back();
+   }
+    loadPlayerProfile();
+    loadPartners();
+    if (!localStorage.getItem("deviceId")) {
+      window.location.href = "error.html";
+    }
+  
   playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
 };
 
@@ -45,7 +55,7 @@ function playBackgroundMusic(filePath) {
     currentBGM.currentTime = 0;
   }
 
-  gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+  const gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
 
   currentBGM = new Audio(filePath);
   currentBGM.loop = true;
@@ -58,94 +68,55 @@ function playBackgroundMusic(filePath) {
 
 async function fetchTraitsByDeviceId(deviceId) {
   try {
-    const traitsQuery = query(collection(db, "traits"), where("deviceId", "==", deviceId));
-    const traitsSnapshot = await getDocs(traitsQuery);
-    if (!traitsSnapshot.empty) {
-      const traitsData = traitsSnapshot.docs[0].data();
+    const traitsDoc = await getDoc(doc(db, "traits", deviceId));
+    if (traitsDoc.exists()) {
+      const traitsData = traitsDoc.data();
       const allowedTraits = ["direct", "humorous", "kind", "optimistic", "romantic", "shy"];
-      // 返回特征和对应的值
       return Object.entries(traitsData)
-        .filter(([key, value]) => allowedTraits.includes(key))
-        .reduce((acc, [key, value]) => {
+       .filter(([key, value]) => allowedTraits.includes(key))
+       .reduce((acc, [key, value]) => {
           acc[key] = value;
           return acc;
-        }, {});
+        }, {});;
+    } } catch (error) {
+      console.error(`获取设备ID ${deviceId} 的特征时出错:`, error);
     }
-  } catch (error) {
-    console.error(`获取设备ID ${deviceId} 的特征时出错:`, error);
-  }
-  return {};
+    return {};
 }
 
-// // 计算匹配分数
-// function calculateMatchingScore(selectedTraits, partnerTraits) {
-//   let totalScore = 0;
-//   let maxPossibleScore = 0;
-
-//   // 如果没有选择特征，使用所有特征计算
-//   if (selectedTraits.length === 0) {
-//     Object.entries(partnerTraits).forEach(([trait, value]) => {
-//       totalScore += value;
-//       maxPossibleScore += 10;
-//     });
-//   } else {
-//     // 只计算选中的特征
-//     selectedTraits.forEach(trait => {
-//       const traitLower = trait.toLowerCase();
-//       if (partnerTraits[traitLower] !== undefined) {
-//         totalScore += partnerTraits[traitLower];
-//         maxPossibleScore += 10;
-//       }
-//     });
-//   }
-
-//   // 如果没有可计算的特征，返回默认值
-//   if (maxPossibleScore === 0) return 3; // 返回中等匹配度
-
-//   // 计算最终得分（1-5颗心）
-//   const normalizedScore = (totalScore / maxPossibleScore) * 5;
-//   // 确保分数在1-5之间，且高分值得到更好的显示
-//   return Math.max(1, Math.min(5, Math.round(normalizedScore)));
-// }
-
-// function generateHearts(count) {
-//   return '💜'.repeat(count) + '🤍'.repeat(5 - count);
-// }
-
-// 计算每个特征的匹配等级并生成对应的爱心
 function calculateMatchingScore(selectedTraits, partnertraits) {
   const traitsToCheck = selectedTraits.length > 0
     ? selectedTraits.map(t => t.toLowerCase())
     : Object.keys(partnertraits);
 
-  let totalHearts = 0;  
-  let count = 0;
+  if (!partnertraits || Object.keys(partnertraits).length === 0) {
+    return 1;
+  }
 
+  let totalScore = 0;
   traitsToCheck.forEach(trait => {
-    const value = partnertraits[trait];
-    let hearts = 1;
-      if (value > 20 && value <= 60) {
-        hearts = 3;
-      } else if (value > 60) {
-        hearts = 5;
-      }
-      totalHearts += hearts;
-      count++;
-    
-    console.log(`Trait: ${trait}, Value: ${value}, Hearts: ${hearts}`);
+    totalScore += partnertraits[trait] || 0;
   });
 
-  console.log(selectedTraits) ;
-  console.log(partnertraits) ;
-  console.log('Total Hearts:', totalHearts);
-  console.log('Count:', count);
-  // If no traits were valid, return 3 as neutral match
-  if (count === 0) return 0;
+  console.log("Total Score:", totalScore); // 调试输出
 
-  // Return average, rounded to nearest integer, between 1 and 5
-  return Math.max(1, Math.min(5, Math.round(totalHearts / count)));
-  
+  // 基础分数范围
+  let baseRanges = selectedTraits.length === 0 ? [0, 6, 13, 21, 27] : [0, 4, 8, 12, 16];
+
+  // 根据选择的特征数量调整分数范围
+  const rangeAdjustment = selectedTraits.length * 2;
+  const adjustedRanges = baseRanges.map(range => range + rangeAdjustment);
+
+  // 根据调整后的分数范围返回心数
+  if (totalScore >= adjustedRanges[4]) return 5;
+  if (totalScore >= adjustedRanges[3]) return 4;
+  if (totalScore >= adjustedRanges[2]) return 3;
+  if (totalScore >= adjustedRanges[1]) return 2;
+
+  return 1;
 }
+
+
 
 function generateHearts(count) {
   return '💜'.repeat(count) + '🤍'.repeat(5 - count);
@@ -160,7 +131,9 @@ async function loadPartners() {
       const data = docSnap.data();
       let traits = {};
       if (data.deviceId) {
+        console.log('Fetching traits for deviceId:', data.deviceId);
         traits = await fetchTraitsByDeviceId(data.deviceId);
+        console.log('Fetched traits:', traits);
       }
       allPartners.push({
         id: docSnap.id,
@@ -234,7 +207,7 @@ function renderCards(gender = "all", selectedTraits = []) {
       const traitsList = sortedTraits
         .map(([trait, value]) => {
           const percentage = parseInt((value / totalScore) * 100); // Convert to percentage
-          return `${trait.charAt(0).toUpperCase() + trait.slice(1)}: ${percentage}%`;
+          return `${trait.charAt(0).toUpperCase() + trait.slice(1)}: ${value}`;
         })
         .join(", ");
 
@@ -248,7 +221,7 @@ function renderCards(gender = "all", selectedTraits = []) {
     container.appendChild(card);
   });
 }
-// ... existing code ...
+
 
 searchButton.addEventListener("click", () => {
   const gender = genderFilter.value;
@@ -256,7 +229,7 @@ searchButton.addEventListener("click", () => {
   renderCards(gender, traits);
 });
 
-loadPartners();
+
 
 async function loadPlayerProfile() {
   const querySnapshot = await getDocs(collection(db, "players"));
@@ -270,93 +243,5 @@ async function loadPlayerProfile() {
       `<strong>Contact:</strong><br>Email: ${player.email || 'N/A'}<br>Phone: ${player.phone || 'N/A'}`;
     document.getElementById("traits").innerHTML =
       `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits available"}`;
-    // You can dynamically update the image if URLs are stored in the DB
-    // document.getElementById("profile-img").src = player.imageURL || "default.jpg";
   }
 }
-
-loadPlayerProfile();
-
-const maxTraitValue = 10;
-const maxTotalScore = Object.keys(traitWeights).length * maxTraitValue;
-
-// Function to calculate total score for a user
-function calculateTotalScore(traits) {
-  let total = 0;
-  for (let trait in traitWeights) {
-    const traitValue = traits[trait] || 0;
-    total += traitValue * traitWeights[trait];
-  }
-  return total;
-}
-
-// Function to normalize score to a scale of 0 to 6
-function normalizeScore(score) {
-  return Math.round((score / maxTotalScore) * 6);
-}
-
-// Function to create heart icons
-function createHearts(count) {
-  const heartContainer = document.createElement('div');
-  heartContainer.classList.add('heart-container');
-  for (let i = 0; i < count; i++) {
-    const heart = document.createElement('span');
-    heart.classList.add('heart');
-    heart.innerHTML = '&#10084;'; // Unicode for heart symbol
-    heartContainer.appendChild(heart);
-  }
-  return heartContainer;
-}
-
-// Function to render user profiles
-function renderProfiles(users) {
-  const container = document.getElementById('profiles-container');
-  users.forEach(user => {
-    const totalScore = calculateTotalScore(user.traits);
-    const heartCount = normalizeScore(totalScore);
-
-    const card = document.createElement('div');
-    card.classList.add('profile-card');
-
-    const name = document.createElement('h3');
-    name.textContent = user.name;
-
-    const hearts = createHearts(heartCount);
-
-    card.appendChild(name);
-    card.appendChild(hearts);
-    container.appendChild(card);
-  });
-}
-
-// Initialize rendering
-renderProfiles(users);
-
-function calculateMatchingLevel(traits1, traits2) {
-  let matches = traits1.filter(trait => traits2.includes(trait));
-  return matches.length / Math.max(traits1.length, traits2.length);
-}
-
-const selectedProfiles = [profile1, profile2]; // assume these are your selected objects
-
-const level = calculateMatchingLevel(selectedProfiles[0].traits, selectedProfiles[1].traits);
-console.log("Matching Level:", level);
-
-$('.card').on('click', function () {
-  // collect selected cards
-  const selected = $('.card.selected');
-  if (selected.length === 2) {
-    const profile1 = selected.eq(0).data('profile');
-    const profile2 = selected.eq(1).data('profile');
-
-    const level = calculateMatchingLevel(profile1.traits, profile2.traits);
-    alert(`Matching Level: ${(level * 100).toFixed(2)}%`);
-  }
-});
-
-window.onload = async function () {
-  if (!localStorage.getItem("deviceId")) {
-    window.location.href = "error.html";
-  }
-}
-
