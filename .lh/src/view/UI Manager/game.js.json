@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1747056927782,
@@ -15,6 +15,14 @@
                 },
                 {
                     "date": 1747057403327,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -251,10 +251,10 @@\n \r\n     // Check if all scenarios are now completed\r\n     if (scenarioPoints.every(p => p.triggered)) {\r\n         allScenariosCompleted = true;\r\n+    }\r\n \r\n-\r\n function openInfoModal() {\r\n     document.getElementById('info-modal').style.display = 'block';\r\n }\r\n \r\n"
+                },
+                {
+                    "date": 1747061942422,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -251,10 +251,10 @@\n \r\n     // Check if all scenarios are now completed\r\n     if (scenarioPoints.every(p => p.triggered)) {\r\n         allScenariosCompleted = true;\r\n-    }\r\n \r\n+\r\n function openInfoModal() {\r\n     document.getElementById('info-modal').style.display = 'block';\r\n }\r\n \r\n"
+                },
+                {
+                    "date": 1747062257421,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -251,10 +251,10 @@\n \r\n     // Check if all scenarios are now completed\r\n     if (scenarioPoints.every(p => p.triggered)) {\r\n         allScenariosCompleted = true;\r\n+    }\r\n \r\n-\r\n function openInfoModal() {\r\n     document.getElementById('info-modal').style.display = 'block';\r\n }\r\n \r\n"
                 }
             ],
