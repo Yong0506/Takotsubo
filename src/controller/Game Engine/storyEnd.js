@@ -15,13 +15,8 @@ function goToMainMenu() {
 }
 
 function nextChap() {
-    if (savedChap === 3) {
-        localStorage.setItem("gameSavedChap", 0);
-        window.location.href = 'partnerpairing.html'
-    } else {
-        localStorage.setItem("gameSavedChap", 0);
-        window.location.href = 'dashboard.html'
-    }
+    localStorage.setItem("gameSavedChap", 0);
+    window.location.href = 'dashboard.html'
 }
 
 window.onload = function () {

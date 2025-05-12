@@ -127,7 +127,7 @@ async function movePlayer(dx, dy) {
             });
             localStorage.setItem("gameSavedDialog", "");
             localStorage.setItem("currentStory", "");
-            window.location.href = 'partnerpairing.html';
+            window.location.href = 'storyEnd.html';
         } catch (error) {
             console.error(`Error:`, error);
         }
@@ -146,7 +146,7 @@ function generateRedEndpoint() {
     maze[ey][ex].classList.add('red-end'); // Add the red endpoint class
     redEndpointGenerated = true;
 
-    alert('🎯 The red endpoint wil be generate after answering the last scenario! Move your player icon to trigger it and complete the maze!');
+    alert('🎯 The red endpoint will be generate after answering the last scenario! Move your player icon to trigger it and complete the maze!');
 }
 
 // Function to handle health loss
