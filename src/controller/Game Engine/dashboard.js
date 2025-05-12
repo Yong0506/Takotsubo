@@ -32,11 +32,11 @@ function playBackgroundMusic(filePath) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const birthInput = document.getElementById("birth");
+    const birthInput = document.getElementById("editBirthDate");
     const today = new Date().toISOString().split("T")[0];
     birthInput.setAttribute("max", today);
 });
 
-document.getElementById("phone").addEventListener("input", function () {
+document.getElementById("editPhone").addEventListener("input", function () {
     this.value = this.value.replace(/[^\d\s\-]/g, '');
 });
