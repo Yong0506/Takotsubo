@@ -77,40 +77,75 @@ async function fetchTraitsByDeviceId(deviceId) {
   return {};
 }
 
-// 计算匹配分数
-function calculateMatchingScore(selectedTraits, partnerTraits) {
-  let totalScore = 0;
-  let maxPossibleScore = 0;
+// // 计算匹配分数
+// function calculateMatchingScore(selectedTraits, partnerTraits) {
+//   let totalScore = 0;
+//   let maxPossibleScore = 0;
 
-  // 如果没有选择特征，使用所有特征计算
-  if (selectedTraits.length === 0) {
-    Object.entries(partnerTraits).forEach(([trait, value]) => {
-      totalScore += value;
-      maxPossibleScore += 10;
-    });
-  } else {
-    // 只计算选中的特征
-    selectedTraits.forEach(trait => {
-      const traitLower = trait.toLowerCase();
-      if (partnerTraits[traitLower] !== undefined) {
-        totalScore += partnerTraits[traitLower];
-        maxPossibleScore += 10;
+//   // 如果没有选择特征，使用所有特征计算
+//   if (selectedTraits.length === 0) {
+//     Object.entries(partnerTraits).forEach(([trait, value]) => {
+//       totalScore += value;
+//       maxPossibleScore += 10;
+//     });
+//   } else {
+//     // 只计算选中的特征
+//     selectedTraits.forEach(trait => {
+//       const traitLower = trait.toLowerCase();
+//       if (partnerTraits[traitLower] !== undefined) {
+//         totalScore += partnerTraits[traitLower];
+//         maxPossibleScore += 10;
+//       }
+//     });
+//   }
+
+//   // 如果没有可计算的特征，返回默认值
+//   if (maxPossibleScore === 0) return 3; // 返回中等匹配度
+
+//   // 计算最终得分（1-5颗心）
+//   const normalizedScore = (totalScore / maxPossibleScore) * 5;
+//   // 确保分数在1-5之间，且高分值得到更好的显示
+//   return Math.max(1, Math.min(5, Math.round(normalizedScore)));
+// }
+
+// function generateHearts(count) {
+//   return '💜'.repeat(count) + '🤍'.repeat(5 - count);
+// }
+
+// 计算每个特征的匹配等级并生成对应的爱心
+function calculateMatchingScore(selectedTraits, partnertraits) {
+  const traitsToCheck = selectedTraits.length > 0
+    ? selectedTraits.map(t => t.toLowerCase())
+    : Object.keys(partnertraits);
+
+  let totalHearts = 0;
+  let count = 0;
+
+  traitsToCheck.forEach(trait => {
+    const value = partnertraits[trait];
+    if (value < 20) {
+      let hearts = 1;
+      if (value > 20 && value <= 60) {
+        hearts = 3;
+      } else if (value > 60) {
+        hearts = 5;
       }
-    });
-  }
+      totalHearts += hearts;
+      count++;
+    }
+  });
 
-  // 如果没有可计算的特征，返回默认值
-  if (maxPossibleScore === 0) return 3; // 返回中等匹配度
+  // If no traits were valid, return 3 as neutral match
+  if (count === 0) return 3;
 
-  // 计算最终得分（1-5颗心）
-  const normalizedScore = (totalScore / maxPossibleScore) * 5;
-  // 确保分数在1-5之间，且高分值得到更好的显示
-  return Math.max(1, Math.min(5, Math.round(normalizedScore)));
+  // Return average, rounded to nearest integer, between 1 and 5
+  return Math.max(1, Math.min(5, Math.round(totalHearts / count)));
 }
 
 function generateHearts(count) {
   return '💜'.repeat(count) + '🤍'.repeat(5 - count);
 }
+
 
 async function loadPartners() {
   try {
