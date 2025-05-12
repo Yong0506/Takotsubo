@@ -143,6 +143,7 @@ function typeText(text) {
 }
 
 async function loadDialogueFromFirebase(dialogueId) {
+    console.log(dialogueId);
     const currentStory = localStorage.getItem("currentStory");
     if (!dialogueId || dialogueId === "0") {
         console.error(`Invalid dialogue ID: ${dialogueId}`);
@@ -163,6 +164,7 @@ async function loadDialogueFromFirebase(dialogueId) {
 }
 
 async function showDialogue(dialogueId) {
+    currentProgress = dialogueId;
     const dialogue = await loadDialogueFromFirebase(dialogueId);
     if (!dialogue) return;
     localStorage.setItem('gameSavedDialog', dialogueId);
@@ -182,7 +184,7 @@ async function showDialogue(dialogueId) {
     }
 
     characterNameElement.innerText = renderCharName(dialogue.charName);
-    
+
     if (dialogue.type === "monologue") {
         dialogueTextElement.classList.add("monologue");
     } else {
@@ -280,7 +282,7 @@ async function skipToInteraction() {
             window.location.href = 'punch.html';
             return true;
         }
-        if (dialogue.type === 'puzzle') {
+        if (dialogue.next.type === 'puzzle') {
             startPuzzleGame(dialogue.imagePath);
             return true;
         }
@@ -288,7 +290,10 @@ async function skipToInteraction() {
             window.location.href = 'maze.html';
             return true;
         }
-        if (dialogue.next) {
+        if (dialogue.next.onComplete) {
+            currentProgress = dialogue.next.onComplete;
+            return await checkAndSkipDialogue(dialogue.next.onComplete);
+        } else if (dialogue.next) {
             currentProgress = dialogue.next;
             return await checkAndSkipDialogue(dialogue.next);
         }
@@ -302,29 +307,7 @@ async function skipToInteraction() {
 
 // document.querySelector('.skip-button').addEventListener('click', skipToInteraction);
 
-// dialogueBox.addEventListener('click', async () => {
-//     const dialogue = await loadDialogueFromFirebase(currentProgress);
-//     if (!dialogue) return;
-//     if (isTyping) {
-//         if (currentTimeout) {
-//             clearTimeout(currentTimeout);
-//         }
-//         dialogueTextElement.innerHTML = dialogue.dialog;
-//         isTyping = false;
-//         return;
-//     }
-//     let hasOptions = false;
-//     for (let i = 1; i <= 3; i++) {
-//         if (dialogue[`option${i}`]) hasOptions = true;
-//     }
-//     if (hasOptions) return;
-//     if (dialogue.next) {
-//         currentProgress = dialogue.next;
-//         showDialogue(currentProgress);
-//     }
-// });
-
-async function dialogueBoxClick() {
+dialogueBox.addEventListener('click', async () => {
     const dialogue = await loadDialogueFromFirebase(currentProgress);
     if (!dialogue) return;
     if (isTyping) {
@@ -340,11 +323,29 @@ async function dialogueBoxClick() {
         if (dialogue[`option${i}`]) hasOptions = true;
     }
     if (hasOptions) return;
-    if (dialogue.next) {
+
+    if (dialogue.type === 'punch') {
+        window.location.href = 'punch.html';
+        return true;
+    }
+    if (dialogue.next.type === 'puzzle') {
+        startPuzzleGame(dialogue.next.imagePath);
+        return true;
+    }
+    if (dialogue.type === 'maze') {
+        window.location.href = 'maze.html';
+        return true;
+    }
+
+    if (dialogue.next.onComplete) {
+        currentProgress = dialogue.next.onComplete;
+        showDialogue(currentProgress);
+    } else if (dialogue.next) {
         currentProgress = dialogue.next;
         showDialogue(currentProgress);
     }
-}
+});
+
 
 async function updateProgress(chapterProgress, overallProgress) {
     const progressFill = document.querySelector('.progress-fill');

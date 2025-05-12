@@ -149,7 +149,7 @@ function playBackgroundMusic(filePath) {
         currentBGM.currentTime = 0;
     }
 
-    gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+    const gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
 
     currentBGM = new Audio(filePath);
     currentBGM.loop = true;
