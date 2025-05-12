@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1747064543914,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1747064973748,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -245,15 +245,15 @@\n             break;\r\n     }\r\n });\r\n \r\n- const choiceButtons = document.querySelectorAll(`#${modalId} .choice button`);\r\n-    choiceButtons.forEach(button => button.disabled = true);\r\n+const choiceButtons = document.querySelectorAll(`#${modalId} .choice button`);\r\n+choiceButtons.forEach(button => button.disabled = true);\r\n \r\n-    // Check if all scenarios are now completed\r\n-    if (scenarioPoints.every(p => p.triggered)) {\r\n-        allScenariosCompleted = true;\r\n-    }\r\n+// Check if all scenarios are now completed\r\n+if (scenarioPoints.every(p => p.triggered)) {\r\n+    allScenariosCompleted = true;\r\n+}\r\n \r\n function openInfoModal() {\r\n     document.getElementById('info-modal').style.display = 'block';\r\n }\r\n@@ -264,5 +264,13 @@\n \r\n // Initialize the game\r\n generateMaze();\r\n previousPlayerPos = { x: player.x, y: player.y }; // Initialize previous position\r\n-updateHeartDisplay(); // Set initial heart display\n\\ No newline at end of file\n+updateHeartDisplay(); // Set initial heart display\r\n+\r\n+function openSettings() {\r\n+    window.location.href = 'setting.html'\r\n+}\r\n+\r\n+function goToMainMenu() {\r\n+    window.location.href = 'dashboard.html'\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1747064984726,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -245,15 +245,15 @@\n             break;\r\n     }\r\n });\r\n \r\n-const choiceButtons = document.querySelectorAll(`#${modalId} .choice button`);\r\n-choiceButtons.forEach(button => button.disabled = true);\r\n+ const choiceButtons = document.querySelectorAll(`#${modalId} .choice button`);\r\n+    choiceButtons.forEach(button => button.disabled = true);\r\n \r\n-// Check if all scenarios are now completed\r\n-if (scenarioPoints.every(p => p.triggered)) {\r\n-    allScenariosCompleted = true;\r\n-}\r\n+    // Check if all scenarios are now completed\r\n+    if (scenarioPoints.every(p => p.triggered)) {\r\n+        allScenariosCompleted = true;\r\n+    }\r\n \r\n function openInfoModal() {\r\n     document.getElementById('info-modal').style.display = 'block';\r\n }\r\n@@ -264,13 +264,5 @@\n \r\n // Initialize the game\r\n generateMaze();\r\n previousPlayerPos = { x: player.x, y: player.y }; // Initialize previous position\r\n-updateHeartDisplay(); // Set initial heart display\r\n-\r\n-function openSettings() {\r\n-    window.location.href = 'setting.html'\r\n-}\r\n-\r\n-function goToMainMenu() {\r\n-    window.location.href = 'dashboard.html'\r\n-}\n\\ No newline at end of file\n+updateHeartDisplay(); // Set initial heart display\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1747064543914,
