@@ -390,18 +390,19 @@ window.onload = async function () {
         localStorage.setItem('currentStory', "denyAnger");
         currentProgress = savedDialog !== "" ? savedDialog : "deny1";
         if (savedDialog === "") localStorage.setItem('gameSavedDialog', "deny1");
-
+        playBackgroundMusic("../Asset Manager/musics/main/chp1.mp3")
     } else if (savedChapter === 2) {
         currentStory = "memoriesTogether";
         localStorage.setItem('currentStory', "memoriesTogether");
         currentProgress = savedDialog !== "" ? savedDialog : "memories1";
         if (savedDialog === "") localStorage.setItem('gameSavedDialog', "memories1");
-
+        playBackgroundMusic("../Asset Manager/musics/main/chp2.mp3")
     } else if (savedChapter === 3) {
         currentStory = "lettingGo";
         localStorage.setItem('currentStory', "lettingGo");
         currentProgress = savedDialog !== "" ? savedDialog : "letting1";
         if (savedDialog === "") localStorage.setItem('gameSavedDialog', "letting1");
+        playBackgroundMusic("../Asset Manager/musics/main/chp3.mp3")
     }
 
     console.log('Initialization - Current state:', {
@@ -420,4 +421,23 @@ function openSettings() {
 
 function goToMainMenu() {
     window.location.href = 'dashboard.html';
+}
+
+
+let currentBGM = null;
+
+function playBackgroundMusic(filePath) {
+    if (currentBGM) {
+        currentBGM.pause();
+        currentBGM.currentTime = 0;
+    }
+
+    gameVolume = (parseInt(localStorage.getItem("gameVolume")) / 100);
+
+    currentBGM = new Audio(filePath);
+    currentBGM.loop = true;
+    currentBGM.volume = gameVolume;
+    currentBGM.play().catch((err) => {
+        console.warn("Autoplay blocked or error occurred:", err);
+    });
 }
