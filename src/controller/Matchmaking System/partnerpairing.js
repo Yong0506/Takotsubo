@@ -25,9 +25,13 @@ traitFilter.select2();
 let allPartners = [];
 
 
-function openSettings() {
-  window.location.href = 'setting.html'
-}
+window.openSettings = function () {
+  window.location.href = 'setting.html';
+};
+
+window.goBack = function () {
+  window.location.href ='dashboard.html'
+};
 
 window.onload = function () {
   playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
