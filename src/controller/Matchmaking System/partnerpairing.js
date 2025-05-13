@@ -35,8 +35,8 @@ window.goBack = function () {
 
 window.onload = function () {
 
-  if (localStorage.getItem("overallProgress") != 100) {
-    window.history.back();
+    if (localStorage.getItem("overallProgress") != 100) {
+      window.history.back();
   }
   loadPlayerProfile();
   loadPartners();
@@ -105,8 +105,8 @@ function calculateMatchingScore(selectedTraits, partnertraits) {
   let baseRanges = selectedTraits.length === 0 ? [0, 6, 13, 21, 27] : [0, 4, 8, 12, 16];
 
   // 根据选择的特征数量调整分数范围
-  const rangeAdjustment = selectedTraits.length * 2;
-  const adjustedRanges = baseRanges.map(range => range + rangeAdjustment);
+  const rangeAdjustment = selectedTraits.length > 1 ? selectedTraits.length * 2 : 0;
+  const adjustedRanges = baseRanges.map((range, index) => index === 0 ? range : range + rangeAdjustment);
 
   // 根据调整后的分数范围返回心数
   if (totalScore >= adjustedRanges[4]) return 5;
