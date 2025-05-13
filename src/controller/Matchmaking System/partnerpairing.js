@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-import { getFirestore, collection, getDocs, query, where,  doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAGSZM98qLSSIXfSor4_Mn_jqxPs__a_S0",
@@ -30,20 +30,20 @@ window.openSettings = function () {
 };
 
 window.goBack = function () {
-  window.location.href ='dashboard.html'
+  window.location.href = 'dashboard.html'
 };
 
 window.onload = function () {
- 
-    if (localStorage.getItem("overallProgress") != 100) {
-      window.history.back();
-   }
-    loadPlayerProfile();
-    loadPartners();
-    if (!localStorage.getItem("deviceId")) {
-      window.location.href = "error.html";
-    }
-  
+
+  if (localStorage.getItem("overallProgress") != 100) {
+    window.history.back();
+  }
+  loadPlayerProfile();
+  loadPartners();
+  if (!localStorage.getItem("deviceId")) {
+    window.location.href = "error.html";
+  }
+
   playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
 };
 
@@ -73,15 +73,16 @@ async function fetchTraitsByDeviceId(deviceId) {
       const traitsData = traitsDoc.data();
       const allowedTraits = ["direct", "humorous", "kind", "optimistic", "romantic", "shy"];
       return Object.entries(traitsData)
-       .filter(([key, value]) => allowedTraits.includes(key))
-       .reduce((acc, [key, value]) => {
+        .filter(([key, value]) => allowedTraits.includes(key))
+        .reduce((acc, [key, value]) => {
           acc[key] = value;
           return acc;
         }, {});;
-    } } catch (error) {
-      console.error(`获取设备ID ${deviceId} 的特征时出错:`, error);
     }
-    return {};
+  } catch (error) {
+    console.error(`获取设备ID ${deviceId} 的特征时出错:`, error);
+  }
+  return {};
 }
 
 function calculateMatchingScore(selectedTraits, partnertraits) {
@@ -176,6 +177,11 @@ function renderCards(gender = "all", selectedTraits = []) {
   }
 
   filtered.forEach(partner => {
+    if (partner.gender === "Male") {
+      partner.imgUrl = "../Asset Manager/images/partnerpairing/boy.jpg";
+    } else {
+      partner.imgUrl = "../Asset Manager/images/partnerpairing/kate.jpg";
+    }
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
