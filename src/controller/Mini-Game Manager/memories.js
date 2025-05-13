@@ -160,3 +160,6 @@ function playBackgroundMusic(filePath) {
 }
 
 window.checkSolution = checkSolution;
+window.openSettings = openSettings;
+window.goToMainMenu = goToMainMenu;
+window.resetPuzzle = resetPuzzle;
