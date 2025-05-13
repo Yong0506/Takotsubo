@@ -168,7 +168,12 @@ async function showDialogue(dialogueId) {
     const dialogue = await loadDialogueFromFirebase(dialogueId);
     if (!dialogue) return;
     localStorage.setItem('gameSavedDialog', dialogueId);
-    updateProgress(dialogue.progressBar, dialogue.overallProgress);
+
+    if (!dialogue.progressBar && !dialogue.overallProgress) {
+        console.log("No progress to update.")
+    } else {
+        updateProgress(dialogue.progressBar, dialogue.overallProgress);
+    }
 
     if (dialogue.type === 'punch') {
         window.location.href = 'punch.html';
