@@ -45,9 +45,6 @@ window.onload = function () {
   }
 
   playBackgroundMusic("../Asset Manager/musics/main/bgm.mp3");
-  loadPlayerProfile();
-  loadPartners();
-
 };
 
 let currentBGM = null;
@@ -88,7 +85,6 @@ async function fetchTraitsByDeviceId(deviceId) {
   return {};
 }
 
-
 function calculateMatchingScore(selectedTraits, partnertraits) {
   const traitsToCheck = selectedTraits.length > 0
     ? selectedTraits.map(t => t.toLowerCase())
@@ -126,98 +122,6 @@ function calculateMatchingScore(selectedTraits, partnertraits) {
 function generateHearts(count) {
   return '💜'.repeat(count) + '🤍'.repeat(5 - count);
 }
-// // 计算匹配分数
-// function calculateMatchingScore(selectedTraits, partnerTraits) {
-//   let totalScore = 0;
-//   let maxPossibleScore = 0;
-
-//   // 如果没有选择特征，使用所有特征计算
-//   if (selectedTraits.length === 0) {
-//     Object.entries(partnerTraits).forEach(([trait, value]) => {
-//       totalScore += value;
-//       maxPossibleScore += 10;
-//     });
-//   } else {
-//     // 只计算选中的特征
-//     selectedTraits.forEach(trait => {
-//       const traitLower = trait.toLowerCase();
-//       if (partnerTraits[traitLower] !== undefined) {
-//         totalScore += partnerTraits[traitLower];
-//         maxPossibleScore += 10;
-//       }
-//     });
-//   }
-
-//   // 如果没有可计算的特征，返回默认值
-//   if (maxPossibleScore === 0) return 3; // 返回中等匹配度
-
-//   // 计算最终得分（1-5颗心）
-//   const normalizedScore = (totalScore / maxPossibleScore) * 5;
-//   // 确保分数在1-5之间，且高分值得到更好的显示
-//   return Math.max(1, Math.min(5, Math.round(normalizedScore)));
-// }
-
-// function generateHearts(count) {
-//   return '💜'.repeat(count) + '🤍'.repeat(5 - count);
-// }
-
-// 计算每个特征的匹配等级并生成对应的爱心
-function calculateMatchingScore(filteredProfiles, selectedTraits) {
-  if (filteredProfiles.length === 0 || selectedTraits.length === 0) return [];
-
-  let scores = [];
-
-  // Step 1: Calculate score (single trait value or sum of selected traits) for each profile
-  filteredProfiles.forEach(profile => {
-    let totalValue = 0;
-
-    if (selectedTraits.length === 1) {
-      totalValue = profile.traits[selectedTraits[0]] || 0;
-    } else {
-      selectedTraits.forEach(trait => {
-        totalValue += profile.traits[trait] || 0;
-      });
-    }
-
-    scores.push({
-      profile,
-      score: totalValue,
-    });
-  });
-
-  // Step 2: Sort scores descending
-  scores.sort((a, b) => b.score - a.score);
-
-  // Step 3: Assign heart icons based on ranking with equal scores getting equal hearts
-  const heartsMap = new Map();
-  let heartCount = 5;
-  let currentScore = null;
-  let currentHeart = 5;
-
-  for (let i = 0; i < scores.length; i++) {
-    const score = scores[i].score;
-
-    if (score !== currentScore) {
-      currentScore = score;
-      currentHeart = heartCount;
-      heartCount = Math.max(1, heartCount - 1); // decrease for next group
-    }
-
-    heartsMap.set(scores[i].profile.deviceId, currentHeart);
-  }
-
-  // Step 4: Attach heart count to profiles
-  return filteredProfiles.map(profile => ({
-    ...profile,
-    heartCount: heartsMap.get(profile.deviceId) || 1,
-  }));
-}
-
-
-//function generateHearts(count) {
-  //return '💜'.repeat(count) + '🤍'.repeat(5 - count);
-//}
-
 
 
 async function loadPartners() {
@@ -346,89 +250,4 @@ async function loadPlayerProfile() {
     document.getElementById("traits").innerHTML =
       `<strong>Traits:</strong><br>${player.traits ? player.traits.join(", ") : "No traits available"}`;
   }
-
 }
-
-const maxTraitValue = 10;
-const maxTotalScore = Object.keys(traitWeights).length * maxTraitValue;
-
-// Function to calculate total score for a user
-function calculateTotalScore(traits) {
-  let total = 0;
-  for (let trait in traitWeights) {
-    const traitValue = traits[trait] || 0;
-    total += traitValue * traitWeights[trait];
-  }
-  return total;
-}
-
-// Function to normalize score to a scale of 0 to 6
-function normalizeScore(score) {
-  return Math.round((score / maxTotalScore) * 6);
-}
-
-// Function to create heart icons
-function createHearts(count) {
-  const heartContainer = document.createElement('div');
-  heartContainer.classList.add('heart-container');
-  for (let i = 0; i < count; i++) {
-    const heart = document.createElement('span');
-    heart.classList.add('heart');
-    heart.innerHTML = '&#10084;'; // Unicode for heart symbol
-    heartContainer.appendChild(heart);
-  }
-  return heartContainer;
-}
-
-// Function to render user profiles
-function renderProfiles(users) {
-  const container = document.getElementById('profiles-container');
-  users.forEach(user => {
-    const totalScore = calculateTotalScore(user.traits);
-    const heartCount = normalizeScore(totalScore);
-
-    const card = document.createElement('div');
-    card.classList.add('profile-card');
-
-    const name = document.createElement('h3');
-    name.textContent = user.name;
-
-    const hearts = createHearts(heartCount);
-
-    card.appendChild(name);
-    card.appendChild(hearts);
-    container.appendChild(card);
-  });
-}
-
-// Initialize rendering
-renderProfiles(users);
-
-//function calculateMatchingLevel(traits1, traits2) {
-//let matches = traits1.filter(trait => traits2.includes(trait));
-  //return matches.length / Math.max(traits1.length, traits2.length);
-//}
-
-//const selectedProfiles = [profile1, profile2]; // assume these are your selected objects
-
-//const level = calculateMatchingLevel(selectedProfiles[0].traits, selectedProfiles[1].traits);
-//console.log("Matching Level:", level);
-
-//$('.card').on('click', function () {
-  // collect selected cards
- // const selected = $('.card.selected');
-  //if (selected.length === 2) {
-  //  const profile1 = selected.eq(0).data('profile');a
-  //  const profile2 = selected.eq(1).data('profile');
-
- //   const level = calculateMatchingLevel(profile1.traits, profile2.traits);
- //   alert(`Matching Level: ${(level * 100).toFixed(2)}%`);
- // }
-//});
-
-window.onload = async function () {
-  if (!localStorage.getItem("deviceId")) {
-    window.location.href = "error.html";
-  }
-}
-
